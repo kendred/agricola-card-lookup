@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agricola Card Lookup</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="top-section">
+        <h1>🌾 Agricola Card Lookup</h1>
+        <p class="subtitle">Search and explore Agricola card rankings</p>
+        
+        <div class="search-section">
+            <input type="text" 
+                   id="searchInput" 
+                   class="search-input" 
+                   placeholder="Search for a card..." 
+                   autocomplete="off">
+            <div id="suggestions" class="suggestions"></div>
+        </div>
+        
+        <div id="results" class="results"></div>
+    </div>
+    
+    <div class="bottom-section">
+        <div class="table-grid">
+            <div class="filter-sidebar">
+                <div class="sidebar-title">Filters & Sort</div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Type</label>
+                    <select id="typeFilter" class="filter-select">
+                        <option value="all">All Types</option>
+                        <option value="occupation">Occupation</option>
+                        <option value="minor">Minor Improvement</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Passing</label>
+                    <select id="passingFilter" class="filter-select">
+                        <option value="all">All Cards</option>
+                        <option value="passing">Passing Only</option>
+                        <option value="not-passing">Not Passing</option>
+                    </select>
+                </div>
+                
+                <div class="gradient-toggle">
+                    <input type="checkbox" id="gradientToggle" checked>
+                    <label for="gradientToggle">Color Gradients</label>
+                </div>
+                
+                <button id="clearSortBtn" class="clear-sort-btn">Clear Sort</button>
+            </div>
+            
+            <div class="table-container">
+                <div class="table-header">All Cards (773)</div>
+                <div class="table-wrapper">
+                    <table class="card-table">
+                        <thead>
+                            <tr>
+                                <th class="sortable" data-sort="rank">
+                                    <span class="col-header">Rank</span>
+                                </th>
+                                <th class="sortable" data-sort="name">
+                                    <span class="col-header">Name</span>
+                                </th>
+                                <th class="sortable" data-sort="type">
+                                    <span class="col-header">Type</span>
+                                </th>
+                                <th class="sortable" data-sort="pwr">
+                                    <span class="col-header">
+                                        PWR
+                                        <span class="help-icon" data-tooltip="Power rating: higher is better">?</span>
+                                    </span>
+                                </th>
+                                <th class="sortable" data-sort="adp">
+                                    <span class="col-header">
+                                        ADP
+                                        <span class="help-icon" data-tooltip="Average Draft Position: when the card is typically picked">?</span>
+                                    </span>
+                                </th>
+                                <th class="sortable" data-sort="playrate">
+                                    <span class="col-header">
+                                        Play Rate
+                                        <span class="help-icon" data-tooltip="How often this card is played when drafted">?</span>
+                                    </span>
+                                </th>
+                                <th class="sortable" data-sort="value">
+                                    <span class="col-header">
+                                        Value
+                                        <span class="help-icon" data-tooltip="ADP × Power: overall value metric">?</span>
+                                    </span>
+                                </th>
+                                <th class="sortable" data-sort="valueplayed">
+                                    <span class="col-header">
+                                        When Played
+                                        <span class="help-icon" data-tooltip="Value when actually played: (1/Play Rate) × Elo/Play">?</span>
+                                    </span>
+                                </th>
+                                <th>
+                                    <span class="col-header">
+                                        Passing
+                                        <span class="help-icon" data-tooltip="Cards that are played immediately after drafting">?</span>
+                                    </span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="cardTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
