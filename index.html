@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agricola Card Lookup</title>
+    <link rel="icon" href="Icons/Grain.webp">
+    <title>Grics Rankings</title>
     <style>
 * {
     margin: 0;
@@ -13,7 +14,10 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-color: #6da340;
+    background-image: url('https://x.boardgamearena.net/data/themereleases/current/games/agricola/260123-1203/img/background.jpg');
+    background-repeat: repeat;
+    background-size: auto;
     min-height: 100vh;
     padding: 20px;
 }
@@ -38,6 +42,13 @@ h1 {
     margin-bottom: 10px;
 }
 
+.title-icon {
+    height: 1em;
+    width: auto;
+    vertical-align: middle;
+    margin-right: 4px;
+}
+
 .subtitle {
     color: #666;
     font-size: 1.1em;
@@ -59,7 +70,7 @@ h1 {
 }
 
 #searchInput:focus {
-    border-color: #667eea;
+    border-color: #8B6914;
 }
 
 .suggestions {
@@ -112,7 +123,7 @@ h1 {
 
 .suggestion-pwr {
     font-weight: bold;
-    color: #667eea;
+    color: #8B6914;
 }
 
 .results {
@@ -120,7 +131,7 @@ h1 {
 }
 
 .card-result {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #b8956a 0%, #8B6914 100%);
     color: white;
     padding: 30px;
     border-radius: 12px;
@@ -136,6 +147,30 @@ h1 {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+.card-result-with-image {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+.card-image-container {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+}
+
+.card-image-container img {
+    height: 286px;
+    width: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.card-info {
+    flex: 1;
+    min-width: 0;
 }
 
 .card-header {
@@ -276,7 +311,7 @@ h1 {
     content: "→";
     position: absolute;
     left: 0;
-    color: #667eea;
+    color: #8B6914;
 }
 
 .no-results {
@@ -387,27 +422,131 @@ h1 {
     color: #333;
 }
 
-.gradient-toggle {
+.deck-dropdown {
+    position: relative;
+}
+
+.deck-dropdown-btn {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+    background: white;
+    color: #333;
+    font-size: 0.95em;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+}
+
+.deck-dropdown-btn:hover {
+    border-color: #999;
+}
+
+.deck-dropdown-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    padding: 6px 0;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.deck-dropdown-menu.open {
+    display: block;
+}
+
+.deck-dropdown-item {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 10px;
-    background: #f5f5f5;
-    border-radius: 8px;
+    padding: 8px 12px;
     cursor: pointer;
+    font-size: 0.9em;
+    color: #333;
+    user-select: none;
+    transition: background 0.15s;
+}
+
+.deck-dropdown-item:hover {
+    background: #f5f5f5;
+}
+
+.deck-dropdown-item input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.deck-dropdown-divider {
+    height: 1px;
+    background: #eee;
+    margin: 4px 0;
+}
+
+.toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.toggle-label {
+    font-size: 0.9em;
+    color: #333;
     user-select: none;
 }
 
-.gradient-toggle input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 22px;
+    flex-shrink: 0;
 }
 
-.gradient-toggle label {
-    font-size: 0.9em;
-    color: #333;
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-track {
+    position: absolute;
     cursor: pointer;
+    inset: 0;
+    background: #ccc;
+    border-radius: 22px;
+    transition: background 0.2s;
+}
+
+.toggle-track::before {
+    content: '';
+    position: absolute;
+    height: 16px;
+    width: 16px;
+    left: 3px;
+    bottom: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.2s;
+}
+
+.toggle-switch input:checked + .toggle-track {
+    background: #8B6914;
+}
+
+.toggle-switch input:checked + .toggle-track::before {
+    transform: translateX(18px);
 }
 
 .clear-sort-btn {
@@ -529,30 +668,34 @@ h1 {
 .help-icon:hover::after {
     content: attr(data-tooltip);
     position: absolute;
-    bottom: 100%;
+    top: 100%;
     left: 50%;
     transform: translateX(-50%);
     background: #333;
     color: white;
     padding: 8px 12px;
     border-radius: 6px;
-    white-space: nowrap;
+    white-space: normal;
+    width: max-content;
+    max-width: 240px;
     font-size: 12px;
     font-weight: normal;
     z-index: 1000;
-    margin-bottom: 5px;
+    margin-top: 5px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    pointer-events: none;
 }
 
 .help-icon:hover::before {
     content: '';
     position: absolute;
-    bottom: 100%;
+    top: 100%;
     left: 50%;
     transform: translateX(-50%);
     border: 5px solid transparent;
-    border-top-color: #333;
-    margin-bottom: 0px;
+    border-bottom-color: #333;
+    margin-top: -5px;
+    z-index: 1001;
 }
 
 .card-table td {
@@ -646,7 +789,7 @@ h1 {
 </head>
 <body>
     <div class="top-section">
-        <h1>🌾 Agricola Card Lookup</h1>
+        <h1><img id="titleIcon" src="" alt="" class="title-icon"> Grics Rankings</h1>
         <p class="subtitle">Search and explore Agricola card rankings</p>
         
         <div class="search-section">
@@ -683,10 +826,56 @@ h1 {
                         <option value="not-passing">Not Passing</option>
                     </select>
                 </div>
-                
-                <div class="gradient-toggle">
-                    <input type="checkbox" id="gradientToggle" checked>
-                    <label for="gradientToggle">Color Gradients</label>
+
+                <div class="filter-group">
+                    <label class="filter-label">Deck</label>
+                    <div class="deck-dropdown">
+                        <button type="button" class="deck-dropdown-btn" id="deckDropdownBtn">All Decks</button>
+                        <div class="deck-dropdown-menu" id="deckDropdownMenu">
+                            <label class="deck-dropdown-item">
+                                <input type="checkbox" id="deckAll" checked>
+                                <span>All Decks</span>
+                            </label>
+                            <div class="deck-dropdown-divider"></div>
+                            <label class="deck-dropdown-item">
+                                <input type="checkbox" class="deck-cb" value="A" checked>
+                                <span>Deck A</span>
+                            </label>
+                            <label class="deck-dropdown-item">
+                                <input type="checkbox" class="deck-cb" value="B" checked>
+                                <span>Deck B</span>
+                            </label>
+                            <label class="deck-dropdown-item">
+                                <input type="checkbox" class="deck-cb" value="C" checked>
+                                <span>Deck C</span>
+                            </label>
+                            <label class="deck-dropdown-item">
+                                <input type="checkbox" class="deck-cb" value="D" checked>
+                                <span>Deck D</span>
+                            </label>
+                            <label class="deck-dropdown-item">
+                                <input type="checkbox" class="deck-cb" value="E" checked>
+                                <span>Deck E</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">Prerequisites</label>
+                    <select id="prerequisitesFilter" class="filter-select">
+                        <option value="all">All Cards</option>
+                        <option value="has-prereqs">Has Prerequisites</option>
+                        <option value="no-prereqs">No Prerequisites</option>
+                    </select>
+                </div>
+
+                <div class="toggle-row">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="gradientToggle" checked>
+                        <span class="toggle-track"></span>
+                    </label>
+                    <span class="toggle-label">Color Gradients</span>
                 </div>
                 
                 <button id="clearSortBtn" class="clear-sort-btn">Clear Sort</button>
@@ -710,37 +899,43 @@ h1 {
                                 <th class="sortable" data-sort="pwr">
                                     <span class="col-header">
                                         PWR
-                                        <span class="help-icon" data-tooltip="Power rating: higher is better">?</span>
+                                        <span class="help-icon" data-tooltip="Calculated by multiplying PLAY percentage x WIN percentage, then dividing by 7">?</span>
                                     </span>
                                 </th>
                                 <th class="sortable" data-sort="adp">
                                     <span class="col-header">
                                         ADP
-                                        <span class="help-icon" data-tooltip="Average Draft Position: when the card is typically picked">?</span>
+                                        <span class="help-icon" data-tooltip="Average draft position">?</span>
+                                    </span>
+                                </th>
+                                <th class="sortable" data-sort="eloplay">
+                                    <span class="col-header">
+                                        ELO / Play
+                                        <span class="help-icon" data-tooltip="Average Elo won or lost across all times the card was played">?</span>
                                     </span>
                                 </th>
                                 <th class="sortable" data-sort="playrate">
                                     <span class="col-header">
                                         Play Rate
-                                        <span class="help-icon" data-tooltip="How often this card is played when drafted">?</span>
+                                        <span class="help-icon" data-tooltip="% of times drafted the card is played">?</span>
                                     </span>
                                 </th>
                                 <th class="sortable" data-sort="value">
                                     <span class="col-header">
-                                        Value
-                                        <span class="help-icon" data-tooltip="ADP × Power: overall value metric">?</span>
+                                        Value Draft
+                                        <span class="help-icon" data-tooltip="ADP * ELO/Play - Higher for cards that are drafted later but have high ELO">?</span>
                                     </span>
                                 </th>
                                 <th class="sortable" data-sort="valueplayed">
                                     <span class="col-header">
                                         When Played
-                                        <span class="help-icon" data-tooltip="Value when actually played: (1/Play Rate) × Elo/Play">?</span>
+                                        <span class="help-icon" data-tooltip="Calculated by ELO/Play * (1/play rate) - Represents that the card is valuable when played, giving a boost to cards that are played less frequently">?</span>
                                     </span>
                                 </th>
                                 <th>
                                     <span class="col-header">
                                         Passing
-                                        <span class="help-icon" data-tooltip="Cards that are played immediately after drafting">?</span>
+                                        <span class="help-icon" data-tooltip="If this is a passing minor or not">?</span>
                                     </span>
                                 </th>
                             </tr>
@@ -13914,13 +14109,14 @@ const gradientToggle = document.getElementById('gradientToggle');
 
 // State for sorting, filtering, and gradients
 let currentSort = { column: 'rank', direction: 'asc' };
-let currentFilters = { type: 'all', passing: 'all' };
+let currentFilters = { type: 'all', passing: 'all', decks: ['A', 'B', 'C', 'D', 'E'], prerequisites: 'all' };
 let gradientsEnabled = true;
 
 // Calculate min/max for gradients
 const playRates = cards.map(c => parseFloat(c.play_rate)).filter(v => !isNaN(v));
 const values = cards.map(c => parseFloat(c.value)).filter(v => !isNaN(v));
 const valuesPlayed = cards.map(c => parseFloat(c.value_when_played)).filter(v => !isNaN(v));
+const eloPerPlays = cards.map(c => parseFloat(c.elo_per_play)).filter(v => !isNaN(v));
 
 const minPlayRate = Math.min(...playRates);
 const maxPlayRate = Math.max(...playRates);
@@ -13928,17 +14124,18 @@ const minValue = Math.min(...values);
 const maxValue = Math.max(...values);
 const minValuePlayed = Math.min(...valuesPlayed);
 const maxValuePlayed = Math.max(...valuesPlayed);
+const minEloPerPlay = Math.min(...eloPerPlays);
+const maxEloPerPlay = Math.max(...eloPerPlays);
 
 // Gradient calculation functions
 function getPlayRateGradient(playRate) {
     if (!gradientsEnabled) return '';
     const value = parseFloat(playRate);
     if (isNaN(value)) return '';
-    // White (0%) to Green (100%)
-    const normalized = value / 100; // 0 to 1
-    const r = Math.round(255 - (normalized * 100)); // 255 to 155
-    const g = Math.round(255 - (normalized * 55));  // 255 to 200 (keep it bright green)
-    const b = Math.round(255 - (normalized * 100)); // 255 to 155
+    const normalized = value / 100;
+    const r = Math.round(255 - (normalized * 100));
+    const g = Math.round(255 - (normalized * 55));
+    const b = Math.round(255 - (normalized * 100));
     return `rgb(${r}, ${g}, ${b})`;
 }
 
@@ -13946,11 +14143,10 @@ function getValueGradient(value) {
     if (!gradientsEnabled) return '';
     const val = parseFloat(value);
     if (isNaN(val)) return '';
-    // White (0) to Green (max)
-    const normalized = Math.min(val / maxValue, 1); // Clamp to 0-1
-    const r = Math.round(255 - (normalized * 100)); // 255 to 155
-    const g = Math.round(255 - (normalized * 55));  // 255 to 200
-    const b = Math.round(255 - (normalized * 100)); // 255 to 155
+    const normalized = Math.min(val / maxValue, 1);
+    const r = Math.round(255 - (normalized * 100));
+    const g = Math.round(255 - (normalized * 55));
+    const b = Math.round(255 - (normalized * 100));
     return `rgb(${r}, ${g}, ${b})`;
 }
 
@@ -13958,21 +14154,40 @@ function getValuePlayedGradient(value) {
     if (!gradientsEnabled) return '';
     const val = parseFloat(value);
     if (isNaN(val)) return '';
-    // Red (-10) to White (0) to Green (max)
-    
+
     if (val < 0) {
-        // Red (-10) to White (0)
-        const normalized = Math.max((val + 10) / 10, 0); // Clamp -10 to 0 → 0 to 1
+        const normalized = Math.max((val + 10) / 10, 0);
         const r = 255;
-        const g = Math.round(155 + (normalized * 100)); // 155 to 255
-        const b = Math.round(155 + (normalized * 100)); // 155 to 255
+        const g = Math.round(155 + (normalized * 100));
+        const b = Math.round(155 + (normalized * 100));
         return `rgb(${r}, ${g}, ${b})`;
     } else {
-        // White (0) to Green (max)
         const normalized = Math.min(val / maxValuePlayed, 1);
-        const r = Math.round(255 - (normalized * 100)); // 255 to 155
-        const g = Math.round(255 - (normalized * 55));  // 255 to 200
-        const b = Math.round(255 - (normalized * 100)); // 255 to 155
+        const r = Math.round(255 - (normalized * 100));
+        const g = Math.round(255 - (normalized * 55));
+        const b = Math.round(255 - (normalized * 100));
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+}
+
+function getEloPerPlayGradient(eloPerPlay) {
+    if (!gradientsEnabled) return '';
+    const val = parseFloat(eloPerPlay);
+    if (isNaN(val)) return '';
+
+    if (val < 0) {
+        // Red for negative values
+        const normalized = Math.max((val - minEloPerPlay) / (0 - minEloPerPlay), 0);
+        const r = 255;
+        const g = Math.round(155 + (normalized * 100));
+        const b = Math.round(155 + (normalized * 100));
+        return `rgb(${r}, ${g}, ${b})`;
+    } else {
+        // White to Green for positive values
+        const normalized = Math.min(val / maxEloPerPlay, 1);
+        const r = Math.round(255 - (normalized * 100));
+        const g = Math.round(255 - (normalized * 55));
+        const b = Math.round(255 - (normalized * 100));
         return `rgb(${r}, ${g}, ${b})`;
     }
 }
@@ -13998,7 +14213,18 @@ function getFilteredAndSortedCards() {
             if (currentFilters.passing === 'passing' && !card.passing) return false;
             if (currentFilters.passing === 'not-passing' && card.passing) return false;
         }
-        
+
+        if (currentFilters.decks.length < 5) {
+            const cardDeck = card.card_id ? card.card_id.charAt(0) : '';
+            if (!currentFilters.decks.includes(cardDeck)) return false;
+        }
+
+        if (currentFilters.prerequisites !== 'all') {
+            const hasPrereqs = card.prerequisites && card.prerequisites.trim() !== '';
+            if (currentFilters.prerequisites === 'has-prereqs' && !hasPrereqs) return false;
+            if (currentFilters.prerequisites === 'no-prereqs' && hasPrereqs) return false;
+        }
+
         return true;
     });
     
@@ -14021,6 +14247,10 @@ function getFilteredAndSortedCards() {
             case 'pwr':
                 aVal = parseFloat(a.pwr);
                 bVal = parseFloat(b.pwr);
+                break;
+            case 'eloplay':
+                aVal = parseFloat(a.elo_per_play) || 0;
+                bVal = parseFloat(b.elo_per_play) || 0;
                 break;
             case 'adp':
                 aVal = parseFloat(a.adp);
@@ -14065,7 +14295,8 @@ function renderTable() {
         const playRateColor = getPlayRateGradient(card.play_rate);
         const valueColor = getValueGradient(card.value);
         const valuePlayedColor = getValuePlayedGradient(card.value_when_played);
-        
+        const eloPerPlayColor = getEloPerPlayGradient(card.elo_per_play);
+
         return `
         <tr data-name="${card.name}">
             <td class="table-rank">#${card.rank}</td>
@@ -14073,6 +14304,7 @@ function renderTable() {
             <td class="table-type">${card.type || 'N/A'}</td>
             <td>${card.pwr}</td>
             <td>${card.adp}</td>
+            <td class="cell-gradient" style="background-color: ${eloPerPlayColor}">${card.elo_per_play || 'N/A'}</td>
             <td class="cell-gradient" style="background-color: ${playRateColor}">${card.play_rate}</td>
             <td class="cell-gradient" style="background-color: ${valueColor}">${card.value ? parseFloat(card.value).toFixed(2) : 'N/A'}</td>
             <td class="cell-gradient" style="background-color: ${valuePlayedColor}">${card.value_when_played ? parseFloat(card.value_when_played).toFixed(1) : 'N/A'}</td>
@@ -14123,6 +14355,56 @@ typeFilter.addEventListener('change', (e) => {
 
 passingFilter.addEventListener('change', (e) => {
     currentFilters.passing = e.target.value;
+    renderTable();
+});
+
+const deckAll = document.getElementById('deckAll');
+const deckCheckboxes = document.querySelectorAll('.deck-cb');
+const deckDropdownBtn = document.getElementById('deckDropdownBtn');
+const deckDropdownMenu = document.getElementById('deckDropdownMenu');
+const prerequisitesFilter = document.getElementById('prerequisitesFilter');
+
+function updateDeckButtonText() {
+    if (currentFilters.decks.length === 5) {
+        deckDropdownBtn.textContent = 'All Decks';
+    } else if (currentFilters.decks.length === 0) {
+        deckDropdownBtn.textContent = 'No Decks';
+    } else {
+        deckDropdownBtn.textContent = currentFilters.decks.join(', ');
+    }
+}
+
+deckDropdownBtn.addEventListener('click', () => {
+    deckDropdownMenu.classList.toggle('open');
+});
+
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.deck-dropdown')) {
+        deckDropdownMenu.classList.remove('open');
+    }
+});
+
+deckAll.addEventListener('change', (e) => {
+    const checked = e.target.checked;
+    deckCheckboxes.forEach(cb => cb.checked = checked);
+    currentFilters.decks = checked ? ['A', 'B', 'C', 'D', 'E'] : [];
+    updateDeckButtonText();
+    renderTable();
+});
+
+deckCheckboxes.forEach(cb => {
+    cb.addEventListener('change', () => {
+        currentFilters.decks = Array.from(deckCheckboxes)
+            .filter(c => c.checked)
+            .map(c => c.value);
+        deckAll.checked = currentFilters.decks.length === 5;
+        updateDeckButtonText();
+        renderTable();
+    });
+});
+
+prerequisitesFilter.addEventListener('change', (e) => {
+    currentFilters.prerequisites = e.target.value;
     renderTable();
 });
 
@@ -14210,71 +14492,857 @@ document.addEventListener('click', (e) => {
     }
 });
 
+// List of all card image filenames
+const CARD_IMAGE_LIST = [
+    'abort oriel.png',
+    'acornsbasket.png',
+    'acquirer.png',
+    'agricultural fertilizers.png',
+    'agriculturallabourer.png',
+    'alchemists lab.png',
+    'ale-benches.png',
+    'almsbag.png',
+    'ambition.png',
+    'angler.png',
+    'animal bedding.png',
+    'animalactivist.png',
+    'animaldealer.png',
+    'animaldriver.png',
+    'animalhusbandryworker.png',
+    'animalreeve.png',
+    'animaltamer\'sapprentice.png',
+    'animaltamer.png',
+    'animalteacher.png',
+    'apiary.png',
+    'artichoke field.png',
+    'artisan district.png',
+    'ash trees.png',
+    'asparagus gift.png',
+    'asparagus knife.png',
+    'assistanttiller.png',
+    'autumnmother.png',
+    'baker.png',
+    'baking course.png',
+    'baking sheet.png',
+    'barley mill.png',
+    'barn cats.png',
+    'barn shed.png',
+    'barrowpusher.png',
+    'bartering hut.png',
+    'baseboards.png',
+    'basket.png',
+    'basketmaker\'swife.png',
+    'beancounter.png',
+    'beanfield.png',
+    'beating rod.png',
+    'beaver colony.png',
+    'bed in the grain field.png',
+    'bedmaker.png',
+    'bee statue.png',
+    'beer keg.png',
+    'beer stall.png',
+    'beer table.png',
+    'beer tap.png',
+    'beertentoperator.png',
+    'beggingstudent.png',
+    'bellfounder.png',
+    'beneficiary.png',
+    'bigcountry.png',
+    'blackberryfarmer.png',
+    'blade shears.png',
+    'blighter.png',
+    'blueprint.png',
+    'boar spear.png',
+    'bohemian.png',
+    'bonehead.png',
+    'bookcase.png',
+    'bookmark.png',
+    'bookshelf.png',
+    'bottles.png',
+    'braidmaker.png',
+    'breadpaddle.png',
+    'breed registry.png',
+    'breederbuyer.png',
+    'brewery pond.png',
+    'brewing water.png',
+    'briar hedge.png',
+    'brickhammer.png',
+    'bricklayer.png',
+    'brook.png',
+    'brushwoodcollector.png',
+    'bucksaw.png',
+    'buildingtycoon.png',
+    'bunk beds.png',
+    'bunnybreeder.png',
+    'butler.png',
+    'butterchurn.png',
+    'buyer.png',
+    'canoe.png',
+    'canvas sack.png',
+    'caravan.png',
+    'carpenter\'s axe.png',
+    'carpenter\'s bench.png',
+    'carpenter\'s hammer.png',
+    'carpenter\'s yard.png',
+    'carpenter.png',
+    'carpentersparlor.png',
+    'carriagetrip.png',
+    'carrotmuseum.png',
+    'carter.png',
+    'casebuilder.png',
+    'casualworker.png',
+    'cattlebuyer.png',
+    'cattlefeeder.png',
+    'cattlewhisperer.png',
+    'ceilings.png',
+    'cesspit.png',
+    'chain float.png',
+    'chairman.png',
+    'championbreeder.png',
+    'changeover.png',
+    'chapel.png',
+    'charcoalburner.png',
+    'cheese fondue.png',
+    'cherry orchard.png',
+    'chick stable.png',
+    'chickencoop.png',
+    'chiefforester.png',
+    'child\'s toy.png',
+    'childless.png',
+    'childombudsman.png',
+    'chimneysweep.png',
+    'chophouse.png',
+    'christianity.png',
+    'churchyard.png',
+    'civicfacade.png',
+    'claw knife.png',
+    'clay deposit.png',
+    'claycarrier.png',
+    'claydeliveryman.png',
+    'clayembankment.png',
+    'clayfirer.png',
+    'clayhutbuilder.png',
+    'claykneader.png',
+    'claypipe.png',
+    'claypitowner.png',
+    'clayplasterer.png',
+    'claypuncher.png',
+    'claysupply.png',
+    'claysupports.png',
+    'claywarden.png',
+    'clearingspade.png',
+    'club house.png',
+    'clutterer.png',
+    'cob.png',
+    'collector.png',
+    'collier.png',
+    'comb and cutter.png',
+    'confidant.png',
+    'conjurer.png',
+    'conservator.png',
+    'constable.png',
+    'consultant.png',
+    'contraband.png',
+    'cookery lesson.png',
+    'cookeryoutfitter.png',
+    'cooperativeplower.png',
+    'cordmaker.png',
+    'corf.png',
+    'corn schnapps distillery.png',
+    'cornscoop.png',
+    'cottager.png',
+    'cottar.png',
+    'cow patty.png',
+    'cowherd.png',
+    'crack weeder.png',
+    'craft brewery.png',
+    'craftteacher.png',
+    'credit.png',
+    'crop rotation field.png',
+    'crosscutwood.png',
+    'crudite.png',
+    'cubbyhole.png',
+    'cubecutter.png',
+    'culinaryartist.png',
+    'cultivator.png',
+    'curator.png',
+    'dairycrier.png',
+    'debt security.png',
+    'deliverynurse.png',
+    'denbuilder.png',
+    'dentist.png',
+    'digging spade.png',
+    'diligentfarmer.png',
+    'districtmanager.png',
+    'dolly\'s mother.png',
+    'domesticianexpert.png',
+    'double-turn plow.png',
+    'drift-net boat.png',
+    'drill harrow.png',
+    'drinkingtrough.png',
+    'drudgeryreeve.png',
+    'dungcollector.png',
+    'dutchwindmill.png',
+    'dwellingmound.png',
+    'dwellingplan.png',
+    'early cattle.png',
+    'earth oven.png',
+    'ebonist.png',
+    'educationbonus.png',
+    'elder.png',
+    'elderbaker.png',
+    'elephantgrass plant.png',
+    'emergencyseller.png',
+    'entrepreneur.png',
+    'equipper.png',
+    'establishedperson.png',
+    'estatemaster.png',
+    'estateworker.png',
+    'eternal rye cultivation.png',
+    'excavator.png',
+    'excursion to the quarry.png',
+    'facades carving.png',
+    'family friendly home.png',
+    'farm building.png',
+    'farmers market.png',
+    'farmstore.png',
+    'farmyard manure.png',
+    'fatstock stretcher.png',
+    'feedfence.png',
+    'feeding dish.png',
+    'feedpellets.png',
+    'feedyard.png',
+    'fellowgrazer.png',
+    'field spade.png',
+    'fieldcaretaker.png',
+    'fieldclay.png',
+    'fieldcultivator.png',
+    'fielddoctor.png',
+    'fieldfences.png',
+    'fieldmerchant.png',
+    'fieldwatchman.png',
+    'final scenario.png',
+    'fircutter.png',
+    'fire protection pond.png',
+    'firewood.png',
+    'firewoodcollector.png',
+    'fisherman\'sfriend.png',
+    'fishfarmer.png',
+    'fishingnet.png',
+    'flail.png',
+    'flaxfarmer.png',
+    'fodder beets.png',
+    'fodderchamber.png',
+    'fodderplanter.png',
+    'food basket.png',
+    'fooddistributor.png',
+    'foodmerchant.png',
+    'foreignaid.png',
+    'forest lake hut.png',
+    'forest plow.png',
+    'forest school.png',
+    'forest stone.png',
+    'forestcampaigner.png',
+    'forestclearer.png',
+    'forestreviewer.png',
+    'forestry studies.png',
+    'foresttrader.png',
+    'forestwell.png',
+    'framebuilder.png',
+    'freemason.png',
+    'freshman.png',
+    'fruit ladder.png',
+    'fullfarmer.png',
+    'furnisher.png',
+    'furniturecarpenter.png',
+    'furnituremaker.png',
+    'furrows.png',
+    'future building site.png',
+    'gamecatcher.png',
+    'gameprovider.png',
+    'gametrade.png',
+    'garden claw.png',
+    'gardendesigner.png',
+    'gardener\'s knife.png',
+    'gardeningheadofficial.png',
+    'geologist.png',
+    'germanheathkeeper.png',
+    'gift basket.png',
+    'godlyspouse.png',
+    'godmother.png',
+    'grain bag.png',
+    'grain depot.png',
+    'grainthief.png',
+    'granary.png',
+    'grange.png',
+    'grassland harrow.png',
+    'greengrocer.png',
+    'greening plan.png',
+    'grocer.png',
+    'groom.png',
+    'growing farm.png',
+    'guest room.png',
+    'gypsy\'s crock.png',
+    'halftimberedhouse.png',
+    'handcart.png',
+    'handplow.png',
+    'hardporcelain.png',
+    'hardware store.png',
+    'hardworkingman.png',
+    'harpooner.png',
+    'harvest house.png',
+    'hauberg.png',
+    'hawktower.png',
+    'haydryer.png',
+    'hayloft barn.png',
+    'heart of stone.png',
+    'hedgekeeper.png',
+    'heirloom.png',
+    'henpeckedhusband.png',
+    'herbal garden.png',
+    'herringpot.png',
+    'hewer.png',
+    'hidefarmer.png',
+    'hod.png',
+    'homebrewer.png',
+    'homekeeper.png',
+    'hoofcaregiver.png',
+    'hook knife.png',
+    'horsedrawnboat.png',
+    'housebookmaster.png',
+    'housemaster.png',
+    'housesteward.png',
+    'huntingtrophy.png',
+    'huntsman\'s hat.png',
+    'huntsman.png',
+    'hutch.png',
+    'illusionist.png',
+    'informant.png',
+    'innerdistrictsdirector.png',
+    'interim storage.png',
+    'interiordecorator.png',
+    'iron hoe.png',
+    'iron oven.png',
+    'job contract.png',
+    'joinerofthesea.png',
+    'journeymanbricklayer.png',
+    'junkroom.png',
+    'kelpgatherer.png',
+    'kettle.png',
+    'kindlinggatherer.png',
+    'knapper.png',
+    'land register.png',
+    'landheir.png',
+    'landsurveyor.png',
+    'lanternhouse.png',
+    'large pottery.png',
+    'largegreenhouse.png',
+    'lasso.png',
+    'lawn fertilzer.png',
+    'layabout.png',
+    'lazybones.png',
+    'lazysowman.png',
+    'lettucepatch.png',
+    'lieutenantgeneral.png',
+    'lifting machine.png',
+    'littlepeasant.png',
+    'littlestickknitter.png',
+    'livestockfeeder.png',
+    'loampit.png',
+    'lodger.png',
+    'loom.png',
+    'loppers.png',
+    'loudmouth.png',
+    'lover.png',
+    'lumber pile.png',
+    'lumberjack.png',
+    'lumbermill.png',
+    'lutenist.png',
+    'lynchet.png',
+    'maintenance premium.png',
+    'mandoline.png',
+    'manger.png',
+    'manservant.png',
+    'mantlepiece.png',
+    'margrave.png',
+    'market stall.png',
+    'marketcrier.png',
+    'marketmaster.png',
+    'marketstall.png',
+    'mason.png',
+    'masterbricklayer.png',
+    'masterbuilder.png',
+    'masterfencer.png',
+    'masterhuntsman.png',
+    'masterrenovator.png',
+    'mastertanner.png',
+    'masterworkman.png',
+    'mattock.png',
+    'mayorcandidate.png',
+    'melon patch.png',
+    'merchant.png',
+    'milking parlor.png',
+    'milkingplace.png',
+    'milkingstool.png',
+    'milkjug.png',
+    'mill wheel.png',
+    'miller.png',
+    'millwright.png',
+    'mineral feeder.png',
+    'mineralogist.png',
+    'mininghammer.png',
+    'minipasture.png',
+    'misanthropy.png',
+    'moldboardplow.png',
+    'mole plow.png',
+    'moralcrusader.png',
+    'motivator.png',
+    'muckrake.png',
+    'mud patch.png',
+    'muddy puddles.png',
+    'muddy waters.png',
+    'mudwallower.png',
+    'museumcaretaker.png',
+    'mushroomcollector.png',
+    'nail basket.png',
+    'nave.png',
+    'nest site.png',
+    'new purchase.png',
+    'newmarket.png',
+    'night loot.png',
+    'night-schoolstudent.png',
+    'nightworker.png',
+    'nutritionexpert.png',
+    'oldmiser.png',
+    'openairfarmer.png',
+    'organicfarmer.png',
+    'oriental fireplace.png',
+    'outrider.png',
+    'outskirtsdirector.png',
+    'ovenfiringboy.png',
+    'overachiever.png',
+    'overhaul.png',
+    'ox goad.png',
+    'ox skull.png',
+    'oystereater.png',
+    'paintbrush.png',
+    'panbaker.png',
+    'paper knife.png',
+    'papermaker.png',
+    'partyorganizer.png',
+    'parvenu.png',
+    'pastor.png',
+    'pasturemaster.png',
+    'patchcaregiver.png',
+    'patron.png',
+    'patroness.png',
+    'patternmaker.png',
+    'pavior.png',
+    'paymaster.png',
+    'pelletpress.png',
+    'penbuilder.png',
+    'petgrower.png',
+    'petlover.png',
+    'petrifiedwood.png',
+    'petting zoo.png',
+    'pickler.png',
+    'pigbreeder.png',
+    'piggy bank.png',
+    'pigowner.png',
+    'pigstalker.png',
+    'pigswill.png',
+    'pioneer.png',
+    'pipesmoker.png',
+    'pitchfork.png',
+    'plowbuilder.png',
+    'plowdriver.png',
+    'plowmaker.png',
+    'plowman.png',
+    'pole barns.png',
+    'pondhut.png',
+    'porter.png',
+    'portmonger.png',
+    'potato ridger.png',
+    'potatodigger.png',
+    'potatoharvester.png',
+    'potatoplanter.png',
+    'potter\'s yard.png',
+    'potterceramics.png',
+    'potters market.png',
+    'pottery yard.png',
+    'priest.png',
+    'privateforest.png',
+    'prodigy.png',
+    'profiteering.png',
+    'prophet.png',
+    'pub owner.png',
+    'pulverizer plow.png',
+    'pumpernickel.png',
+    'puppeteer.png',
+    'raised bed.png',
+    'rammedclay.png',
+    'ranchprovost.png',
+    'ravenoushunger.png',
+    'reader.png',
+    'reaphook.png',
+    'reclamation plow.png',
+    'recluse.png',
+    'recount.png',
+    'recreationalcarpenter.png',
+    'recruitment.png',
+    'recycledbrick.png',
+    'reed belt.png',
+    'reedhattedtoad.png',
+    'reedpond.png',
+    'reedroofrenovator.png',
+    'remodeling.png',
+    'renovation company.png',
+    'renovation materials.png',
+    'renovationpreparer.png',
+    'reseller.png',
+    'resourceanalyzer.png',
+    'resourcerecycler.png',
+    'retraining.png',
+    'riverineshepherd.png',
+    'roastmaster.png',
+    'rockbeater.png',
+    'rocky terrain.png',
+    'rod collection.png',
+    'rollingpin.png',
+    'roman pot.png',
+    'roofballaster.png',
+    'roofexaminer.png',
+    'ropemaker.png',
+    'roughcaster.png',
+    'royal wood.png',
+    'rustic.png',
+    'sackcart.png',
+    'saddler.png',
+    'samplestablemaker.png',
+    'scales.png',
+    'schnappsdistiller.png',
+    'schnappsdistillery.png',
+    'scholar.png',
+    'scrapcollector.png',
+    'scullery.png',
+    'sculptor.png',
+    'sculpture course.png',
+    'sculpture.png',
+    'scythe.png',
+    'scytheworker.png',
+    'seasonalworker.png',
+    'seducer.png',
+    'seed almanac.png',
+    'seed pellets.png',
+    'seedresearcher.png',
+    'seedseller.png',
+    'seedservant.png',
+    'seedtrader.png',
+    'shaving horse.png',
+    'shedbuilder.png',
+    'sheep rug.png',
+    'sheepkeeper.png',
+    'sheepprovider.png',
+    'sheepwalker.png',
+    'sheepwell.png',
+    'sheepwhisperer.png',
+    'shelter.png',
+    'shepherd\'s whistle.png',
+    'shiftingcultivation.png',
+    'shiftingcultivator.png',
+    'shoreforester.png',
+    'shovelbearer.png',
+    'silage.png',
+    'silokeeper.png',
+    'simple oven.png',
+    'sitemanager.png',
+    'skillfulrenovator.png',
+    'skimmer plow.png',
+    'sleepingcorner.png',
+    'sleight of hand.png',
+    'slurry.png',
+    'slurryspreader.png',
+    'smallanimalbreeder.png',
+    'smallbasket.png',
+    'smallgreenhouse.png',
+    'smuggler.png',
+    'soilscientist.png',
+    'sour dough.png',
+    'sower.png',
+    'sowingdirector.png',
+    'sowingmaster.png',
+    'special food.png',
+    'spicetrader.png',
+    'spindoctor.png',
+    'stable manure.png',
+    'stable tree.png',
+    'stable yard.png',
+    'stable.png',
+    'stablearchitect.png',
+    'stablecleaner.png',
+    'stablehand.png',
+    'stablemaster.png',
+    'stablemilker.png',
+    'stableplanner.png',
+    'stablesergeant.png',
+    'stagehand.png',
+    'stallholder.png',
+    'stallwright.png',
+    'steammachine.png',
+    'stew.png',
+    'stockman.png',
+    'stockprotector.png',
+    'stockyard.png',
+    'stone axe.png',
+    'stone company.png',
+    'stone house reconstruction.png',
+    'stone weir.png',
+    'stonebuyer.png',
+    'stonecart.png',
+    'stonecarver.png',
+    'stoneclearing.png',
+    'stonecustodian.png',
+    'stonecutter.png',
+    'stoneimporter.png',
+    'stonesculptor.png',
+    'stonetongs.png',
+    'storage barn.png',
+    'store of experience.png',
+    'storehousekeeper.png',
+    'storehousesteward.png',
+    'storeroom.png',
+    'stork\'snest.png',
+    'straw manure.png',
+    'strawberrypatch.png',
+    'strawthatchedroof.png',
+    'studio boat.png',
+    'studio.png',
+    'sugarbaker.png',
+    'summer house.png',
+    'sundial.png',
+    'supplyboat.png',
+    'swingplow.png',
+    'syrup tap.png',
+    'taskartisan.png',
+    'tasting.png',
+    'taxcollector.png',
+    'tea house.png',
+    'teacher\'s desk.png',
+    'teatime.png',
+    'telegram.png',
+    'thickforest.png',
+    'threefieldrotation.png',
+    'thresher.png',
+    'threshingboard.png',
+    'throwing axe.png',
+    'thunderbolt.png',
+    'timbershinglemaker.png',
+    'tinsmith master.png',
+    'toolbox.png',
+    'town hall.png',
+    'tradeteacher.png',
+    'transactor.png',
+    'trapbuilder.png',
+    'treefarmjoiner.png',
+    'treegardener.png',
+    'treeguard.png',
+    'trellis.png',
+    'trellises.png',
+    'trident.png',
+    'trimmer.png',
+    'troutpool.png',
+    'trowel.png',
+    'trufflesearcher.png',
+    'truffleslicer.png',
+    'turnipfarmer.png',
+    'turnwrestplow.png',
+    'tutor.png',
+    'twibil.png',
+    'twinresearcher.png',
+    'uncaringparents.png',
+    'upholstery.png',
+    'upscale lifestyle.png',
+    'usufructuary.png',
+    'value assets.png',
+    'vegetable slicer.png',
+    'vegetablevendor.png',
+    'veggielover.png',
+    'visionary.png',
+    'wage.png',
+    'walking boots.png',
+    'wall builder.png',
+    'water gully.png',
+    'waterlily pond.png',
+    'waterworker.png',
+    'weakling.png',
+    'wealthyman.png',
+    'whale oil.png',
+    'whiskydistiller.png',
+    'wholesalemarket.png',
+    'wholesaler.png',
+    'wild greens.png',
+    'wildlifereserve.png',
+    'wintercaretaker.png',
+    'wolf.png',
+    'wood craft.png',
+    'wood pile.png',
+    'wood saw.png',
+    'wood slide hammer.png',
+    'wood workshop.png',
+    'woodbarterer.png',
+    'woodcarrier.png',
+    'woodcart.png',
+    'woodcollector.png',
+    'woodcutter.png',
+    'wooden shed.png',
+    'woodenhutextender.png',
+    'woodenwheybucket.png',
+    'woodexpert.png',
+    'woodfield.png',
+    'woodharvester.png',
+    'woodworker.png',
+    'woolblankets.png',
+    'woolgrower.png',
+    'work permit.png',
+    'writing boards.png',
+    'writing chamber.png',
+    'writingdesk.png',
+    'younganimalmarket.png',
+    'youngfarmer.png',
+    'zigzag harrow.png',
+];
+
+// Build a lookup map of normalized card name -> image filename
+const cardImageMap = {};
+const imageFiles = CARD_IMAGE_LIST;
+
+function normalizeForMatch(str) {
+    return str.toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[\s\-'\.]/g, '');
+}
+
+imageFiles.forEach(filename => {
+    const nameWithoutExt = filename.replace(/\.png$/, '');
+    const normalized = normalizeForMatch(nameWithoutExt);
+    cardImageMap[normalized] = filename;
+});
+
+function getCardImagePath(cardName) {
+    const normalized = normalizeForMatch(cardName);
+    const filename = cardImageMap[normalized];
+    return filename ? `card-images/${filename}` : null;
+}
+
 function displayCard(card) {
     if (!card) {
         resultsDiv.innerHTML = '<div class="no-results">Card not found</div>';
         return;
     }
-    
+
     const typeLabel = card.type ? `<div class="card-type">${card.type}</div>` : '';
     const idLabel = card.card_id ? `<div class="card-id">${card.card_id}</div>` : '';
     const costLabel = card.cost ? `<div class="card-cost">Cost: ${card.cost}</div>` : '';
     const vpsLabel = card.vps ? `<div class="card-vps">VPs: ${card.vps}</div>` : '';
-    
-    const description = card.description ? 
-        `<div class="card-description">${card.description}</div>` : 
+
+    const imagePath = getCardImagePath(card.name);
+
+    const description = card.description ?
+        `<div class="card-description">${card.description}</div>` :
         '<div class="card-description no-desc">No description available</div>';
-    
-    const prerequisites = card.prerequisites ? 
+
+    const prerequisites = card.prerequisites ?
         `<div class="card-prerequisites"><strong>Prerequisites:</strong> ${card.prerequisites}</div>` : '';
-    
-    resultsDiv.innerHTML = `
-        <div class="card-result">
-            <div class="card-header">
-                <div class="card-title-row">
-                    <div class="card-name">${card.name}</div>
-                    <div class="card-rank">Rank #${card.rank}</div>
-                </div>
-                <div class="card-meta">
-                    ${typeLabel}
-                    ${idLabel}
-                    ${costLabel}
-                    ${vpsLabel}
+
+    const statsHtml = `
+        <div class="card-stats">
+            <div class="stat">
+                <div class="stat-label">Power (PWR)</div>
+                <div class="stat-value">${card.pwr}</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Draft Position (ADP)</div>
+                <div class="stat-value">${card.adp}</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Play Rate</div>
+                <div class="stat-value">${card.play_rate}</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Elo per Play</div>
+                <div class="stat-value">${card.elo_per_play || 'N/A'}</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Value Draft</div>
+                <div class="stat-value">${card.value ? parseFloat(card.value).toFixed(2) : 'N/A'}</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Value When Played</div>
+                <div class="stat-value">${card.value_when_played ? parseFloat(card.value_when_played).toFixed(1) : 'N/A'}</div>
+            </div>
+        </div>`;
+
+    if (imagePath) {
+        resultsDiv.innerHTML = `
+            <div class="card-result">
+                <div class="card-result-with-image">
+                    <div class="card-image-container">
+                        <img src="${imagePath}" alt="${card.name}">
+                    </div>
+                    <div class="card-info">
+                        <div class="card-header">
+                            <div class="card-title-row">
+                                <div class="card-name">${card.name}</div>
+                                <div class="card-rank">Rank #${card.rank}</div>
+                            </div>
+                            <div class="card-meta">
+                                ${typeLabel}
+                                ${idLabel}
+                                ${costLabel}
+                                ${vpsLabel}
+                            </div>
+                        </div>
+                        ${statsHtml}
+                    </div>
                 </div>
             </div>
-            
-            ${prerequisites}
-            ${description}
-            
-            <div class="card-stats">
-                <div class="stat">
-                    <div class="stat-label">Power (PWR)</div>
-                    <div class="stat-value">${card.pwr}</div>
+        `;
+    } else {
+        resultsDiv.innerHTML = `
+            <div class="card-result">
+                <div class="card-header">
+                    <div class="card-title-row">
+                        <div class="card-name">${card.name}</div>
+                        <div class="card-rank">Rank #${card.rank}</div>
+                    </div>
+                    <div class="card-meta">
+                        ${typeLabel}
+                        ${idLabel}
+                        ${costLabel}
+                        ${vpsLabel}
+                    </div>
                 </div>
-                <div class="stat">
-                    <div class="stat-label">Draft Position (ADP)</div>
-                    <div class="stat-value">${card.adp}</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label">Play Rate</div>
-                    <div class="stat-value">${card.play_rate}</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label">Elo per Play</div>
-                    <div class="stat-value">${card.elo_per_play || 'N/A'}</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label">Value (ADP × Power)</div>
-                    <div class="stat-value">${card.value ? parseFloat(card.value).toFixed(2) : 'N/A'}</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label">Value When Played</div>
-                    <div class="stat-value">${card.value_when_played ? parseFloat(card.value_when_played).toFixed(1) : 'N/A'}</div>
-                </div>
+
+                ${prerequisites}
+                ${description}
+
+                ${statsHtml}
             </div>
-        </div>
-    `;
+        `;
+    }
 }
+
+// Random resource icon for title and favicon
+const RESOURCE_ICONS = [
+    'Icons/Grain.webp', 'Icons/Wood.png', 'Icons/Clay.png',
+    'Icons/Reed.webp', 'Icons/Stone.png', 'Icons/Sheep.webp',
+    'Icons/Cow.webp', 'Icons/Pig.webp', 'Icons/Veg.webp',
+    'Icons/Cornucopia.webp'
+];
+const randomIcon = RESOURCE_ICONS[Math.floor(Math.random() * RESOURCE_ICONS.length)];
+document.getElementById('titleIcon').src = randomIcon;
+const favicon = document.querySelector('link[rel="icon"]');
+favicon.href = randomIcon;
 
     </script>
 </body>
