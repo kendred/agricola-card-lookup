@@ -155,6 +155,11 @@ h1 {
     align-items: flex-start;
 }
 
+.card-result-with-image:has(.card-text-column) {
+    align-items: stretch;
+    min-height: 286px;
+}
+
 .card-image-container {
     flex-shrink: 0;
     display: flex;
@@ -166,6 +171,34 @@ h1 {
     width: auto;
     border-radius: 8px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.card-text-column {
+    flex-shrink: 0;
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.card-text-column .card-description {
+    flex: 1;
+    margin-bottom: 0;
+    font-size: 0.9em;
+}
+
+.card-text-column .card-description-title {
+    font-weight: bold;
+    margin-bottom: 8px;
+    font-size: 0.85em;
+    opacity: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.card-text-column .card-prerequisites {
+    margin-bottom: 0;
+    font-size: 0.85em;
 }
 
 .card-info {
@@ -15251,6 +15284,10 @@ function displayCard(card) {
         `<div class="card-description">${card.description}</div>` :
         '<div class="card-description no-desc">No description available</div>';
 
+    const descriptionWithTitle = card.description ?
+        `<div class="card-description"><div class="card-description-title">Description</div>${card.description}</div>` :
+        '<div class="card-description no-desc"><div class="card-description-title">Description</div>No description available</div>';
+
     const prerequisites = card.prerequisites ?
         `<div class="card-prerequisites"><strong>Prerequisites:</strong> ${card.prerequisites}</div>` : '';
 
@@ -15310,23 +15347,27 @@ function displayCard(card) {
     } else {
         resultsDiv.innerHTML = `
             <div class="card-result">
-                <div class="card-header">
-                    <div class="card-title-row">
-                        <div class="card-name">${card.name}</div>
-                        <div class="card-rank">Rank #${card.rank}</div>
+                <div class="card-result-with-image">
+                    <div class="card-text-column">
+                        ${prerequisites}
+                        ${descriptionWithTitle}
                     </div>
-                    <div class="card-meta">
-                        ${typeLabel}
-                        ${idLabel}
-                        ${costLabel}
-                        ${vpsLabel}
+                    <div class="card-info">
+                        <div class="card-header">
+                            <div class="card-title-row">
+                                <div class="card-name">${card.name}</div>
+                                <div class="card-rank">Rank #${card.rank}</div>
+                            </div>
+                            <div class="card-meta">
+                                ${typeLabel}
+                                ${idLabel}
+                                ${costLabel}
+                                ${vpsLabel}
+                            </div>
+                        </div>
+                        ${statsHtml}
                     </div>
                 </div>
-
-                ${prerequisites}
-                ${description}
-
-                ${statsHtml}
             </div>
         `;
     }
