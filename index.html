@@ -136,6 +136,8 @@ h1 {
     padding: 30px;
     border-radius: 12px;
     animation: slideIn 0.3s ease-out;
+    height: 346px;
+    overflow: hidden;
 }
 
 @keyframes slideIn {
@@ -157,7 +159,6 @@ h1 {
 
 .card-result-with-image:has(.card-text-column) {
     align-items: stretch;
-    min-height: 286px;
 }
 
 .card-image-container {
@@ -358,13 +359,212 @@ h1 {
     .container {
         padding: 20px;
     }
-    
+
     h1 {
-        font-size: 1.8em;
-    }
-    
-    .card-name {
         font-size: 1.5em;
+    }
+
+    body {
+        padding: 10px;
+    }
+
+    /* Top section compact */
+    .top-section {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+
+    #searchInput {
+        padding: 10px 14px;
+        font-size: 0.95em;
+    }
+
+    /* Card result compact sizing */
+    .card-result {
+        height: auto;
+        padding: 15px;
+        overflow: visible;
+    }
+
+    .card-result-with-image {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .card-image-container {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .card-image-container img {
+        height: auto;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .card-name {
+        font-size: 1.3em;
+    }
+
+    .card-rank {
+        font-size: 1.1em;
+    }
+
+    .card-header {
+        margin-bottom: 10px;
+    }
+
+    .card-meta {
+        gap: 8px;
+        font-size: 0.8em;
+    }
+
+    .card-type, .card-id, .card-cost, .card-vps {
+        padding: 2px 8px;
+        font-size: 0.8em;
+    }
+
+    .card-description {
+        padding: 12px;
+        margin-bottom: 10px;
+        font-size: 0.85em;
+    }
+
+    .card-stats {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+
+    .stat {
+        padding: 8px;
+    }
+
+    .stat-label {
+        font-size: 0.7em;
+    }
+
+    .stat-value {
+        font-size: 1.2em;
+    }
+
+    /* Description not forced full height, wraps properly */
+    .card-text-column {
+        width: 100%;
+        flex-shrink: 1;
+        min-width: 0;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .card-text-column .card-description {
+        flex: none;
+        width: 100%;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+    }
+
+    .card-result-with-image:has(.card-text-column) {
+        align-items: flex-start;
+    }
+
+    /* Filter sidebar compact & collapsible */
+    .filter-sidebar {
+        max-width: none;
+        padding: 12px;
+        gap: 0;
+    }
+
+    .sidebar-title {
+        font-size: 0.95em;
+        margin-bottom: 0;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .sidebar-title::after {
+        content: ' ▸';
+        font-size: 0.8em;
+    }
+
+    .filter-sidebar.open .sidebar-title::after {
+        content: ' ▾';
+    }
+
+    .filter-sidebar .filter-content {
+        display: none;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 12px;
+    }
+
+    .filter-sidebar.open .filter-content {
+        display: flex;
+    }
+
+    .filter-label {
+        font-size: 0.8em;
+    }
+
+    .filter-select {
+        padding: 6px 8px;
+        font-size: 0.85em;
+    }
+
+    .deck-dropdown-btn {
+        padding: 6px 8px;
+        font-size: 0.85em;
+    }
+
+    .toggle-label {
+        font-size: 0.8em;
+    }
+
+    .clear-sort-btn {
+        padding: 8px 12px;
+        font-size: 0.85em;
+    }
+
+    .bottom-section {
+        padding: 0;
+    }
+
+    /* Table compact */
+    .table-container {
+        height: auto;
+        max-height: 500px;
+    }
+
+    .table-header {
+        font-size: 1.1em;
+        margin-bottom: 8px;
+    }
+
+    .card-table th {
+        padding: 6px 4px;
+        font-size: 0.75em;
+    }
+
+    .card-table td {
+        padding: 6px 4px;
+        font-size: 0.8em;
+    }
+
+    /* Hide columns: Type(3), PWR(4), ELO/Play(6), Play Rate(7), Value Draft(8), When Played(9), Passing(10) */
+    .card-table th:nth-child(3),
+    .card-table td:nth-child(3),
+    .card-table th:nth-child(4),
+    .card-table td:nth-child(4),
+    .card-table th:nth-child(6),
+    .card-table td:nth-child(6),
+    .card-table th:nth-child(7),
+    .card-table td:nth-child(7),
+    .card-table th:nth-child(8),
+    .card-table td:nth-child(8),
+    .card-table th:nth-child(9),
+    .card-table td:nth-child(9),
+    .card-table th:nth-child(10),
+    .card-table td:nth-child(10) {
+        display: none;
     }
 }
 
@@ -421,6 +621,12 @@ h1 {
     margin-bottom: 10px;
     text-align: center;
     color: #333;
+}
+
+.filter-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .filter-group {
@@ -811,7 +1017,7 @@ h1 {
     .table-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .filter-sidebar {
         position: relative;
         top: 0;
@@ -840,78 +1046,80 @@ h1 {
     <div class="bottom-section">
         <div class="table-grid">
             <div class="filter-sidebar">
-                <div class="sidebar-title">Filters & Sort</div>
-                
-                <div class="filter-group">
-                    <label class="filter-label">Type</label>
-                    <select id="typeFilter" class="filter-select">
-                        <option value="all">All Types</option>
-                        <option value="occupation">Occupation</option>
-                        <option value="minor">Minor Improvement</option>
-                    </select>
-                </div>
-                
-                <div class="filter-group">
-                    <label class="filter-label">Passing</label>
-                    <select id="passingFilter" class="filter-select">
-                        <option value="all">All Cards</option>
-                        <option value="passing">Passing Only</option>
-                        <option value="not-passing">Not Passing</option>
-                    </select>
-                </div>
+                <div class="sidebar-title" id="sidebarToggle">Filters & Sort</div>
 
-                <div class="filter-group">
-                    <label class="filter-label">Deck</label>
-                    <div class="deck-dropdown">
-                        <button type="button" class="deck-dropdown-btn" id="deckDropdownBtn">All Decks</button>
-                        <div class="deck-dropdown-menu" id="deckDropdownMenu">
-                            <label class="deck-dropdown-item">
-                                <input type="checkbox" id="deckAll" checked>
-                                <span>All Decks</span>
-                            </label>
-                            <div class="deck-dropdown-divider"></div>
-                            <label class="deck-dropdown-item">
-                                <input type="checkbox" class="deck-cb" value="A" checked>
-                                <span>Deck A</span>
-                            </label>
-                            <label class="deck-dropdown-item">
-                                <input type="checkbox" class="deck-cb" value="B" checked>
-                                <span>Deck B</span>
-                            </label>
-                            <label class="deck-dropdown-item">
-                                <input type="checkbox" class="deck-cb" value="C" checked>
-                                <span>Deck C</span>
-                            </label>
-                            <label class="deck-dropdown-item">
-                                <input type="checkbox" class="deck-cb" value="D" checked>
-                                <span>Deck D</span>
-                            </label>
-                            <label class="deck-dropdown-item">
-                                <input type="checkbox" class="deck-cb" value="E" checked>
-                                <span>Deck E</span>
-                            </label>
+                <div class="filter-content" id="filterContent">
+                    <div class="filter-group">
+                        <label class="filter-label">Type</label>
+                        <select id="typeFilter" class="filter-select">
+                            <option value="all">All Types</option>
+                            <option value="occupation">Occupation</option>
+                            <option value="minor">Minor Improvement</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">Passing</label>
+                        <select id="passingFilter" class="filter-select">
+                            <option value="all">All Cards</option>
+                            <option value="passing">Passing Only</option>
+                            <option value="not-passing">Not Passing</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">Deck</label>
+                        <div class="deck-dropdown">
+                            <button type="button" class="deck-dropdown-btn" id="deckDropdownBtn">All Decks</button>
+                            <div class="deck-dropdown-menu" id="deckDropdownMenu">
+                                <label class="deck-dropdown-item">
+                                    <input type="checkbox" id="deckAll" checked>
+                                    <span>All Decks</span>
+                                </label>
+                                <div class="deck-dropdown-divider"></div>
+                                <label class="deck-dropdown-item">
+                                    <input type="checkbox" class="deck-cb" value="A" checked>
+                                    <span>Deck A</span>
+                                </label>
+                                <label class="deck-dropdown-item">
+                                    <input type="checkbox" class="deck-cb" value="B" checked>
+                                    <span>Deck B</span>
+                                </label>
+                                <label class="deck-dropdown-item">
+                                    <input type="checkbox" class="deck-cb" value="C" checked>
+                                    <span>Deck C</span>
+                                </label>
+                                <label class="deck-dropdown-item">
+                                    <input type="checkbox" class="deck-cb" value="D" checked>
+                                    <span>Deck D</span>
+                                </label>
+                                <label class="deck-dropdown-item">
+                                    <input type="checkbox" class="deck-cb" value="E" checked>
+                                    <span>Deck E</span>
+                                </label>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="filter-group">
-                    <label class="filter-label">Prerequisites</label>
-                    <select id="prerequisitesFilter" class="filter-select">
-                        <option value="all">All Cards</option>
-                        <option value="has-prereqs">Has Prerequisites</option>
-                        <option value="no-prereqs">No Prerequisites</option>
-                    </select>
-                </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Prerequisites</label>
+                        <select id="prerequisitesFilter" class="filter-select">
+                            <option value="all">All Cards</option>
+                            <option value="has-prereqs">Has Prerequisites</option>
+                            <option value="no-prereqs">No Prerequisites</option>
+                        </select>
+                    </div>
 
-                <div class="toggle-row">
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="gradientToggle" checked>
-                        <span class="toggle-track"></span>
-                    </label>
-                    <span class="toggle-label">Color Gradients</span>
+                    <div class="toggle-row">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="gradientToggle" checked>
+                            <span class="toggle-track"></span>
+                        </label>
+                        <span class="toggle-label">Color Gradients</span>
+                    </div>
+
+                    <button id="clearSortBtn" class="clear-sort-btn">Clear Sort</button>
                 </div>
-                
-                <button id="clearSortBtn" class="clear-sort-btn">Clear Sort</button>
             </div>
             
             <div class="table-container">
@@ -14452,6 +14660,11 @@ gradientToggle.addEventListener('change', (e) => {
 });
 
 renderTable();
+
+// Mobile filter sidebar toggle
+document.getElementById('sidebarToggle').addEventListener('click', () => {
+    document.querySelector('.filter-sidebar').classList.toggle('open');
+});
 
 searchInput.addEventListener('input', (e) => {
     const query = e.target.value.trim().toLowerCase();
