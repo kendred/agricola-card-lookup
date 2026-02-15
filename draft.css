@@ -405,7 +405,7 @@ body {
 .prior-hands-section {
     background: rgba(255, 255, 255, 0.95);
     border-radius: 16px;
-    padding: 24px 30px;
+    padding: 24px 16px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     margin-bottom: 20px;
 }
@@ -419,16 +419,17 @@ body {
 
 .prior-hands-grid {
     display: flex;
-    gap: 16px;
+    gap: 10px;
     overflow-x: auto;
 }
 
 .prior-hand-card {
-    min-width: 200px;
+    min-width: 0;
+    flex: 1;
     background: #f5f5f5;
     border-radius: 8px;
     padding: 12px;
-    flex-shrink: 0;
+    overflow: hidden;
 }
 
 .prior-hand-header {
@@ -444,6 +445,9 @@ body {
     font-size: 0.8em;
     color: #555;
     padding: 2px 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .prior-hand-card .mini-card.drafted {
@@ -473,12 +477,12 @@ body {
 
 /* Summary view */
 .summary-section {
-    background: linear-gradient(135deg, #b8956a 0%, #8B6914 100%);
+    background: rgba(255, 255, 255, 0.95);
     border-radius: 16px;
     padding: 30px 40px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     margin-bottom: 20px;
-    color: white;
+    color: #333;
 }
 
 .summary-title {
@@ -498,15 +502,14 @@ body {
     font-size: 1.1em;
     font-weight: 600;
     margin-bottom: 12px;
-    opacity: 0.9;
+    color: #555;
 }
 
 .summary-card {
-    background: rgba(255, 255, 255, 0.15);
+    background: #f5f5f5;
     border-radius: 8px;
     padding: 10px 14px;
     margin-bottom: 6px;
-    backdrop-filter: blur(10px);
 }
 
 .summary-card .card-name {
@@ -518,7 +521,7 @@ body {
     display: flex;
     gap: 12px;
     font-size: 0.85em;
-    opacity: 0.85;
+    color: #777;
 }
 
 .summary-card.clickable {
@@ -527,7 +530,7 @@ body {
 }
 
 .summary-card.clickable:hover {
-    background: rgba(255, 255, 255, 0.25);
+    background: #eaeaea;
     transform: translateY(-1px);
 }
 
@@ -722,10 +725,10 @@ body {
 
 .toggle-btn {
     padding: 8px 20px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    border: 2px solid #ddd;
     border-radius: 6px;
     background: transparent;
-    color: rgba(255, 255, 255, 0.7);
+    color: #888;
     font-size: 0.9em;
     font-weight: 600;
     cursor: pointer;
@@ -733,25 +736,26 @@ body {
 }
 
 .toggle-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: #f0f0f0;
 }
 
 .toggle-btn.active {
-    background: rgba(255, 255, 255, 0.2);
+    background: #555;
     color: white;
-    border-color: rgba(255, 255, 255, 0.5);
+    border-color: #555;
 }
 
 /* Others' pick in all-drafted view */
 .summary-card.others-pick {
     opacity: 0.75;
-    border-left: 3px solid rgba(255, 100, 100, 0.5);
+    border-left: 3px solid #e88;
 }
 
 .other-badge {
     display: inline-block;
     font-size: 0.7em;
-    background: rgba(255, 100, 100, 0.3);
+    background: #f8d7da;
+    color: #a44;
     padding: 1px 6px;
     border-radius: 8px;
     margin-right: 6px;
