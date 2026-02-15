@@ -1,0 +1,798 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #6da340;
+    background-image: url('https://x.boardgamearena.net/data/themereleases/current/games/agricola/260123-1203/img/background.jpg');
+    background-repeat: repeat;
+    background-size: auto;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Nav bar */
+.nav-bar {
+    max-width: 1200px;
+    margin: 0 auto 16px;
+    display: flex;
+    gap: 12px;
+}
+
+.nav-link {
+    color: white;
+    text-decoration: none;
+    font-size: 0.95em;
+    padding: 6px 14px;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+.nav-link:hover {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.nav-link.active {
+    background: rgba(255, 255, 255, 0.25);
+    font-weight: 600;
+}
+
+/* Main container */
+.draft-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Header section */
+.draft-header {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    padding: 30px 40px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.draft-title {
+    font-size: 2em;
+    color: #333;
+}
+
+.title-icon {
+    height: 1em;
+    width: auto;
+    vertical-align: middle;
+    margin-right: 4px;
+}
+
+.draft-header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.round-indicator {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #555;
+    background: #f0f0f0;
+    padding: 8px 18px;
+    border-radius: 8px;
+}
+
+.round-indicator .round-num {
+    color: #8B6914;
+}
+
+/* Buttons */
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, opacity 0.2s;
+}
+
+.btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background: #8B6914;
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: #6d5210;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+    background: #b02a37;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: #565e64;
+}
+
+/* Loading state */
+.loading {
+    text-align: center;
+    padding: 60px;
+    color: white;
+    font-size: 1.3em;
+}
+
+/* Search section */
+.search-section {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    padding: 24px 30px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.search-label {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 1.05em;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.search-input:focus {
+    border-color: #8B6914;
+}
+
+.suggestions {
+    position: absolute;
+    left: 30px;
+    right: 30px;
+    top: calc(100% - 8px);
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.suggestions.active {
+    display: block;
+}
+
+.suggestion-item {
+    padding: 10px 16px;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.suggestion-item:hover,
+.suggestion-item.highlighted {
+    background: #f5f5f5;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-rank {
+    font-size: 0.85em;
+    color: #999;
+    min-width: 35px;
+}
+
+.suggestion-name {
+    flex: 1;
+    color: #333;
+}
+
+.suggestion-type {
+    font-size: 0.8em;
+    color: #888;
+    padding: 2px 8px;
+    background: #f0f0f0;
+    border-radius: 10px;
+}
+
+/* Hand display */
+.hand-section {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    padding: 24px 30px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+}
+
+.hand-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.hand-column {
+    min-width: 0;
+}
+
+.column-header {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-count {
+    font-size: 0.85em;
+    font-weight: 400;
+    color: #888;
+}
+
+.card-count.complete {
+    color: #28a745;
+    font-weight: 600;
+}
+
+/* Sort controls */
+.sort-controls {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.sort-btn {
+    padding: 4px 10px;
+    font-size: 0.8em;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.sort-btn:hover {
+    border-color: #999;
+}
+
+.sort-btn.active {
+    background: #8B6914;
+    color: white;
+    border-color: #8B6914;
+}
+
+/* Card rows in hand */
+.card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.card-row {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background: #fafafa;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+    gap: 8px;
+}
+
+.card-row:hover {
+    background: #f0f0f0;
+}
+
+.card-row.selected {
+    border-color: #8B6914;
+    background: #fdf6e3;
+}
+
+.card-row.faded {
+    opacity: 0.4;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+.card-row .card-name {
+    flex: 1;
+    font-weight: 500;
+    font-size: 0.9em;
+    color: #333;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.card-row .card-stat {
+    font-size: 0.8em;
+    color: #777;
+    min-width: 45px;
+    text-align: right;
+}
+
+.card-row .card-stat-label {
+    font-size: 0.65em;
+    color: #aaa;
+    text-transform: uppercase;
+}
+
+.card-row .remove-btn {
+    padding: 2px 6px;
+    font-size: 0.75em;
+    border: none;
+    background: none;
+    color: #ccc;
+    cursor: pointer;
+    border-radius: 4px;
+    line-height: 1;
+}
+
+.card-row .remove-btn:hover {
+    color: #dc3545;
+    background: #fee;
+}
+
+/* Draft actions */
+.draft-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px 0;
+}
+
+/* Your Hand section */
+.your-hand-section {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    padding: 24px 30px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+}
+
+.your-hand-title {
+    font-size: 1.3em;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Prior hands compact view */
+.prior-hands-section {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    padding: 24px 30px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+}
+
+.prior-hands-title {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 16px;
+}
+
+.prior-hands-grid {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+}
+
+.prior-hand-card {
+    min-width: 200px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    padding: 12px;
+    flex-shrink: 0;
+}
+
+.prior-hand-header {
+    font-size: 0.9em;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #ddd;
+}
+
+.prior-hand-card .mini-card {
+    font-size: 0.8em;
+    color: #555;
+    padding: 2px 0;
+}
+
+.prior-hand-card .mini-card.drafted {
+    color: #8B6914;
+    font-weight: 600;
+}
+
+.prior-hand-card .mini-card.passed {
+    color: #aaa;
+}
+
+.prior-hand-card .mini-card.others-took {
+    color: #dc3545;
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+.others-took-count {
+    font-size: 0.7em;
+    color: #999;
+    text-align: center;
+    padding: 4px 0;
+    margin-top: 4px;
+    border-top: 1px dashed #ddd;
+    font-style: italic;
+}
+
+/* Summary view */
+.summary-section {
+    background: linear-gradient(135deg, #b8956a 0%, #8B6914 100%);
+    border-radius: 16px;
+    padding: 30px 40px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+    color: white;
+}
+
+.summary-title {
+    font-size: 1.8em;
+    font-weight: 700;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.summary-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.summary-column-title {
+    font-size: 1.1em;
+    font-weight: 600;
+    margin-bottom: 12px;
+    opacity: 0.9;
+}
+
+.summary-card {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 6px;
+    backdrop-filter: blur(10px);
+}
+
+.summary-card .card-name {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.summary-card .card-stats {
+    display: flex;
+    gap: 12px;
+    font-size: 0.85em;
+    opacity: 0.85;
+}
+
+.summary-card.clickable {
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+}
+
+.summary-card.clickable:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-1px);
+}
+
+/* Clickable card rows in YourHand */
+.card-row.clickable {
+    cursor: pointer;
+}
+
+/* Marking mode banner */
+.marking-banner {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.marking-banner-text {
+    color: #856404;
+    font-size: 0.95em;
+}
+
+/* Empty state */
+.empty-hand {
+    text-align: center;
+    padding: 24px;
+    color: #aaa;
+    font-size: 0.95em;
+}
+
+/* ─── Pick badge (pass 1/2 numbering) ─────────────────────────────── */
+.pick-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #8B6914;
+    color: white;
+    font-size: 0.65em;
+    font-weight: 700;
+    margin-right: 4px;
+    flex-shrink: 0;
+    vertical-align: middle;
+}
+
+/* ─── Clickable mini-cards in prior hands ─────────────────────────── */
+.mini-card.clickable {
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.mini-card.clickable:hover {
+    background: rgba(0, 0, 0, 0.06);
+    border-radius: 3px;
+}
+
+/* ─── Card Detail Popover ─────────────────────────────────────────── */
+.card-detail-popover {
+    position: fixed;
+    z-index: 2000;
+    background: linear-gradient(135deg, #b8956a 0%, #8B6914 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 16px;
+    width: 280px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    animation: popoverSlideIn 0.15s ease-out;
+}
+
+@keyframes popoverSlideIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.popover-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1em;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.popover-close:hover {
+    background: rgba(255, 255, 255, 0.35);
+}
+
+.popover-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding-right: 28px;
+}
+
+.popover-name {
+    font-weight: 700;
+    font-size: 1.05em;
+}
+
+.popover-rank {
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+.popover-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.popover-tag {
+    font-size: 0.75em;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.popover-image {
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.popover-image img {
+    max-width: 100%;
+    max-height: 180px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.popover-prereqs {
+    font-size: 0.8em;
+    background: rgba(255, 220, 150, 0.2);
+    padding: 8px 10px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+
+.popover-description {
+    font-size: 0.8em;
+    line-height: 1.4;
+    margin-bottom: 10px;
+    opacity: 0.9;
+}
+
+.popover-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+    font-size: 0.75em;
+}
+
+.popover-stats > div {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 4px 6px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.popover-stat-label {
+    display: block;
+    font-size: 0.8em;
+    opacity: 0.7;
+    text-transform: uppercase;
+}
+
+/* ─── Summary toggle ──────────────────────────────────────────────── */
+.summary-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-bottom: 20px;
+}
+
+.toggle-btn {
+    padding: 8px 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.toggle-btn.active {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Others' pick in all-drafted view */
+.summary-card.others-pick {
+    opacity: 0.75;
+    border-left: 3px solid rgba(255, 100, 100, 0.5);
+}
+
+.other-badge {
+    display: inline-block;
+    font-size: 0.7em;
+    background: rgba(255, 100, 100, 0.3);
+    padding: 1px 6px;
+    border-radius: 8px;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+
+/* ─── Responsive ──────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .draft-header {
+        padding: 20px;
+    }
+
+    .draft-title {
+        font-size: 1.5em;
+    }
+
+    .hand-columns {
+        grid-template-columns: 1fr;
+    }
+
+    .search-section {
+        padding: 16px 20px;
+    }
+
+    .suggestions {
+        left: 20px;
+        right: 20px;
+    }
+
+    .card-detail-popover {
+        width: calc(100vw - 32px);
+        left: 16px !important;
+    }
+
+    .summary-toggle {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .toggle-btn {
+        width: 100%;
+        max-width: 200px;
+    }
+}
