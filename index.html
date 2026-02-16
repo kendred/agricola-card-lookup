@@ -1050,6 +1050,26 @@ h1 {
     }
 }
 
+/* Strategy tag pills */
+.card-tag-pill {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 500;
+    color: white;
+    white-space: nowrap;
+}
+
+.tag-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-left: 4px;
+    vertical-align: middle;
+}
+
     </style>
 </head>
 <body>
@@ -1140,6 +1160,27 @@ h1 {
                         </select>
                     </div>
 
+                    <div class="filter-group">
+                        <label class="filter-label">Strategy</label>
+                        <select id="strategyFilter" class="filter-select">
+                            <option value="all">All Strategies</option>
+                            <option value="Small House">Small House</option>
+                            <option value="Big House">Big House</option>
+                            <option value="Stone House">Stone House</option>
+                            <option value="Day Laborer">Day Laborer</option>
+                            <option value="Grain">Grain</option>
+                            <option value="Major/Minor">Major/Minor</option>
+                            <option value="Fishing">Fishing</option>
+                            <option value="Traveling Players">Traveling Players</option>
+                            <option value="Sow">Sow</option>
+                            <option value="Animal">Animal</option>
+                            <option value="Sheep">Sheep</option>
+                            <option value="Cow">Cow</option>
+                            <option value="Lesson">Lesson</option>
+                            <option value="Stable">Stable</option>
+                        </select>
+                    </div>
+
                     <div class="toggle-row">
                         <label class="toggle-switch">
                             <input type="checkbox" id="gradientToggle" checked>
@@ -1220,6 +1261,7 @@ h1 {
     </div>
     
     <script src="card-image-list.js"></script>
+    <script src="tag-definitions.js"></script>
     <script>
 // Card data embedded directly
 const cards = [
@@ -14381,7 +14423,7 @@ const gradientToggle = document.getElementById('gradientToggle');
 
 // State for sorting, filtering, and gradients
 let currentSort = { column: 'rank', direction: 'asc' };
-let currentFilters = { type: 'all', passing: 'all', decks: ['A', 'B', 'C', 'D', 'E'], prerequisites: 'all' };
+let currentFilters = { type: 'all', passing: 'all', decks: ['A', 'B', 'C', 'D', 'E'], prerequisites: 'all', strategy: 'all' };
 let gradientsEnabled = true;
 
 // Calculate min/max for gradients
@@ -14497,6 +14539,10 @@ function getFilteredAndSortedCards() {
             if (currentFilters.prerequisites === 'no-prereqs' && hasPrereqs) return false;
         }
 
+        if (currentFilters.strategy !== 'all') {
+            if (!card.tags || !card.tags.includes(currentFilters.strategy)) return false;
+        }
+
         return true;
     });
     
@@ -14569,10 +14615,15 @@ function renderTable() {
         const valuePlayedColor = getValuePlayedGradient(card.value_when_played);
         const eloPerPlayColor = getEloPerPlayGradient(card.elo_per_play);
 
+        const tagDots = (card.tags || []).map(tag => {
+            const def = TAG_DEFINITIONS[tag];
+            return def ? `<span class="tag-dot" style="background:${def.color}" title="${tag}"></span>` : '';
+        }).join('');
+
         return `
         <tr data-name="${card.name}">
             <td class="table-rank">#${card.rank}</td>
-            <td class="table-name">${card.name}</td>
+            <td class="table-name">${card.name}${tagDots}</td>
             <td class="table-type">${card.type || 'N/A'}</td>
             <td>${card.pwr}</td>
             <td>${card.adp}</td>
@@ -14677,6 +14728,11 @@ deckCheckboxes.forEach(cb => {
 
 prerequisitesFilter.addEventListener('change', (e) => {
     currentFilters.prerequisites = e.target.value;
+    renderTable();
+});
+
+document.getElementById('strategyFilter').addEventListener('change', (e) => {
+    currentFilters.strategy = e.target.value;
     renderTable();
 });
 
@@ -14801,6 +14857,10 @@ function displayCard(card) {
     const idLabel = card.card_id ? `<div class="card-id">${card.card_id}</div>` : '';
     const costLabel = card.cost ? `<div class="card-cost">Cost: ${card.cost}</div>` : '';
     const vpsLabel = card.vps ? `<div class="card-vps">VPs: ${card.vps}</div>` : '';
+    const tagsHtml = (card.tags || []).map(tag => {
+        const def = TAG_DEFINITIONS[tag];
+        return def ? `<div class="card-tag-pill" style="background:${def.color}">${tag}</div>` : '';
+    }).join('');
 
     const imagePath = getCardImagePath(card.name);
 
@@ -14861,6 +14921,7 @@ function displayCard(card) {
                                 ${idLabel}
                                 ${costLabel}
                                 ${vpsLabel}
+                                ${tagsHtml}
                             </div>
                         </div>
                         ${statsHtml}
@@ -14887,6 +14948,7 @@ function displayCard(card) {
                                 ${idLabel}
                                 ${costLabel}
                                 ${vpsLabel}
+                                ${tagsHtml}
                             </div>
                         </div>
                         ${statsHtml}

@@ -582,6 +582,70 @@ body {
     vertical-align: middle;
 }
 
+/* ─── Strategy tag pills ─────────────────────────────────────────── */
+.tag-pills {
+    display: inline-flex;
+    gap: 4px;
+    flex-shrink: 0;
+    align-items: center;
+    margin-left: 6px;
+}
+
+.tag-pill {
+    display: inline-block;
+    color: white;
+    font-size: 0.75em;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 12px;
+    white-space: nowrap;
+    line-height: 1.4;
+}
+
+/* ─── Tag dots for prior hands mini-cards ─────────────────────────── */
+.mini-tag-dots {
+    display: inline-flex;
+    gap: 2px;
+    margin-right: 3px;
+    vertical-align: middle;
+    flex-shrink: 0;
+}
+
+.mini-tag-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* ─── Tag legend ─────────────────────────────────────────────────── */
+.tag-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    margin-bottom: 10px;
+    font-size: 0.7em;
+    color: #888;
+}
+
+.tag-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.tag-legend-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.tag-legend-label {
+    font-weight: 500;
+}
+
 /* ─── Clickable mini-cards in prior hands ─────────────────────────── */
 .mini-card.clickable {
     cursor: pointer;

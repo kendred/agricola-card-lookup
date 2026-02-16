@@ -10,6 +10,7 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="card-image-list.js"></script>
+    <script src="tag-definitions.js"></script>
 </head>
 <body>
     <div id="root">
@@ -182,6 +183,23 @@ function CardSearch({ cards, onAddCard, allUsedCardNames }) {
     );
 }
 
+// ─── TagPills Component ─────────────────────────────────────────────
+function TagPills({ tags, abbreviated = true }) {
+    if (!tags || tags.length === 0) return null;
+    return (
+        <span className="tag-pills">
+            {tags.map(tag => {
+                const def = TAG_DEFINITIONS[tag];
+                return def ? (
+                    <span key={tag} className="tag-pill" style={{ background: def.color }} title={tag}>
+                        {abbreviated ? def.abbrev : tag}
+                    </span>
+                ) : null;
+            })}
+        </span>
+    );
+}
+
 // ─── HandColumn Component ───────────────────────────────────────────
 function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSelectCard, selectedCardName, showRemove, fadedCardNames, onToggleFaded }) {
     const count = cards.length;
@@ -230,6 +248,7 @@ function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSele
                             onClick={handleClick}
                         >
                             <span className="card-name">{card.name}</span>
+                            <TagPills tags={card.tags} />
                             <div className="card-stat">
                                 <div className="card-stat-label">Rank</div>
                                 <div>#{card.rank}</div>
@@ -279,6 +298,13 @@ function PriorHands({ hands, draftedCards, cardMap, currentRound, othersDrafted,
         const isDrafted = draftedSet.has(name);
         const isOthersTook = othersDraftedSet.has(name);
         const passNum = isDrafted ? getPassNumber(round) : null;
+        const card = cardMap[name];
+        const tagDots = (card?.tags || []).map(tag => {
+            const def = TAG_DEFINITIONS[tag];
+            return def ? (
+                <span key={tag} className="mini-tag-dot" style={{ background: def.color }} title={tag}>{'\u200B'}</span>
+            ) : null;
+        }).filter(Boolean);
 
         return (
             <div
@@ -286,7 +312,9 @@ function PriorHands({ hands, draftedCards, cardMap, currentRound, othersDrafted,
                 className={`mini-card ${isDrafted ? 'drafted' : isOthersTook ? 'others-took' : 'passed'} clickable`}
                 onClick={(e) => onCardClick && onCardClick(name, e)}
             >
-                {passNum ? <span className="pick-badge">{passNum}</span> : isOthersTook ? '✗ ' : ''}{name}
+                {passNum ? <span className="pick-badge">{passNum}</span> : isOthersTook ? '✗ ' : ''}
+                {tagDots.length > 0 && <span className="mini-tag-dots">{tagDots}</span>}
+                {name}
             </div>
         );
     };
@@ -294,6 +322,14 @@ function PriorHands({ hands, draftedCards, cardMap, currentRound, othersDrafted,
     return (
         <div className="prior-hands-section">
             <div className="prior-hands-title">Prior Hands</div>
+            <div className="tag-legend">
+                {Object.entries(TAG_DEFINITIONS).map(([name, def]) => (
+                    <span key={name} className="tag-legend-item">
+                        <span className="tag-legend-dot" style={{ background: def.color }}>{'\u200B'}</span>
+                        <span className="tag-legend-label">{name}</span>
+                    </span>
+                ))}
+            </div>
             <div className="prior-hands-grid">
                 {visibleHandGroups.map(({ handNum, pass1Round, pass2Round }) => {
                     const pass1Hand = hands[pass1Round] || [];
@@ -356,11 +392,11 @@ function PriorHands({ hands, draftedCards, cardMap, currentRound, othersDrafted,
                         <div key={handNum} className="prior-hand-card">
                             <div className="prior-hand-header">Hand {handNum}</div>
                             <div style={{ display: 'flex', gap: '12px' }}>
-                                <div style={{ flex: 1 }}>
+                                <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
                                     <div style={{ fontSize: '0.75em', fontWeight: 600, color: '#888', marginBottom: '4px' }}>Occ</div>
                                     {allOccs.map(name => renderMiniCard(name, getRoundForCard(name)))}
                                 </div>
-                                <div style={{ flex: 1 }}>
+                                <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
                                     <div style={{ fontSize: '0.75em', fontWeight: 600, color: '#888', marginBottom: '4px' }}>Minor</div>
                                     {allMins.map(name => renderMiniCard(name, getRoundForCard(name)))}
                                 </div>
@@ -395,6 +431,7 @@ function YourHand({ draftedCards, cardMap, onCardClick }) {
     const renderDraftedCard = (card) => (
         <div key={card.name} className="card-row clickable" onClick={(e) => onCardClick && onCardClick(card.name, e)}>
             <span className="card-name">{card.name}</span>
+            <TagPills tags={card.tags} abbreviated={false} />
             <div className="card-stat"><div className="card-stat-label">Rank</div><div>#{card.rank}</div></div>
             <div className="card-stat"><div className="card-stat-label">ADP</div><div>{card.adp}</div></div>
             <div className="card-stat"><div className="card-stat-label">Elo/Play</div><div>{card.elo_per_play || '—'}</div></div>
@@ -483,6 +520,14 @@ function CardDetailPopover({ card, anchorRect, onClose }) {
                 {card.card_id && <span className="popover-tag">{card.card_id}</span>}
                 {card.cost && <span className="popover-tag">Cost: {card.cost}</span>}
                 {card.vps && <span className="popover-tag">VPs: {card.vps}</span>}
+                {(card.tags || []).map(tag => {
+                    const def = TAG_DEFINITIONS[tag];
+                    return def ? (
+                        <span key={tag} className="popover-tag" style={{ background: def.color, color: 'white' }}>
+                            {tag}
+                        </span>
+                    ) : null;
+                })}
             </div>
             {imagePath && (
                 <div className="popover-image">
@@ -571,7 +616,7 @@ function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, 
 
     const renderSummaryCard = (card) => (
         <div key={card.name} className="summary-card clickable" onClick={(e) => onCardClick && onCardClick(card.name, e)}>
-            <div className="card-name">{card.name}</div>
+            <div className="card-name">{card.name} <TagPills tags={card.tags} abbreviated={false} /></div>
             <div className="card-stats">
                 <span>Rank #{card.rank}</span>
                 <span>ADP {card.adp}</span>
@@ -586,7 +631,7 @@ function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, 
         <div key={`${card.name}-${card._drafter}`} className={`summary-card clickable${card._drafter === 'other' ? ' others-pick' : ''}`} onClick={(e) => onCardClick && onCardClick(card.name, e)}>
             <div className="card-name">
                 {card._drafter === 'other' && <span className="other-badge">Other</span>}
-                {card.name}
+                {card.name} <TagPills tags={card.tags} abbreviated={false} />
             </div>
             <div className="card-stats">
                 <span>Rank #{card.rank}</span>
