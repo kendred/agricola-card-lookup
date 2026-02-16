@@ -1,0 +1,9 @@
+{
+  "name": "agricola-ocr-api",
+  "version": "1.0.0",
+  "description": "Azure Function proxy for Agricola card screenshot OCR via Azure OpenAI GPT-4o Vision",
+  "scripts": {
+    "start": "func start"
+  },
+  "dependencies": {}
+}

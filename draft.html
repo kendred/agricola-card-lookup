@@ -11,6 +11,7 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="card-image-list.js"></script>
     <script src="tag-definitions.js"></script>
+    <script src="screenshot-ocr.js"></script>
 </head>
 <body>
     <div id="root">
@@ -95,7 +96,7 @@ function clearSavedState() {
 }
 
 // ─── CardSearch Component ───────────────────────────────────────────
-function CardSearch({ cards, onAddCard, allUsedCardNames }) {
+function CardSearch({ cards, onAddCard, allUsedCardNames, children }) {
     const [query, setQuery] = useState('');
     const [highlightIndex, setHighlightIndex] = useState(-1);
     const inputRef = useRef(null);
@@ -179,6 +180,145 @@ function CardSearch({ cards, onAddCard, allUsedCardNames }) {
                     ))}
                 </div>
             )}
+            {children}
+        </div>
+    );
+}
+
+// ─── ScreenshotInput Component ───────────────────────────────────────
+// Compact inline version — sits below the search input inside .search-section
+function ScreenshotInput({ onImageCaptured, processing, disabled }) {
+    const [dragOver, setDragOver] = useState(false);
+    const fileInputRef = useRef(null);
+
+    // Clipboard paste listener
+    useEffect(() => {
+        if (disabled) return;
+        const handlePaste = (e) => {
+            const items = Array.from(e.clipboardData?.items || []);
+            const imageItem = items.find(item => item.type.startsWith('image/'));
+            if (!imageItem) return;
+            e.preventDefault();
+            const blob = imageItem.getAsFile();
+            if (blob.size > 10 * 1024 * 1024) {
+                alert('Image too large (max 10MB). Please use a smaller screenshot.');
+                return;
+            }
+            onImageCaptured(blob);
+        };
+        document.addEventListener('paste', handlePaste);
+        return () => document.removeEventListener('paste', handlePaste);
+    }, [onImageCaptured, disabled]);
+
+    const handleDrop = (e) => {
+        e.preventDefault();
+        setDragOver(false);
+        if (disabled || processing) return;
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+            if (file.size > 10 * 1024 * 1024) {
+                alert('Image too large (max 10MB).');
+                return;
+            }
+            onImageCaptured(file);
+        }
+    };
+
+    const handleDragOver = (e) => { e.preventDefault(); setDragOver(true); };
+    const handleDragLeave = () => setDragOver(false);
+
+    const handleFileSelect = (e) => {
+        const file = e.target.files[0];
+        if (file && file.type.startsWith('image/')) {
+            if (file.size > 10 * 1024 * 1024) {
+                alert('Image too large (max 10MB).');
+                return;
+            }
+            onImageCaptured(file);
+        }
+        e.target.value = '';
+    };
+
+    if (disabled) return null;
+
+    return (
+        <div
+            className={`screenshot-paste-hint${dragOver ? ' dragover' : ''}${processing ? ' processing' : ''}`}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+        >
+            {processing ? (
+                <span className="screenshot-hint-text processing">Analyzing screenshot...</span>
+            ) : (
+                <span className="screenshot-hint-text">
+                    or paste a BGA screenshot (⌘V) or <button type="button" className="screenshot-upload-link" onClick={() => fileInputRef.current?.click()}>upload image</button>
+                </span>
+            )}
+            <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={handleFileSelect}
+            />
+        </div>
+    );
+}
+
+// ─── ScreenshotResults Component ────────────────────────────────────
+function ScreenshotResults({ results, error, onDismiss }) {
+    // Auto-dismiss success banners after 10s (unless there are warnings)
+    useEffect(() => {
+        if (!results || error) return;
+        const hasWarnings = (results.unmatched && results.unmatched.length > 0) ||
+                            (results.skippedOverflow && results.skippedOverflow.length > 0);
+        if (hasWarnings) return;
+        const timer = setTimeout(onDismiss, 10000);
+        return () => clearTimeout(timer);
+    }, [results, error, onDismiss]);
+
+    if (!results && !error) return null;
+
+    if (error) {
+        return (
+            <div className="screenshot-banner screenshot-error">
+                <span>{error}</span>
+                <button className="screenshot-dismiss" onClick={onDismiss}>✕</button>
+            </div>
+        );
+    }
+
+    const parts = [];
+    if (results.added > 0) parts.push(`Added ${results.added} card${results.added !== 1 ? 's' : ''}`);
+    if (results.duplicates > 0) parts.push(`${results.duplicates} duplicate${results.duplicates !== 1 ? 's' : ''} skipped`);
+    if (results.skippedOverflow && results.skippedOverflow.length > 0) {
+        parts.push(`${results.skippedOverflow.length} skipped (slots full)`);
+    }
+    if (parts.length === 0 && (!results.unmatched || results.unmatched.length === 0)) {
+        parts.push('No card names found. Make sure card titles are visible in the screenshot');
+    }
+
+    const hasWarnings = (results.unmatched && results.unmatched.length > 0) ||
+                        (results.skippedOverflow && results.skippedOverflow.length > 0) ||
+                        results.added === 0;
+
+    return (
+        <div className={`screenshot-banner ${hasWarnings ? 'screenshot-warning' : 'screenshot-success'}`}>
+            <div>
+                <span>{parts.join('. ')}.</span>
+                {results.unmatched && results.unmatched.length > 0 && (
+                    <div className="screenshot-unmatched">
+                        Not recognized: {results.unmatched.join(', ')}
+                    </div>
+                )}
+                {results.skippedOverflow && results.skippedOverflow.length > 0 && (
+                    <div className="screenshot-unmatched">
+                        Slots full: {results.skippedOverflow.join(', ')}
+                    </div>
+                )}
+            </div>
+            <button className="screenshot-dismiss" onClick={onDismiss}>✕</button>
         </div>
     );
 }
@@ -718,6 +858,19 @@ function DraftApp() {
     const [markingPhase, setMarkingPhase] = useState(false);
     const [othersDrafted, setOthersDrafted] = useState([]);
 
+    // Screenshot processing state
+    const [ocrAvailable, setOcrAvailable] = useState(false);
+    const [screenshotProcessing, setScreenshotProcessing] = useState(false);
+    const [screenshotError, setScreenshotError] = useState(null);
+    const [screenshotResults, setScreenshotResults] = useState(null);
+
+    // Check OCR endpoint availability on mount
+    useEffect(() => {
+        if (typeof screenshotOCR !== 'undefined' && screenshotOCR.checkAvailability) {
+            screenshotOCR.checkAvailability().then(setOcrAvailable);
+        }
+    }, []);
+
     // Popover state for card detail
     const [popoverCard, setPopoverCard] = useState(null);
     const [popoverAnchor, setPopoverAnchor] = useState(null);
@@ -915,6 +1068,63 @@ function DraftApp() {
         if (cardName === selectedMinor) setSelectedMinor(null);
     }, [selectedOccupation, selectedMinor]);
 
+    // Batch add cards (used by screenshot processing)
+    const handleAddCards = useCallback((cardNames) => {
+        setCurrentHandNames(prev => {
+            let updated = [...prev];
+            const limit = HAND_SIZE_BY_ROUND[currentRound] || 10;
+            cardNames.forEach(name => {
+                if (updated.includes(name)) return;
+                const card = cardMap[name];
+                if (!card) return;
+                const typeCount = updated.map(n => cardMap[n]).filter(c => c && c.type === card.type).length;
+                if (typeCount >= limit) return;
+                updated.push(name);
+            });
+            return updated;
+        });
+    }, [cardMap, currentRound]);
+
+    // Screenshot processing handler
+    const handleScreenshotProcess = useCallback(async (imageBlob) => {
+        if (screenshotProcessing) return;
+        setScreenshotProcessing(true);
+        setScreenshotError(null);
+        setScreenshotResults(null);
+
+        try {
+            if (typeof screenshotOCR === 'undefined') {
+                throw new Error('Screenshot processing not available. OCR module not loaded.');
+            }
+
+            const result = await screenshotOCR.processImage(imageBlob, cards, cardMap, currentHandNames, allUsedCardNames, currentRound);
+
+            // Add matched cards
+            if (result.matched.length > 0) {
+                handleAddCards(result.matched);
+            }
+
+            setScreenshotResults({
+                added: result.added.length,
+                duplicates: result.duplicates.length,
+                unmatched: result.unmatched,
+                skippedOverflow: result.skippedOverflow,
+                total: result.total,
+            });
+        } catch (err) {
+            console.error('Screenshot processing error:', err);
+            if (err.message.includes('429') || err.message.includes('rate limit')) {
+                setScreenshotError('Too many requests. Try again in a few minutes.');
+            } else if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+                setScreenshotError('Could not reach the server. Check your connection.');
+            } else {
+                setScreenshotError(err.message || 'Screenshot processing failed.');
+            }
+        } finally {
+            setScreenshotProcessing(false);
+        }
+    }, [screenshotProcessing, cards, cardMap, currentHandNames, allUsedCardNames, currentRound, handleAddCards]);
+
     const handleSelectOccupation = useCallback((cardName) => {
         if (othersDraftedSet.has(cardName)) return;
         setSelectedOccupation(prev => prev === cardName ? null : cardName);
@@ -1052,13 +1262,26 @@ function DraftApp() {
                         {/* Prior Hands */}
                         <PriorHands hands={hands} draftedCards={draftedCards} cardMap={cardMap} currentRound={currentRound} othersDrafted={othersDrafted} onCardClick={handleMiniCardClick} />
 
-                        {/* Search (only for rounds 1-4 manual entry) */}
+                        {/* Search + Screenshot (only for rounds 1-4 manual entry) */}
                         {!isReturningRound && (
                             <CardSearch
                                 cards={cards}
                                 onAddCard={handleAddCard}
                                 allUsedCardNames={allUsedCardNames}
-                            />
+                            >
+                                {ocrAvailable && (
+                                    <ScreenshotInput
+                                        onImageCaptured={handleScreenshotProcess}
+                                        processing={screenshotProcessing}
+                                        disabled={handIsFull}
+                                    />
+                                )}
+                                <ScreenshotResults
+                                    results={screenshotResults}
+                                    error={screenshotError}
+                                    onDismiss={() => { setScreenshotResults(null); setScreenshotError(null); }}
+                                />
+                            </CardSearch>
                         )}
 
                         {/* Marking phase banner (rounds 5-7) */}
