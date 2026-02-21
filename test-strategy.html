@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strategy Advisor Test Harness</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 20px; background: #f5f5f5; }
+        h1 { color: #333; margin-bottom: 8px; }
+        .subtitle { color: #888; font-size: 0.9em; margin-bottom: 24px; }
+        .section { background: white; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        label { display: block; font-weight: 600; color: #555; margin-bottom: 6px; font-size: 0.9em; }
+        input, textarea, select { width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9em; font-family: inherit; box-sizing: border-box; }
+        textarea { resize: vertical; }
+        .row { display: flex; gap: 12px; margin-bottom: 12px; }
+        .row > div { flex: 1; }
+        button.run { padding: 12px 24px; background: #2980b9; color: white; border: none; border-radius: 8px; font-size: 1em; font-weight: 600; cursor: pointer; width: 100%; }
+        button.run:hover { background: #1a6da0; }
+        button.run:disabled { background: #aaa; cursor: wait; }
+        .result { white-space: pre-wrap; font-family: 'SF Mono', Menlo, monospace; font-size: 0.82em; background: #f8f8f8; padding: 16px; border-radius: 8px; border: 1px solid #e0e0e0; max-height: 500px; overflow: auto; }
+        .error { color: #c0392b; background: #fdf0f0; border-color: #f5c6cb; }
+        .meta { font-size: 0.8em; color: #888; margin-top: 8px; }
+        .preset-btn { padding: 6px 12px; background: #eee; border: 1px solid #ddd; border-radius: 4px; font-size: 0.82em; cursor: pointer; margin-right: 6px; margin-bottom: 6px; }
+        .preset-btn:hover { background: #ddd; }
+        .warning { background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; font-size: 0.88em; color: #856404; }
+    </style>
+</head>
+<body>
+    <h1>Strategy Advisor Test Harness</h1>
+    <p class="subtitle">Test the LLM strategy call directly against Azure OpenAI — no Azure Functions needed.</p>
+
+    <div class="warning">
+        Your API key is used client-side for testing only. Don't commit this page with a key in it.
+    </div>
+
+    <div class="section">
+        <div class="row">
+            <div>
+                <label>Azure OpenAI Endpoint</label>
+                <input id="endpoint" placeholder="https://your-resource.openai.azure.com" />
+            </div>
+            <div>
+                <label>API Key</label>
+                <input id="apiKey" type="password" placeholder="your-api-key" />
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <label>Deployment Name</label>
+                <input id="deployment" value="gpt-4o" />
+            </div>
+            <div>
+                <label>Round</label>
+                <select id="round">
+                    <option value="1">Round 1</option>
+                    <option value="2">Round 2</option>
+                    <option value="3">Round 3</option>
+                    <option value="4">Round 4</option>
+                    <option value="5">Round 5</option>
+                    <option value="6">Round 6</option>
+                    <option value="7">Round 7</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <label>Current Hand (card names, one per line)</label>
+        <div style="margin-bottom: 8px;">
+            <button class="preset-btn" onclick="loadPreset('round1')">Preset: Round 1 (20 cards)</button>
+            <button class="preset-btn" onclick="loadPreset('round3')">Preset: Round 3 (16 cards)</button>
+            <button class="preset-btn" onclick="loadPreset('round5')">Preset: Round 5 (returning)</button>
+        </div>
+        <textarea id="handNames" rows="8" placeholder="Lover&#10;Basket Carrier&#10;Cesspit&#10;..."></textarea>
+    </div>
+
+    <div class="section">
+        <label>Drafted Cards So Far (card names, one per line — leave empty for round 1)</label>
+        <textarea id="draftedNames" rows="4" placeholder="Job Contract&#10;Brewery Pond&#10;..."></textarea>
+    </div>
+
+    <div class="section">
+        <label>Cards Taken by Opponents (card names, one per line — optional)</label>
+        <textarea id="othersDrafted" rows="3" placeholder=""></textarea>
+    </div>
+
+    <div class="section">
+        <button class="run" id="runBtn" onclick="runTest()">Call Azure OpenAI</button>
+        <div class="meta" id="meta"></div>
+    </div>
+
+    <div class="section">
+        <label>Response</label>
+        <div class="result" id="result">Click "Call Azure OpenAI" to test.</div>
+    </div>
+
+    <div class="section">
+        <label>Raw Prompt (system + user message)</label>
+        <div class="result" id="prompt" style="max-height: 300px;">Will show the full prompt after you run a test.</div>
+    </div>
+
+    <script>
+        // Load card data
+        let CARDS = [];
+        let CARD_MAP = {};
+        fetch('agricola-cards.json')
+            .then(r => r.json())
+            .then(data => {
+                CARDS = data;
+                CARDS.forEach(c => { CARD_MAP[c.name] = c; });
+            });
+
+        // Load strategy guide
+        let STRATEGY_GUIDE = '';
+        fetch('Feature specs/agricola-strategy-guide.md')
+            .then(r => r.text())
+            .then(text => { STRATEGY_GUIDE = text; });
+
+        const PRESETS = {
+            round1: {
+                round: '1',
+                hand: [
+                    'Lover', 'Job Contract', 'Collector', 'Mason', 'Charcoal Burner',
+                    'Cottar', 'Lord of the Manor', 'Plow Driver', 'Writing Desk', 'Kindling Gatherer',
+                    'Cesspit', 'Loom', 'Beer Keg', 'Trellis', 'Briar Hedge',
+                    'Seed Almanac', 'Ox Goad', 'Feed Pellets', 'Ceilings', 'Mud Patch'
+                ],
+                drafted: [],
+                others: [],
+            },
+            round3: {
+                round: '3',
+                hand: [
+                    'Cultivator', 'Night-School Student', 'Priest', 'Game Catcher',
+                    'Stable Sergeant', 'Constable', 'Dung Collector', 'Chimney Sweep',
+                    'Artichoke Field', 'Mini Pasture', 'Straw-Thatched Roof', 'Wooden Whey Bucket',
+                    'Earth Oven', 'Newly-Plowed Field', 'Haydryer', 'Rammed Clay'
+                ],
+                drafted: ['Lover', 'Cesspit', 'Job Contract', 'Loom'],
+                others: ['Basket Carrier', 'Forest Clearer', 'Brewery Pond', 'Bookshelf'],
+            },
+            round5: {
+                round: '5',
+                hand: [
+                    'Mason', 'Charcoal Burner', 'Cottar', 'Plow Driver',
+                    'Writing Desk', 'Kindling Gatherer',
+                    'Trellis', 'Seed Almanac', 'Ox Goad', 'Mud Patch'
+                ],
+                drafted: ['Lover', 'Cesspit', 'Job Contract', 'Loom', 'Cultivator', 'Mini Pasture',
+                           'Lord of the Manor', 'Beer Keg', 'Collector', 'Briar Hedge'],
+                others: ['Basket Carrier', 'Forest Clearer', 'Brewery Pond', 'Bookshelf',
+                          'Constable', 'Artichoke Field', 'Stable Sergeant', 'Straw-Thatched Roof'],
+            },
+        };
+
+        function loadPreset(name) {
+            const p = PRESETS[name];
+            document.getElementById('round').value = p.round;
+            document.getElementById('handNames').value = p.hand.join('\n');
+            document.getElementById('draftedNames').value = p.drafted.join('\n');
+            document.getElementById('othersDrafted').value = p.others.join('\n');
+        }
+
+        function parseLines(id) {
+            return document.getElementById(id).value.split('\n').map(s => s.trim()).filter(Boolean);
+        }
+
+        function enrichCards(names) {
+            return names.map(n => CARD_MAP[n]).filter(Boolean).map(c => ({
+                name: c.name, rank: c.rank, pwr: c.pwr, adp: c.adp,
+                play_rate: c.play_rate, elo_per_play: c.elo_per_play,
+                type: c.type, description: c.description, cost: c.cost,
+                vps: c.vps, tags: c.tags,
+            }));
+        }
+
+        function buildCompactIndex() {
+            return JSON.stringify(CARDS.map(c => ({ name: c.name, rank: c.rank, adp: c.adp, type: c.type })));
+        }
+
+        function buildSystemPrompt() {
+            return `You are an expert Agricola (board game) draft strategy advisor for 4-player games. You analyze a player's draft state and provide strategic guidance.
+
+You must respond with ONLY valid JSON matching this exact format — no markdown, no explanation, no text outside the JSON:
+
+{
+  "overall_analysis": "2-3 sentence narrative summarizing the draft state, strategy direction, and what to prioritize next.",
+  "dimensions": {
+    "food": "weak|adequate|strong",
+    "growth": "weak|adequate|strong",
+    "extra_actions": "weak|adequate|strong",
+    "point_ceiling": "low|medium|high",
+    "plow": "covered|not_covered"
+  },
+  "risks": "2-3 sentence risk assessment highlighting specific weaknesses, resource bottlenecks, or strategic vulnerabilities.",
+  "suggestions": [
+    { "card_name": "Exact Card Name", "rank_number": 1, "rationale": "1-2 sentence explanation of why this card is the best pick given the current draft state." },
+    { "card_name": "Exact Card Name", "rank_number": 2, "rationale": "1-2 sentence explanation." },
+    { "card_name": "Exact Card Name", "rank_number": 3, "rationale": "1-2 sentence explanation." }
+  ]
+}
+
+Rules for suggestions:
+- Suggest 2-3 cards from the current hand (occupations and minor improvements combined).
+- rank_number is YOUR ranking (1 = best pick, 2 = second best, 3 = third best). NOT the card's database rank.
+- card_name must exactly match a card name from the current hand.
+- Consider: current drafted cards, strategic coverage gaps, card synergies, what opponents likely took, card rank/ADP/play rate, and game flow timing.
+- Prefer cards that fill the biggest strategic gap. If food is weak, prioritize food. If growth is missing, prioritize growth enablers.
+- Factor in whether a card is strategy-defining (requires commitment) vs complementary (enhances actions you'd take anyway).
+
+STRATEGIC FRAMEWORK:
+
+${STRATEGY_GUIDE}
+
+COMPLETE CARD INDEX (773 cards — name, rank, ADP, type):
+
+${buildCompactIndex()}`;
+        }
+
+        function buildUserMessage() {
+            const round = document.getElementById('round').value;
+            const handNames = parseLines('handNames');
+            const draftedNames = parseLines('draftedNames');
+            const othersDrafted = parseLines('othersDrafted');
+
+            const handCards = enrichCards(handNames);
+            const draftedCards = enrichCards(draftedNames);
+
+            let msg = `CURRENT ROUND: ${round}\n\n`;
+            msg += `CURRENT HAND (choose from these cards):\n${JSON.stringify(handCards, null, 1)}\n\n`;
+            if (draftedCards.length > 0) {
+                msg += `MY DRAFTED CARDS SO FAR:\n${JSON.stringify(draftedCards, null, 1)}\n\n`;
+            }
+            if (othersDrafted.length > 0) {
+                msg += `CARDS TAKEN BY OPPONENTS (names only):\n${JSON.stringify(othersDrafted)}\n\n`;
+            }
+            msg += 'Analyze my draft state and suggest the best picks from my current hand.';
+            return msg;
+        }
+
+        async function runTest() {
+            const endpoint = document.getElementById('endpoint').value.trim();
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const deployment = document.getElementById('deployment').value.trim();
+            const resultEl = document.getElementById('result');
+            const metaEl = document.getElementById('meta');
+            const promptEl = document.getElementById('prompt');
+            const btn = document.getElementById('runBtn');
+
+            if (!endpoint || !apiKey || !deployment) {
+                resultEl.textContent = 'Please fill in endpoint, API key, and deployment name.';
+                resultEl.className = 'result error';
+                return;
+            }
+
+            if (CARDS.length === 0) {
+                resultEl.textContent = 'Card data not loaded yet. Wait a moment and try again.';
+                resultEl.className = 'result error';
+                return;
+            }
+
+            const systemPrompt = buildSystemPrompt();
+            const userMessage = buildUserMessage();
+            promptEl.textContent = `=== SYSTEM PROMPT (${systemPrompt.length} chars, ~${Math.round(systemPrompt.length / 4)} tokens) ===\n\n${systemPrompt.slice(0, 2000)}...\n\n[truncated — full prompt is ${systemPrompt.length} chars]\n\n=== USER MESSAGE (${userMessage.length} chars) ===\n\n${userMessage}`;
+
+            btn.disabled = true;
+            btn.textContent = 'Calling Azure OpenAI...';
+            resultEl.textContent = 'Waiting for response...';
+            resultEl.className = 'result';
+            metaEl.textContent = '';
+
+            const startTime = Date.now();
+
+            try {
+                const apiVersion = '2024-08-01-preview';
+                const url = `${endpoint.replace(/\/$/, '')}/openai/deployments/${deployment}/chat/completions?api-version=${apiVersion}`;
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'api-key': apiKey,
+                    },
+                    body: JSON.stringify({
+                        messages: [
+                            { role: 'system', content: systemPrompt },
+                            { role: 'user', content: userMessage },
+                        ],
+                        max_tokens: 1500,
+                        temperature: 0.3,
+                        response_format: { type: 'json_object' },
+                    }),
+                });
+
+                const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+
+                if (!response.ok) {
+                    const errText = await response.text();
+                    resultEl.textContent = `HTTP ${response.status}: ${errText}`;
+                    resultEl.className = 'result error';
+                    metaEl.textContent = `Failed after ${elapsed}s`;
+                    return;
+                }
+
+                const data = await response.json();
+                const content = data.choices?.[0]?.message?.content || '';
+                const usage = data.usage || {};
+
+                // Try to parse and pretty-print
+                let display;
+                try {
+                    const parsed = JSON.parse(content);
+                    display = JSON.stringify(parsed, null, 2);
+                } catch {
+                    display = content;
+                }
+
+                resultEl.textContent = display;
+                resultEl.className = 'result';
+
+                const inputCost = (usage.prompt_tokens || 0) * 2.5 / 1000000;
+                const outputCost = (usage.completion_tokens || 0) * 10 / 1000000;
+                metaEl.textContent = `${elapsed}s | ${usage.prompt_tokens || '?'} input tokens | ${usage.completion_tokens || '?'} output tokens | ~$${(inputCost + outputCost).toFixed(4)} (GPT-4o pricing)`;
+
+            } catch (err) {
+                resultEl.textContent = `Error: ${err.message}`;
+                resultEl.className = 'result error';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Call Azure OpenAI';
+            }
+        }
+
+        // Persist endpoint/key in sessionStorage for convenience
+        window.addEventListener('load', () => {
+            const ep = sessionStorage.getItem('test-strategy-endpoint');
+            const key = sessionStorage.getItem('test-strategy-key');
+            const dep = sessionStorage.getItem('test-strategy-deployment');
+            if (ep) document.getElementById('endpoint').value = ep;
+            if (key) document.getElementById('apiKey').value = key;
+            if (dep) document.getElementById('deployment').value = dep;
+        });
+        ['endpoint', 'apiKey', 'deployment'].forEach(id => {
+            document.getElementById(id).addEventListener('input', (e) => {
+                sessionStorage.setItem('test-strategy-' + id.replace('apiKey', 'key'), e.target.value);
+            });
+        });
+    </script>
+</body>
+</html>

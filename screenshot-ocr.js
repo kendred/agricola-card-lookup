@@ -62,11 +62,16 @@ var screenshotOCR = (function () {
             });
         }).then(function (response) {
             if (response.status === 429) {
-                throw new Error('429: Too many requests. Try again in a few minutes.');
+                throw new Error('Too many requests. Try again in a few minutes.');
             }
             if (!response.ok) {
                 return response.json().catch(function () { return {}; }).then(function (data) {
-                    throw new Error(data.error || 'OCR service error (status ' + response.status + ')');
+                    if (data.error) throw new Error(data.error);
+                    if (response.status === 501) throw new Error('The screenshot service is not set up yet.');
+                    if (response.status === 503) throw new Error('The screenshot service is temporarily unavailable. Try again later.');
+                    if (response.status >= 500) throw new Error('The screenshot service ran into a problem. Please try again.');
+                    if (response.status === 400) throw new Error('Could not process the image. Try a clearer screenshot.');
+                    throw new Error('Screenshot processing failed. Please try again.');
                 });
             }
             return response.json();

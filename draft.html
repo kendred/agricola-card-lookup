@@ -12,6 +12,7 @@
     <script src="card-image-list.js"></script>
     <script src="tag-definitions.js"></script>
     <script src="screenshot-ocr.js"></script>
+    <script src="strategy-advisor.js"></script>
 </head>
 <body>
     <div id="root">
@@ -341,10 +342,19 @@ function TagPills({ tags, abbreviated = true }) {
 }
 
 // ─── HandColumn Component ───────────────────────────────────────────
-function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSelectCard, selectedCardName, showRemove, fadedCardNames, onToggleFaded }) {
+function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSelectCard, selectedCardName, showRemove, fadedCardNames, onToggleFaded, suggestions, expandedSuggestion, onToggleSuggestion }) {
     const count = cards.length;
     const fadedSet = useMemo(() => new Set(fadedCardNames || []), [fadedCardNames]);
     const availableCount = cards.filter(c => !fadedSet.has(c.name)).length;
+
+    // Build suggestion lookup: card_name -> { rank_number, rationale }
+    const suggestionMap = useMemo(() => {
+        const map = {};
+        if (suggestions) {
+            suggestions.forEach(s => { map[s.card_name] = s; });
+        }
+        return map;
+    }, [suggestions]);
 
     const sortOption = SORT_OPTIONS.find(s => s.key === sortKey) || SORT_OPTIONS[0];
     const sortedCards = useMemo(() => {
@@ -374,6 +384,8 @@ function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSele
                 {sortedCards.map(card => {
                     const isSelected = card.name === selectedCardName;
                     const isFaded = fadedSet.has(card.name);
+                    const suggestion = suggestionMap[card.name];
+                    const isExpanded = expandedSuggestion === card.name;
                     const handleClick = () => {
                         if (onToggleFaded) {
                             onToggleFaded(card.name);
@@ -382,39 +394,54 @@ function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSele
                         }
                     };
                     return (
-                        <div
-                            key={card.name}
-                            className={`card-row${isSelected ? ' selected' : ''}${isFaded ? ' faded' : ''}`}
-                            onClick={handleClick}
-                        >
-                            <span className="card-name">{card.name}</span>
-                            <TagPills tags={card.tags} />
-                            <div className="card-stat">
-                                <div className="card-stat-label">Rank</div>
-                                <div>#{card.rank}</div>
+                        <React.Fragment key={card.name}>
+                            <div
+                                className={`card-row${isSelected ? ' selected' : ''}${isFaded ? ' faded' : ''}${suggestion ? ' has-suggestion' : ''}`}
+                                onClick={handleClick}
+                            >
+                                {suggestion && (
+                                    <span
+                                        className="ai-suggestion-pill"
+                                        title="AI suggestion — click for rationale"
+                                        onClick={(e) => { e.stopPropagation(); onToggleSuggestion && onToggleSuggestion(card.name); }}
+                                    >
+                                        {suggestion.rank_number}
+                                    </span>
+                                )}
+                                <span className="card-name">{card.name}</span>
+                                <TagPills tags={card.tags} />
+                                <div className="card-stat">
+                                    <div className="card-stat-label">Rank</div>
+                                    <div>#{card.rank}</div>
+                                </div>
+                                <div className="card-stat">
+                                    <div className="card-stat-label">ADP</div>
+                                    <div>{card.adp}</div>
+                                </div>
+                                <div className="card-stat">
+                                    <div className="card-stat-label">Elo/Play</div>
+                                    <div>{card.elo_per_play || '—'}</div>
+                                </div>
+                                <div className="card-stat">
+                                    <div className="card-stat-label">Value</div>
+                                    <div>{card.value ? parseFloat(card.value).toFixed(1) : '—'}</div>
+                                </div>
+                                {showRemove && (
+                                    <button
+                                        className="remove-btn"
+                                        onClick={(e) => { e.stopPropagation(); onRemoveCard(card.name); }}
+                                        title="Remove card"
+                                    >
+                                        ✕
+                                    </button>
+                                )}
                             </div>
-                            <div className="card-stat">
-                                <div className="card-stat-label">ADP</div>
-                                <div>{card.adp}</div>
-                            </div>
-                            <div className="card-stat">
-                                <div className="card-stat-label">Elo/Play</div>
-                                <div>{card.elo_per_play || '—'}</div>
-                            </div>
-                            <div className="card-stat">
-                                <div className="card-stat-label">Value</div>
-                                <div>{card.value ? parseFloat(card.value).toFixed(1) : '—'}</div>
-                            </div>
-                            {showRemove && (
-                                <button
-                                    className="remove-btn"
-                                    onClick={(e) => { e.stopPropagation(); onRemoveCard(card.name); }}
-                                    title="Remove card"
-                                >
-                                    ✕
-                                </button>
+                            {suggestion && isExpanded && (
+                                <div className="ai-rationale">
+                                    {suggestion.rationale}
+                                </div>
                             )}
-                        </div>
+                        </React.Fragment>
                     );
                 })}
             </div>
@@ -550,6 +577,111 @@ function PriorHands({ hands, draftedCards, cardMap, currentRound, othersDrafted,
 }
 
 // ─── YourHand Component ─────────────────────────────────────────────
+// ─── FarmGrid Component ─────────────────────────────────────────────
+const FARM_STATES = ['', 'H', 'F', 'P'];
+const LOCKED_CELLS = [5, 10]; // row 1 col 0 and row 2 col 0 (zero-indexed, row-major)
+
+function FarmGrid({ grid, onCellClick }) {
+    return (
+        <div className="farm-grid-section">
+            <div className="strategy-section-label">Farm Layout</div>
+            <div className="farm-grid">
+                {grid.map((state, i) => {
+                    const isLocked = LOCKED_CELLS.includes(i);
+                    return (
+                        <div
+                            key={i}
+                            className={`farm-cell${isLocked ? ' locked' : ''}`}
+                            data-state={state}
+                            onClick={() => !isLocked && onCellClick(i)}
+                        >
+                            {state || ''}
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
+    );
+}
+
+// ─── StrategyDashboard Component ────────────────────────────────────
+function StrategyDashboard({ strategyResult, strategyLoading, strategyError, strategyAvailable, farmGrid, onFarmCellClick, strategyNotes, onNotesChange, onGetAdvice, onDismissError }) {
+    const dims = strategyResult?.dimensions;
+
+    const renderDimension = (label, key) => {
+        const value = dims?.[key];
+        const cls = value ? value.replace(/ /g, '_') : 'placeholder';
+        const display = value ? value.replace(/_/g, ' ') : '—';
+        return (
+            <div className="dimension-row">
+                <span className="dimension-label">{label}</span>
+                <span className={`dimension-value ${cls}`}>{display}</span>
+            </div>
+        );
+    };
+
+    return (
+        <div className="strategy-dashboard">
+            <div className="strategy-dashboard-title">Strategy</div>
+
+            {/* Overall Analysis */}
+            <div className="strategy-section-label">Analysis</div>
+            <div className={`strategy-analysis${strategyResult?.overall_analysis ? ' has-content' : ''}`}>
+                {strategyLoading ? 'Analyzing your draft...' : (strategyResult?.overall_analysis || 'Click "Get AI Advice" to analyze your draft.')}
+            </div>
+
+            {/* Dimensions */}
+            <div className="dimension-section">
+                {renderDimension('Food', 'food')}
+                {renderDimension('Growth', 'growth')}
+                {renderDimension('Extra Actions', 'extra_actions')}
+                {renderDimension('Point Ceiling', 'point_ceiling')}
+                {renderDimension('Plow', 'plow')}
+            </div>
+
+            <hr className="strategy-divider" />
+
+            {/* Farm Grid */}
+            <FarmGrid grid={farmGrid} onCellClick={onFarmCellClick} />
+
+            {/* Notes */}
+            <div className="strategy-section-label">Notes</div>
+            <textarea
+                className="strategy-notes"
+                rows={4}
+                placeholder="Jot down strategy notes..."
+                value={strategyNotes}
+                onChange={(e) => onNotesChange(e.target.value)}
+            />
+
+            <hr className="strategy-divider" />
+
+            {/* Risks */}
+            <div className="strategy-section-label">Risks</div>
+            <div className={`strategy-risks${strategyResult?.risks ? ' has-content' : ''}`}>
+                {strategyResult?.risks || 'No risks identified yet.'}
+            </div>
+
+            {/* Error banner */}
+            {strategyError && (
+                <div className="screenshot-banner screenshot-error" style={{ marginBottom: 12 }}>
+                    <span>{strategyError}</span>
+                    <button className="screenshot-dismiss" onClick={onDismissError}>✕</button>
+                </div>
+            )}
+
+            {/* Get AI Advice button */}
+            <button
+                className={`strategy-btn${strategyLoading ? ' loading' : ''}`}
+                disabled={!strategyAvailable || strategyLoading}
+                onClick={onGetAdvice}
+            >
+                {strategyLoading ? 'Analyzing...' : (strategyAvailable ? 'Get AI Advice' : 'AI Advice (unavailable)')}
+            </button>
+        </div>
+    );
+}
+
 function YourHand({ draftedCards, cardMap, onCardClick }) {
     const allDrafted = [];
     Object.entries(draftedCards).forEach(([round, picks]) => {
@@ -871,6 +1003,38 @@ function DraftApp() {
         }
     }, []);
 
+    // Check strategy endpoint availability on mount
+    useEffect(() => {
+        if (typeof strategyAdvisor !== 'undefined' && strategyAdvisor.checkAvailability) {
+            strategyAdvisor.checkAvailability().then(setStrategyAvailable);
+        }
+    }, []);
+
+    // Strategy dashboard state
+    const INITIAL_FARM_GRID = () => {
+        const grid = Array(15).fill('');
+        grid[5] = 'H';   // row 1, col 0 (locked)
+        grid[10] = 'H';  // row 2, col 0 (locked)
+        return grid;
+    };
+    const [farmGrid, setFarmGrid] = useState(INITIAL_FARM_GRID);
+    const [strategyNotes, setStrategyNotes] = useState('');
+    const [strategyAvailable, setStrategyAvailable] = useState(false);
+    const [strategyResult, setStrategyResult] = useState(null);
+    const [strategyLoading, setStrategyLoading] = useState(false);
+    const [strategyError, setStrategyError] = useState(null);
+    const [expandedSuggestion, setExpandedSuggestion] = useState(null);
+
+    const handleFarmCellClick = useCallback((index) => {
+        setFarmGrid(prev => {
+            const next = [...prev];
+            const current = next[index];
+            const stateIndex = FARM_STATES.indexOf(current);
+            next[index] = FARM_STATES[(stateIndex + 1) % FARM_STATES.length];
+            return next;
+        });
+    }, []);
+
     // Popover state for card detail
     const [popoverCard, setPopoverCard] = useState(null);
     const [popoverAnchor, setPopoverAnchor] = useState(null);
@@ -924,6 +1088,14 @@ function DraftApp() {
                         });
                     }
                     setDraftedCards(restoredDrafted);
+
+                    // Restore farm grid and notes
+                    if (saved.farmGrid && Array.isArray(saved.farmGrid) && saved.farmGrid.length === 15) {
+                        setFarmGrid(saved.farmGrid);
+                    }
+                    if (saved.strategyNotes) {
+                        setStrategyNotes(saved.strategyNotes);
+                    }
                 }
                 setRestoredFromStorage(true);
                 setLoading(false);
@@ -950,8 +1122,10 @@ function DraftApp() {
             sortKey,
             markingPhase,
             othersDrafted,
+            farmGrid,
+            strategyNotes,
         });
-    }, [restoredFromStorage, currentRound, draftStarted, currentHandNames, hands, draftedCards, sortKey, markingPhase, othersDrafted]);
+    }, [restoredFromStorage, currentRound, draftStarted, currentHandNames, hands, draftedCards, sortKey, markingPhase, othersDrafted, farmGrid, strategyNotes]);
 
     // Random icon for title
     const [titleIcon] = useState(() => {
@@ -1034,6 +1208,10 @@ function DraftApp() {
         setSortKey('rank');
         setMarkingPhase(false);
         setOthersDrafted([]);
+        setFarmGrid(INITIAL_FARM_GRID());
+        setStrategyNotes('');
+        setStrategyResult(null);
+        setStrategyError(null);
         setDraftStarted(true);
     };
 
@@ -1048,6 +1226,10 @@ function DraftApp() {
         setSortKey('rank');
         setMarkingPhase(false);
         setOthersDrafted([]);
+        setFarmGrid(INITIAL_FARM_GRID());
+        setStrategyNotes('');
+        setStrategyResult(null);
+        setStrategyError(null);
         setDraftStarted(false);
         clearSavedState();
     };
@@ -1094,7 +1276,7 @@ function DraftApp() {
 
         try {
             if (typeof screenshotOCR === 'undefined') {
-                throw new Error('Screenshot processing not available. OCR module not loaded.');
+                throw new Error('Screenshot feature is not available.');
             }
 
             const result = await screenshotOCR.processImage(imageBlob, cards, cardMap, currentHandNames, allUsedCardNames, currentRound);
@@ -1113,17 +1295,52 @@ function DraftApp() {
             });
         } catch (err) {
             console.error('Screenshot processing error:', err);
-            if (err.message.includes('429') || err.message.includes('rate limit')) {
-                setScreenshotError('Too many requests. Try again in a few minutes.');
-            } else if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+            if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
                 setScreenshotError('Could not reach the server. Check your connection.');
             } else {
-                setScreenshotError(err.message || 'Screenshot processing failed.');
+                setScreenshotError(err.message || 'Screenshot processing failed. Please try again.');
             }
         } finally {
             setScreenshotProcessing(false);
         }
     }, [screenshotProcessing, cards, cardMap, currentHandNames, allUsedCardNames, currentRound, handleAddCards]);
+
+    // Strategy advisor handler
+    const handleGetAdvice = useCallback(async () => {
+        if (strategyLoading) return;
+        setStrategyLoading(true);
+        setStrategyError(null);
+
+        try {
+            // Gather all drafted card names
+            const draftedNames = [];
+            Object.values(draftedCards).forEach(picks => {
+                if (picks.occupation) draftedNames.push(picks.occupation);
+                if (picks.minor) draftedNames.push(picks.minor);
+            });
+
+            const result = await strategyAdvisor.getAdvice(
+                currentHandNames,
+                draftedNames,
+                othersDrafted,
+                currentRound
+            );
+            setStrategyResult(result);
+        } catch (err) {
+            console.error('Strategy advice error:', err);
+            if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+                setStrategyError('Could not reach the server. Check your connection.');
+            } else {
+                setStrategyError(err.message || 'Could not get strategy advice. Please try again.');
+            }
+        } finally {
+            setStrategyLoading(false);
+        }
+    }, [strategyLoading, currentHandNames, draftedCards, othersDrafted, currentRound]);
+
+    const handleToggleSuggestion = useCallback((cardName) => {
+        setExpandedSuggestion(prev => prev === cardName ? null : cardName);
+    }, []);
 
     const handleSelectOccupation = useCallback((cardName) => {
         if (othersDraftedSet.has(cardName)) return;
@@ -1324,30 +1541,56 @@ function DraftApp() {
                             </div>
 
                             <div className="hand-columns">
-                                <HandColumn
-                                    title="Occupations"
-                                    cards={occupations}
-                                    expectedCount={expectedHandSize}
-                                    sortKey={sortKey}
-                                    onRemoveCard={handleRemoveCard}
-                                    onSelectCard={(!markingPhase && handIsFull) ? handleSelectOccupation : null}
-                                    selectedCardName={!markingPhase ? selectedOccupation : null}
-                                    showRemove={!isReturningRound && !handIsFull}
-                                    fadedCardNames={isReturningRound ? othersDrafted : null}
-                                    onToggleFaded={markingPhase ? handleToggleFaded : null}
-                                />
-                                <HandColumn
-                                    title="Minor Improvements"
-                                    cards={minors}
-                                    expectedCount={expectedHandSize}
-                                    sortKey={sortKey}
-                                    onRemoveCard={handleRemoveCard}
-                                    onSelectCard={(!markingPhase && handIsFull) ? handleSelectMinor : null}
-                                    selectedCardName={!markingPhase ? selectedMinor : null}
-                                    showRemove={!isReturningRound && !handIsFull}
-                                    fadedCardNames={isReturningRound ? othersDrafted : null}
-                                    onToggleFaded={markingPhase ? handleToggleFaded : null}
-                                />
+                                {(() => {
+                                    // Show suggestions only during selection phase
+                                    const showSuggestions = handIsFull && !markingPhase && strategyResult?.suggestions;
+                                    const occSuggestions = showSuggestions
+                                        ? strategyResult.suggestions.filter(s => {
+                                            const card = cardMap[s.card_name];
+                                            return card && card.type === 'Occupation';
+                                        })
+                                        : null;
+                                    const minSuggestions = showSuggestions
+                                        ? strategyResult.suggestions.filter(s => {
+                                            const card = cardMap[s.card_name];
+                                            return card && card.type === 'Minor Improvement';
+                                        })
+                                        : null;
+                                    return (
+                                        <>
+                                            <HandColumn
+                                                title="Occupations"
+                                                cards={occupations}
+                                                expectedCount={expectedHandSize}
+                                                sortKey={sortKey}
+                                                onRemoveCard={handleRemoveCard}
+                                                onSelectCard={(!markingPhase && handIsFull) ? handleSelectOccupation : null}
+                                                selectedCardName={!markingPhase ? selectedOccupation : null}
+                                                showRemove={!isReturningRound && !handIsFull}
+                                                fadedCardNames={isReturningRound ? othersDrafted : null}
+                                                onToggleFaded={markingPhase ? handleToggleFaded : null}
+                                                suggestions={occSuggestions}
+                                                expandedSuggestion={expandedSuggestion}
+                                                onToggleSuggestion={handleToggleSuggestion}
+                                            />
+                                            <HandColumn
+                                                title="Minor Improvements"
+                                                cards={minors}
+                                                expectedCount={expectedHandSize}
+                                                sortKey={sortKey}
+                                                onRemoveCard={handleRemoveCard}
+                                                onSelectCard={(!markingPhase && handIsFull) ? handleSelectMinor : null}
+                                                selectedCardName={!markingPhase ? selectedMinor : null}
+                                                showRemove={!isReturningRound && !handIsFull}
+                                                fadedCardNames={isReturningRound ? othersDrafted : null}
+                                                onToggleFaded={markingPhase ? handleToggleFaded : null}
+                                                suggestions={minSuggestions}
+                                                expandedSuggestion={expandedSuggestion}
+                                                onToggleSuggestion={handleToggleSuggestion}
+                                            />
+                                        </>
+                                    );
+                                })()}
                             </div>
 
                             {/* Draft action buttons */}
@@ -1384,8 +1627,22 @@ function DraftApp() {
                             )}
                         </div>
 
-                        {/* Your Hand (drafted so far) */}
-                        <YourHand draftedCards={draftedCards} cardMap={cardMap} onCardClick={handleMiniCardClick} />
+                        {/* Your Hand + Strategy Dashboard */}
+                        <div className="strategy-layout">
+                            <YourHand draftedCards={draftedCards} cardMap={cardMap} onCardClick={handleMiniCardClick} />
+                            <StrategyDashboard
+                                strategyResult={strategyResult}
+                                strategyLoading={strategyLoading}
+                                strategyError={strategyError}
+                                strategyAvailable={strategyAvailable}
+                                farmGrid={farmGrid}
+                                onFarmCellClick={handleFarmCellClick}
+                                strategyNotes={strategyNotes}
+                                onNotesChange={setStrategyNotes}
+                                onGetAdvice={handleGetAdvice}
+                                onDismissError={() => setStrategyError(null)}
+                            />
+                        </div>
                     </>
                 )}
             </div>

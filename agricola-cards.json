@@ -144,9 +144,7 @@
     "vps": "2",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Lesson"
-    ]
+    "tags": []
   },
   {
     "name": "Brewery Pond",
@@ -312,9 +310,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Stone House"
-    ]
+    "tags": []
   },
   {
     "name": "Furnisher",
@@ -352,9 +348,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Pavior",
@@ -390,9 +384,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Milking Stool",
@@ -410,9 +402,7 @@
     "vps": "",
     "prerequisites": "2 Occupations",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Bookcase",
@@ -563,9 +553,7 @@
     "vps": "1",
     "prerequisites": "2 Occupations",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Cow Prince",
@@ -583,9 +571,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Ash Trees",
@@ -717,9 +703,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Major/Minor"
-    ]
+    "tags": []
   },
   {
     "name": "Claypit Owner",
@@ -893,7 +877,6 @@
     "prerequisites": "1 Cattle",
     "passing": false,
     "tags": [
-      "Animal",
       "Sow"
     ]
   },
@@ -1143,9 +1126,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Seed Almanac",
@@ -1347,9 +1328,7 @@
     "vps": "1",
     "prerequisites": "3 Occupations",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Lord of the Manor",
@@ -1457,9 +1436,7 @@
     "vps": "1",
     "prerequisites": "1 Sheep",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Breed Registry",
@@ -1477,9 +1454,7 @@
     "vps": "",
     "prerequisites": "No Sheep",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Feed Pellets",
@@ -1497,9 +1472,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Market Master",
@@ -1633,7 +1606,6 @@
     "prerequisites": "",
     "passing": false,
     "tags": [
-      "Major/Minor",
       "Stable"
     ]
   },
@@ -1784,9 +1756,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Hauberg",
@@ -1878,9 +1848,7 @@
     "vps": "",
     "prerequisites": "4 Occupations",
     "passing": false,
-    "tags": [
-      "Sow"
-    ]
+    "tags": []
   },
   {
     "name": "Carpenter's Parlor",
@@ -2165,9 +2133,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Roof Ladder",
@@ -2224,7 +2190,6 @@
     "prerequisites": "",
     "passing": false,
     "tags": [
-      "Animal",
       "Stable"
     ]
   },
@@ -2392,9 +2357,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Beer Table",
@@ -2616,7 +2579,6 @@
     "prerequisites": "",
     "passing": false,
     "tags": [
-      "Animal",
       "Lesson"
     ]
   },
@@ -2672,9 +2634,7 @@
     "vps": "1",
     "prerequisites": "1 Occupation",
     "passing": false,
-    "tags": [
-      "Sow"
-    ]
+    "tags": []
   },
   {
     "name": "Treegardener",
@@ -2967,9 +2927,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Shifting Cultivation",
@@ -3211,9 +3169,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Major/Minor"
-    ]
+    "tags": []
   },
   {
     "name": "Muddy Puddles",
@@ -3473,9 +3429,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Wage",
@@ -3513,9 +3467,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Trowel",
@@ -3572,8 +3524,6 @@
     "prerequisites": "",
     "passing": false,
     "tags": [
-      "Day Laborer",
-      "Grain",
       "Stable"
     ]
   },
@@ -3707,9 +3657,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Forest Stone",
@@ -3763,9 +3711,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Ranch Provost",
@@ -3819,9 +3765,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Sow"
-    ]
+    "tags": []
   },
   {
     "name": "Maintenance Premium",
@@ -3875,9 +3819,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Stable"
-    ]
+    "tags": []
   },
   {
     "name": "Hutch",
@@ -3931,9 +3873,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Major/Minor"
-    ]
+    "tags": []
   },
   {
     "name": "Stockyard",
@@ -3970,7 +3910,6 @@
     "prerequisites": "",
     "passing": false,
     "tags": [
-      "Animal",
       "Stable"
     ]
   },
@@ -3990,9 +3929,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Cubbyhole",
@@ -4046,9 +3983,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Major/Minor"
-    ]
+    "tags": []
   },
   {
     "name": "Stone Sculptor",
@@ -4286,9 +4221,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Butter Churn",
@@ -4306,9 +4239,7 @@
     "vps": "1",
     "prerequisites": "At Most 3 Occupations",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Trident",
@@ -4564,9 +4495,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Major/Minor"
-    ]
+    "tags": []
   },
   {
     "name": "Mud Wallower",
@@ -4867,7 +4796,6 @@
     "prerequisites": "",
     "passing": false,
     "tags": [
-      "Animal",
       "Day Laborer"
     ]
   },
@@ -5001,10 +4929,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal",
-      "Big House"
-    ]
+    "tags": []
   },
   {
     "name": "Bunk Beds",
@@ -5130,9 +5055,7 @@
     "vps": "1",
     "prerequisites": "4 Sheep",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Hammer Crusher",
@@ -5433,9 +5356,7 @@
     "vps": "1",
     "prerequisites": "1 Occupation",
     "passing": false,
-    "tags": [
-      "Stone House"
-    ]
+    "tags": []
   },
   {
     "name": "Diligent Farmer",
@@ -5769,9 +5690,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Fruit Ladder",
@@ -6069,9 +5988,7 @@
     "vps": "",
     "prerequisites": "1 Empty and 2 Planted Fields",
     "passing": true,
-    "tags": [
-      "Sow"
-    ]
+    "tags": []
   },
   {
     "name": "Small Greenhouse",
@@ -6501,9 +6418,7 @@
     "vps": "",
     "prerequisites": "3 Occupations",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Debt Security",
@@ -6578,7 +6493,6 @@
     "prerequisites": "",
     "passing": false,
     "tags": [
-      "Animal",
       "Stable"
     ]
   },
@@ -7043,9 +6957,7 @@
     "vps": "2",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Forest Lake Hut",
@@ -7177,9 +7089,7 @@
     "vps": "1",
     "prerequisites": "2 Occupations",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Equipper",
@@ -7422,9 +7332,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Housebook Master",
@@ -7502,9 +7410,7 @@
     "vps": "1",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Stork's Nest",
@@ -7576,9 +7482,7 @@
     "vps": "",
     "prerequisites": "3 Occupations",
     "passing": false,
-    "tags": [
-      "Stone House"
-    ]
+    "tags": []
   },
   {
     "name": "Firewood Collector",
@@ -7735,7 +7639,6 @@
     "prerequisites": "",
     "passing": false,
     "tags": [
-      "Animal",
       "Day Laborer"
     ]
   },
@@ -7889,7 +7792,6 @@
     "prerequisites": "",
     "passing": false,
     "tags": [
-      "Animal",
       "Day Laborer"
     ]
   },
@@ -8172,9 +8074,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Shovel Bearer",
@@ -8210,9 +8110,7 @@
     "vps": "2",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Godmother",
@@ -8735,9 +8633,7 @@
     "vps": "1",
     "prerequisites": "At Least 4 Unused Farmyard Spaces",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Lasso",
@@ -8755,9 +8651,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Lieutenant General",
@@ -8885,9 +8779,7 @@
     "vps": "0",
     "prerequisites": "2 Occupations",
     "passing": false,
-    "tags": [
-      "Sow"
-    ]
+    "tags": []
   },
   {
     "name": "Clay Kneader",
@@ -8926,7 +8818,6 @@
     "prerequisites": "",
     "passing": false,
     "tags": [
-      "Animal",
       "Stable"
     ]
   },
@@ -9134,9 +9025,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Wood Pile",
@@ -9308,9 +9197,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Sow"
-    ]
+    "tags": []
   },
   {
     "name": "Greengrocer",
@@ -9329,7 +9216,6 @@
     "prerequisites": "",
     "passing": false,
     "tags": [
-      "Animal",
       "Grain"
     ]
   },
@@ -9496,7 +9382,6 @@
     "prerequisites": "",
     "passing": false,
     "tags": [
-      "Animal",
       "Stable"
     ]
   },
@@ -9760,9 +9645,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": true,
-    "tags": [
-      "Sow"
-    ]
+    "tags": []
   },
   {
     "name": "Journeyman Bricklayer",
@@ -9819,7 +9702,6 @@
     "prerequisites": "",
     "passing": false,
     "tags": [
-      "Animal",
       "Fishing",
       "Traveling Players"
     ]
@@ -9876,9 +9758,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Vegetable Slicer",
@@ -10087,9 +9967,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Grain Sieve",
@@ -10486,9 +10364,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Sow"
-    ]
+    "tags": []
   },
   {
     "name": "Mandoline",
@@ -10542,9 +10418,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Millwright",
@@ -10710,9 +10584,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Grain"
-    ]
+    "tags": []
   },
   {
     "name": "Reader",
@@ -10731,7 +10603,6 @@
     "prerequisites": "",
     "passing": false,
     "tags": [
-      "Big House",
       "Lesson"
     ]
   },
@@ -10789,10 +10660,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Major/Minor",
-      "Stable"
-    ]
+    "tags": []
   },
   {
     "name": "Old Miser",
@@ -10954,10 +10822,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal",
-      "Stable"
-    ]
+    "tags": []
   },
   {
     "name": "Woolgrower",
@@ -10975,9 +10840,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Stablehand",
@@ -11053,9 +10916,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Potato Ridger",
@@ -11091,9 +10952,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Major/Minor"
-    ]
+    "tags": []
   },
   {
     "name": "Forest School",
@@ -11131,9 +10990,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Lesson"
-    ]
+    "tags": []
   },
   {
     "name": "Petting Zoo",
@@ -11320,9 +11177,7 @@
     "vps": "1",
     "prerequisites": "3 Stables and 3 Pastures",
     "passing": false,
-    "tags": [
-      "Stable"
-    ]
+    "tags": []
   },
   {
     "name": "Flax Farmer",
@@ -11378,9 +11233,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Feedyard",
@@ -11398,9 +11251,7 @@
     "vps": "1",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Misanthropy",
@@ -12016,7 +11867,6 @@
     "prerequisites": "",
     "passing": false,
     "tags": [
-      "Animal",
       "Grain"
     ]
   },
@@ -12198,9 +12048,7 @@
     "vps": "-3",
     "prerequisites": "1 Pasture",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Animal Tamer's Apprentice",
@@ -12218,9 +12066,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Livestock Expert",
@@ -12238,9 +12084,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Prodigy",
@@ -12258,9 +12102,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Lesson"
-    ]
+    "tags": []
   },
   {
     "name": "Stable Manure",
@@ -12334,9 +12176,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Lesson"
-    ]
+    "tags": []
   },
   {
     "name": "Earthenware Potter",
@@ -12538,9 +12378,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Knapper",
@@ -12576,9 +12414,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Game Provider",
@@ -12652,9 +12488,7 @@
     "vps": "1",
     "prerequisites": "1 Fenced Stable",
     "passing": false,
-    "tags": [
-      "Stable"
-    ]
+    "tags": []
   },
   {
     "name": "Ox Skull",
@@ -12711,7 +12545,6 @@
     "prerequisites": "",
     "passing": false,
     "tags": [
-      "Grain",
       "Sow"
     ]
   },
@@ -12865,9 +12698,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Craftsmanship Promoter",
@@ -12885,9 +12716,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Major/Minor"
-    ]
+    "tags": []
   },
   {
     "name": "Pan Baker",
@@ -12959,9 +12788,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Sheep Whisperer",
@@ -12979,9 +12806,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Food Merchant",
@@ -13093,9 +12918,7 @@
     "vps": "",
     "prerequisites": "2 Fields",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Abort Oriel",
@@ -13555,7 +13378,6 @@
     "prerequisites": "",
     "passing": false,
     "tags": [
-      "Animal",
       "Stable"
     ]
   },
@@ -13686,9 +13508,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Cookery Outfitter",
@@ -13743,8 +13563,7 @@
     "prerequisites": "",
     "passing": false,
     "tags": [
-      "Fishing",
-      "Grain"
+      "Fishing"
     ]
   },
   {
@@ -13891,9 +13710,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Sculpture",
@@ -14005,9 +13822,7 @@
     "vps": "",
     "prerequisites": "Exactly 1 Pasture",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Mummy's Boy",
@@ -14063,9 +13878,7 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Heart of Stone",
@@ -14157,9 +13970,7 @@
     "vps": "",
     "prerequisites": "Both Fireplace and Cooking Hearth",
     "passing": false,
-    "tags": [
-      "Major/Minor"
-    ]
+    "tags": []
   },
   {
     "name": "Blackberry Farmer",
@@ -14544,7 +14355,6 @@
     "prerequisites": "",
     "passing": false,
     "tags": [
-      "Animal",
       "Big House",
       "Stable"
     ]
@@ -14565,9 +14375,7 @@
     "vps": "",
     "prerequisites": "2 Occupations",
     "passing": false,
-    "tags": [
-      "Animal"
-    ]
+    "tags": []
   },
   {
     "name": "Loudmouth",

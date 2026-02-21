@@ -954,4 +954,241 @@ body {
         width: 100%;
         max-width: 200px;
     }
+
+    .strategy-layout {
+        flex-direction: column;
+    }
+
+    .strategy-dashboard {
+        min-width: unset;
+    }
+}
+
+/* ─── Strategy Dashboard ─────────────────────────────────────────── */
+.strategy-layout {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.strategy-layout > .your-hand-section {
+    flex: 2;
+    min-width: 0;
+    margin-bottom: 0;
+}
+
+.strategy-dashboard {
+    flex: 1;
+    min-width: 280px;
+    max-width: 360px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    padding: 20px 22px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.strategy-dashboard-title {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 14px;
+}
+
+/* Dimensions */
+.dimension-section {
+    margin-bottom: 16px;
+}
+
+.dimension-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 0;
+    font-size: 0.85em;
+}
+
+.dimension-label {
+    color: #555;
+    font-weight: 600;
+}
+
+.dimension-value {
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.dimension-value.weak, .dimension-value.low, .dimension-value.not_covered {
+    color: #c0392b;
+}
+
+.dimension-value.adequate, .dimension-value.medium {
+    color: #d4a017;
+}
+
+.dimension-value.strong, .dimension-value.high, .dimension-value.covered {
+    color: #27ae60;
+}
+
+.dimension-value.placeholder {
+    color: #bbb;
+    font-weight: 400;
+}
+
+/* Overall Analysis and Risks */
+.strategy-analysis, .strategy-risks {
+    font-size: 0.83em;
+    color: #444;
+    line-height: 1.5;
+    margin-bottom: 14px;
+    padding: 8px 10px;
+    background: #f8f8f8;
+    border-radius: 8px;
+    border-left: 3px solid #ddd;
+}
+
+.strategy-analysis.has-content { border-left-color: #8B6914; }
+.strategy-risks.has-content { border-left-color: #c0392b; }
+
+.strategy-section-label {
+    font-size: 0.75em;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+}
+
+/* Farm Grid */
+.farm-grid-section {
+    margin-bottom: 14px;
+}
+
+.farm-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 3px;
+    max-width: 220px;
+}
+
+.farm-cell {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f0ebe0;
+    border: 1px solid #d4c9a8;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 700;
+    color: #888;
+    user-select: none;
+    transition: background 0.1s;
+}
+
+.farm-cell:hover { background: #e8e0cf; }
+.farm-cell.locked { cursor: default; background: #e8dcc4; }
+.farm-cell.locked:hover { background: #e8dcc4; }
+
+.farm-cell[data-state="H"] { color: #e67e22; }
+.farm-cell[data-state="F"] { color: #27ae60; }
+.farm-cell[data-state="P"] { color: #8B6914; }
+
+/* Notes */
+.strategy-notes {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 0.82em;
+    font-family: inherit;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: none;
+    line-height: 1.4;
+    color: #333;
+    background: #fafafa;
+    margin-bottom: 14px;
+}
+
+.strategy-notes:focus {
+    outline: none;
+    border-color: #8B6914;
+}
+
+.strategy-notes::placeholder {
+    color: #bbb;
+}
+
+/* Get AI Advice button */
+.strategy-btn {
+    width: 100%;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #8B6914;
+    color: white;
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.strategy-btn:hover { background: #73570f; }
+.strategy-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.strategy-btn.loading {
+    background: #a07d1c;
+    cursor: wait;
+}
+
+.strategy-divider {
+    border: none;
+    border-top: 1px solid #e8e0cf;
+    margin: 12px 0;
+}
+
+/* ─── AI Suggestion Pills ────────────────────────────────────────── */
+.ai-suggestion-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #2980b9;
+    color: white;
+    font-size: 0.7em;
+    font-weight: 700;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+}
+
+.ai-suggestion-pill:hover {
+    background: #1a6da0;
+    transform: scale(1.15);
+}
+
+.card-row.has-suggestion {
+    border-left: 3px solid #2980b9;
+}
+
+.ai-rationale {
+    font-size: 0.82em;
+    color: #444;
+    line-height: 1.45;
+    padding: 8px 12px 8px 36px;
+    background: #eaf2f8;
+    border-left: 3px solid #2980b9;
+    border-radius: 0 0 6px 6px;
+    margin-top: -2px;
+    margin-bottom: 4px;
+    animation: rationaleSlideIn 0.15s ease-out;
+}
+
+@keyframes rationaleSlideIn {
+    from { opacity: 0; max-height: 0; padding-top: 0; padding-bottom: 0; }
+    to { opacity: 1; max-height: 100px; }
 }
