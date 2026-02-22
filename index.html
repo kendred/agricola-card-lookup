@@ -1280,8 +1280,8 @@ h1 {
         </div>
     </div>
     
-    <script src="card-image-list.js"></script>
-    <script src="tag-definitions.js"></script>
+    <script src="js/card-image-list.js"></script>
+    <script src="js/tag-definitions.js"></script>
     <script>
 // Load card data from JSON (single source of truth — includes tags)
 let cards = [];
@@ -1897,7 +1897,7 @@ function displayCard(card) {
 } // end initApp
 
 // Fetch card data and initialize
-fetch('agricola-cards.json')
+fetch('data/agricola-cards.json')
     .then(res => res.json())
     .then(data => { cards = data; initApp(); })
     .catch(err => {

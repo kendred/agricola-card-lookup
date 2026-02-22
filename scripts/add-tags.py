@@ -2,6 +2,11 @@
 """Add strategy tags to agricola-cards.json based on reviewed assignments."""
 
 import json
+import os
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.join(SCRIPT_DIR, '..')
+CARDS_JSON = os.path.join(ROOT_DIR, 'data', 'agricola-cards.json')
 
 # Tag assignments: card name -> list of tags
 # Built from the analysis, with user review applied:
@@ -370,7 +375,7 @@ TAG_MAP = {
 
 
 def main():
-    with open('/Users/rileyoneill/Documents/agricola-card-lookup/agricola-cards.json', 'r') as f:
+    with open(CARDS_JSON, 'r') as f:
         cards = json.load(f)
 
     # Build a merged tag map: some cards appear in multiple tag sections,
@@ -403,7 +408,7 @@ def main():
         if name not in card_names_in_json:
             not_found.append(name)
 
-    with open('/Users/rileyoneill/Documents/agricola-card-lookup/agricola-cards.json', 'w') as f:
+    with open(CARDS_JSON, 'w') as f:
         json.dump(cards, f, indent=2, ensure_ascii=False)
 
     # Stats

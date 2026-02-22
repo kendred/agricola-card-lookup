@@ -9,8 +9,10 @@ import os
 import unicodedata
 from difflib import SequenceMatcher
 
-CARDS_JSON = "/Users/rileyoneill/Documents/agricola-card-lookup/agricola-cards.json"
-IMAGES_DIR = "/Users/rileyoneill/Documents/agricola-card-lookup/card-images/"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.join(SCRIPT_DIR, '..')
+CARDS_JSON = os.path.join(ROOT_DIR, 'data', 'agricola-cards.json')
+IMAGES_DIR = os.path.join(ROOT_DIR, 'card-images') + '/'
 
 
 def normalize(name: str) -> str:

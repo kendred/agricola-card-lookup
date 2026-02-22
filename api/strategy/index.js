@@ -7,7 +7,7 @@ const fs = require('fs');
 
 // --- Load card database at module level (cold start only) ---
 const CARDS = JSON.parse(
-    fs.readFileSync(path.join(__dirname, '..', '..', 'agricola-cards.json'), 'utf8')
+    fs.readFileSync(path.join(__dirname, '..', '..', 'data', 'agricola-cards.json'), 'utf8')
 );
 const CARD_MAP = {};
 CARDS.forEach(card => { CARD_MAP[card.name] = card; });
@@ -37,7 +37,7 @@ function isRateLimited(ip) {
 
 // --- Strategy guide (embedded verbatim) ---
 const STRATEGY_GUIDE = fs.readFileSync(
-    path.join(__dirname, '..', '..', 'Feature specs', 'agricola-strategy-guide.md'), 'utf8'
+    path.join(__dirname, '..', '..', 'docs', 'agricola-strategy-guide.md'), 'utf8'
 );
 
 // --- System prompt (static — enables Azure OpenAI prompt caching) ---

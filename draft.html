@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="Icons/Grain.webp">
     <title>Agricola Draft Tool</title>
-    <link rel="stylesheet" href="draft.css">
+    <link rel="stylesheet" href="css/draft.css?v=3">
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="card-image-list.js"></script>
-    <script src="tag-definitions.js"></script>
-    <script src="screenshot-ocr.js"></script>
-    <script src="strategy-advisor.js"></script>
+    <script src="js/card-image-list.js"></script>
+    <script src="js/tag-definitions.js"></script>
+    <script src="js/screenshot-ocr.js"></script>
+    <script src="js/strategy-advisor.js"></script>
 </head>
 <body>
     <div id="root">
@@ -1044,7 +1044,7 @@ function DraftApp() {
 
     // Load card data
     useEffect(() => {
-        fetch('agricola-cards.json')
+        fetch('data/agricola-cards.json')
             .then(res => {
                 if (!res.ok) throw new Error('Failed to load card data');
                 return res.json();
@@ -1475,161 +1475,165 @@ function DraftApp() {
 
                 {/* Active draft — rounds 1-7 */}
                 {draftStarted && !draftComplete && (
-                    <>
-                        {/* Prior Hands */}
-                        <PriorHands hands={hands} draftedCards={draftedCards} cardMap={cardMap} currentRound={currentRound} othersDrafted={othersDrafted} onCardClick={handleMiniCardClick} />
+                    <div className="draft-wide-layout">
+                        <div className="draft-main-col">
+                            {/* Prior Hands */}
+                            <PriorHands hands={hands} draftedCards={draftedCards} cardMap={cardMap} currentRound={currentRound} othersDrafted={othersDrafted} onCardClick={handleMiniCardClick} />
 
-                        {/* Search + Screenshot (only for rounds 1-4 manual entry) */}
-                        {!isReturningRound && (
-                            <CardSearch
-                                cards={cards}
-                                onAddCard={handleAddCard}
-                                allUsedCardNames={allUsedCardNames}
-                            >
-                                {ocrAvailable && (
-                                    <ScreenshotInput
-                                        onImageCaptured={handleScreenshotProcess}
-                                        processing={screenshotProcessing}
-                                        disabled={handIsFull}
+                            {/* Search + Screenshot (only for rounds 1-4 manual entry) */}
+                            {!isReturningRound && (
+                                <CardSearch
+                                    cards={cards}
+                                    onAddCard={handleAddCard}
+                                    allUsedCardNames={allUsedCardNames}
+                                >
+                                    {ocrAvailable && (
+                                        <ScreenshotInput
+                                            onImageCaptured={handleScreenshotProcess}
+                                            processing={screenshotProcessing}
+                                            disabled={handIsFull}
+                                        />
+                                    )}
+                                    <ScreenshotResults
+                                        results={screenshotResults}
+                                        error={screenshotError}
+                                        onDismiss={() => { setScreenshotResults(null); setScreenshotError(null); }}
                                     />
-                                )}
-                                <ScreenshotResults
-                                    results={screenshotResults}
-                                    error={screenshotError}
-                                    onDismiss={() => { setScreenshotResults(null); setScreenshotError(null); }}
-                                />
-                            </CardSearch>
-                        )}
-
-                        {/* Marking phase banner (rounds 5-7) */}
-                        {isReturningRound && markingPhase && (
-                            <div className="marking-banner">
-                                <div className="marking-banner-text">
-                                    <strong>Marking Phase:</strong> Click cards that other players have drafted from this returning hand. Click "Done Marking" when ready to make your pick.
-                                </div>
-                                <button className="btn btn-primary" onClick={handleDoneMarking}>
-                                    Done Marking
-                                </button>
-                            </div>
-                        )}
-
-                        {/* Back to marking button */}
-                        {isReturningRound && !markingPhase && (
-                            <div className="marking-banner" style={{ background: '#d1ecf1', borderColor: '#bee5eb' }}>
-                                <div className="marking-banner-text" style={{ color: '#0c5460' }}>
-                                    <strong>Draft Phase:</strong> Select 1 occupation and 1 minor improvement to draft.
-                                </div>
-                                <button className="btn btn-secondary" onClick={handleBackToMarking}>
-                                    ← Back to Marking
-                                </button>
-                            </div>
-                        )}
-
-                        {/* Current Hand */}
-                        <div className="hand-section">
-                            <div className="sort-controls">
-                                <span style={{ fontSize: '0.85em', color: '#888', marginRight: '4px' }}>Sort by:</span>
-                                {SORT_OPTIONS.map(opt => (
-                                    <button
-                                        key={opt.key}
-                                        className={`sort-btn${sortKey === opt.key ? ' active' : ''}`}
-                                        onClick={() => setSortKey(opt.key)}
-                                    >
-                                        {opt.label}
-                                    </button>
-                                ))}
-                            </div>
-
-                            <div className="hand-columns">
-                                {(() => {
-                                    // Show suggestions only during selection phase
-                                    const showSuggestions = handIsFull && !markingPhase && strategyResult?.suggestions;
-                                    const occSuggestions = showSuggestions
-                                        ? strategyResult.suggestions.filter(s => {
-                                            const card = cardMap[s.card_name];
-                                            return card && card.type === 'Occupation';
-                                        })
-                                        : null;
-                                    const minSuggestions = showSuggestions
-                                        ? strategyResult.suggestions.filter(s => {
-                                            const card = cardMap[s.card_name];
-                                            return card && card.type === 'Minor Improvement';
-                                        })
-                                        : null;
-                                    return (
-                                        <>
-                                            <HandColumn
-                                                title="Occupations"
-                                                cards={occupations}
-                                                expectedCount={expectedHandSize}
-                                                sortKey={sortKey}
-                                                onRemoveCard={handleRemoveCard}
-                                                onSelectCard={(!markingPhase && handIsFull) ? handleSelectOccupation : null}
-                                                selectedCardName={!markingPhase ? selectedOccupation : null}
-                                                showRemove={!isReturningRound && !handIsFull}
-                                                fadedCardNames={isReturningRound ? othersDrafted : null}
-                                                onToggleFaded={markingPhase ? handleToggleFaded : null}
-                                                suggestions={occSuggestions}
-                                                expandedSuggestion={expandedSuggestion}
-                                                onToggleSuggestion={handleToggleSuggestion}
-                                            />
-                                            <HandColumn
-                                                title="Minor Improvements"
-                                                cards={minors}
-                                                expectedCount={expectedHandSize}
-                                                sortKey={sortKey}
-                                                onRemoveCard={handleRemoveCard}
-                                                onSelectCard={(!markingPhase && handIsFull) ? handleSelectMinor : null}
-                                                selectedCardName={!markingPhase ? selectedMinor : null}
-                                                showRemove={!isReturningRound && !handIsFull}
-                                                fadedCardNames={isReturningRound ? othersDrafted : null}
-                                                onToggleFaded={markingPhase ? handleToggleFaded : null}
-                                                suggestions={minSuggestions}
-                                                expandedSuggestion={expandedSuggestion}
-                                                onToggleSuggestion={handleToggleSuggestion}
-                                            />
-                                        </>
-                                    );
-                                })()}
-                            </div>
-
-                            {/* Draft action buttons */}
-                            {!markingPhase && handIsFull && (
-                                <div className="draft-actions">
-                                    {currentRound > 1 && (
-                                        <button className="btn btn-secondary" onClick={handleUndo}>
-                                            ← Undo Round {currentRound - 1}
-                                        </button>
-                                    )}
-                                    <button
-                                        className="btn btn-primary"
-                                        disabled={!canConfirm}
-                                        onClick={handleConfirmDraft}
-                                    >
-                                        {canConfirm
-                                            ? `Confirm Draft — ${cardMap[selectedOccupation]?.name} + ${cardMap[selectedMinor]?.name}`
-                                            : 'Select 1 Occupation + 1 Minor Improvement'}
-                                    </button>
-                                </div>
+                                </CardSearch>
                             )}
 
-                            {!isReturningRound && !handIsFull && (
-                                <div className="draft-actions">
-                                    {currentRound > 1 && (
-                                        <button className="btn btn-secondary" onClick={handleUndo}>
-                                            ← Undo Round {currentRound - 1}
-                                        </button>
-                                    )}
-                                    <div style={{ fontSize: '0.9em', color: '#888', padding: '10px' }}>
-                                        Add {expectedHandSize - occupations.length} more occupation{expectedHandSize - occupations.length !== 1 ? 's' : ''} and {expectedHandSize - minors.length} more minor improvement{expectedHandSize - minors.length !== 1 ? 's' : ''} to this hand
+                            {/* Marking phase banner (rounds 5-7) */}
+                            {isReturningRound && markingPhase && (
+                                <div className="marking-banner">
+                                    <div className="marking-banner-text">
+                                        <strong>Marking Phase:</strong> Click cards that other players have drafted from this returning hand. Click "Done Marking" when ready to make your pick.
                                     </div>
+                                    <button className="btn btn-primary" onClick={handleDoneMarking}>
+                                        Done Marking
+                                    </button>
                                 </div>
                             )}
+
+                            {/* Back to marking button */}
+                            {isReturningRound && !markingPhase && (
+                                <div className="marking-banner" style={{ background: '#d1ecf1', borderColor: '#bee5eb' }}>
+                                    <div className="marking-banner-text" style={{ color: '#0c5460' }}>
+                                        <strong>Draft Phase:</strong> Select 1 occupation and 1 minor improvement to draft.
+                                    </div>
+                                    <button className="btn btn-secondary" onClick={handleBackToMarking}>
+                                        ← Back to Marking
+                                    </button>
+                                </div>
+                            )}
+
+                            {/* Current Hand */}
+                            <div className="hand-section">
+                                <div className="sort-controls">
+                                    <span style={{ fontSize: '0.85em', color: '#888', marginRight: '4px' }}>Sort by:</span>
+                                    {SORT_OPTIONS.map(opt => (
+                                        <button
+                                            key={opt.key}
+                                            className={`sort-btn${sortKey === opt.key ? ' active' : ''}`}
+                                            onClick={() => setSortKey(opt.key)}
+                                        >
+                                            {opt.label}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <div className="hand-columns">
+                                    {(() => {
+                                        // Show suggestions only during selection phase
+                                        const showSuggestions = handIsFull && !markingPhase && strategyResult?.suggestions;
+                                        const occSuggestions = showSuggestions
+                                            ? strategyResult.suggestions.filter(s => {
+                                                const card = cardMap[s.card_name];
+                                                return card && card.type === 'Occupation';
+                                            })
+                                            : null;
+                                        const minSuggestions = showSuggestions
+                                            ? strategyResult.suggestions.filter(s => {
+                                                const card = cardMap[s.card_name];
+                                                return card && card.type === 'Minor Improvement';
+                                            })
+                                            : null;
+                                        return (
+                                            <>
+                                                <HandColumn
+                                                    title="Occupations"
+                                                    cards={occupations}
+                                                    expectedCount={expectedHandSize}
+                                                    sortKey={sortKey}
+                                                    onRemoveCard={handleRemoveCard}
+                                                    onSelectCard={(!markingPhase && handIsFull) ? handleSelectOccupation : null}
+                                                    selectedCardName={!markingPhase ? selectedOccupation : null}
+                                                    showRemove={!isReturningRound && !handIsFull}
+                                                    fadedCardNames={isReturningRound ? othersDrafted : null}
+                                                    onToggleFaded={markingPhase ? handleToggleFaded : null}
+                                                    suggestions={occSuggestions}
+                                                    expandedSuggestion={expandedSuggestion}
+                                                    onToggleSuggestion={handleToggleSuggestion}
+                                                />
+                                                <HandColumn
+                                                    title="Minor Improvements"
+                                                    cards={minors}
+                                                    expectedCount={expectedHandSize}
+                                                    sortKey={sortKey}
+                                                    onRemoveCard={handleRemoveCard}
+                                                    onSelectCard={(!markingPhase && handIsFull) ? handleSelectMinor : null}
+                                                    selectedCardName={!markingPhase ? selectedMinor : null}
+                                                    showRemove={!isReturningRound && !handIsFull}
+                                                    fadedCardNames={isReturningRound ? othersDrafted : null}
+                                                    onToggleFaded={markingPhase ? handleToggleFaded : null}
+                                                    suggestions={minSuggestions}
+                                                    expandedSuggestion={expandedSuggestion}
+                                                    onToggleSuggestion={handleToggleSuggestion}
+                                                />
+                                            </>
+                                        );
+                                    })()}
+                                </div>
+
+                                {/* Draft action buttons */}
+                                {!markingPhase && handIsFull && (
+                                    <div className="draft-actions">
+                                        {currentRound > 1 && (
+                                            <button className="btn btn-secondary" onClick={handleUndo}>
+                                                ← Undo Round {currentRound - 1}
+                                            </button>
+                                        )}
+                                        <button
+                                            className="btn btn-primary"
+                                            disabled={!canConfirm}
+                                            onClick={handleConfirmDraft}
+                                        >
+                                            {canConfirm
+                                                ? `Confirm Draft — ${cardMap[selectedOccupation]?.name} + ${cardMap[selectedMinor]?.name}`
+                                                : 'Select 1 Occupation + 1 Minor Improvement'}
+                                        </button>
+                                    </div>
+                                )}
+
+                                {!isReturningRound && !handIsFull && (
+                                    <div className="draft-actions">
+                                        {currentRound > 1 && (
+                                            <button className="btn btn-secondary" onClick={handleUndo}>
+                                                ← Undo Round {currentRound - 1}
+                                            </button>
+                                        )}
+                                        <div style={{ fontSize: '0.9em', color: '#888', padding: '10px' }}>
+                                            Add {expectedHandSize - occupations.length} more occupation{expectedHandSize - occupations.length !== 1 ? 's' : ''} and {expectedHandSize - minors.length} more minor improvement{expectedHandSize - minors.length !== 1 ? 's' : ''} to this hand
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Your Hand (drafted cards) */}
+                            <YourHand draftedCards={draftedCards} cardMap={cardMap} onCardClick={handleMiniCardClick} />
                         </div>
 
-                        {/* Your Hand + Strategy Dashboard */}
-                        <div className="strategy-layout">
-                            <YourHand draftedCards={draftedCards} cardMap={cardMap} onCardClick={handleMiniCardClick} />
+                        {/* Strategy sidebar */}
+                        <div className="draft-side-col">
                             <StrategyDashboard
                                 strategyResult={strategyResult}
                                 strategyLoading={strategyLoading}
@@ -1643,7 +1647,7 @@ function DraftApp() {
                                 onDismissError={() => setStrategyError(null)}
                             />
                         </div>
-                    </>
+                    </div>
                 )}
             </div>
 

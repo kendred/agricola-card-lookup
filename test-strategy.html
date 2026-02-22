@@ -103,7 +103,7 @@
         // Load card data
         let CARDS = [];
         let CARD_MAP = {};
-        fetch('agricola-cards.json')
+        fetch('data/agricola-cards.json')
             .then(r => r.json())
             .then(data => {
                 CARDS = data;
@@ -112,7 +112,7 @@
 
         // Load strategy guide
         let STRATEGY_GUIDE = '';
-        fetch('Feature specs/agricola-strategy-guide.md')
+        fetch('docs/agricola-strategy-guide.md')
             .then(r => r.text())
             .then(text => { STRATEGY_GUIDE = text; });
 

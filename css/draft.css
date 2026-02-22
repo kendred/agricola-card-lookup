@@ -43,8 +43,27 @@ body {
 
 /* Main container */
 .draft-container {
-    max-width: 1200px;
+    max-width: 1600px;
     margin: 0 auto;
+}
+
+/* Wide two-column layout: main content left, strategy sidebar right */
+.draft-wide-layout {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+.draft-main-col {
+    flex: 1;
+    min-width: 0;
+}
+
+.draft-side-col {
+    width: 340px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 20px;
 }
 
 /* Header section */
@@ -955,32 +974,22 @@ body {
         max-width: 200px;
     }
 
-    .strategy-layout {
+}
+
+/* Stack sidebar below main content when not wide enough */
+@media (max-width: 1100px) {
+    .draft-wide-layout {
         flex-direction: column;
     }
 
-    .strategy-dashboard {
-        min-width: unset;
+    .draft-side-col {
+        width: auto;
+        position: static;
     }
 }
 
 /* ─── Strategy Dashboard ─────────────────────────────────────────── */
-.strategy-layout {
-    display: flex;
-    gap: 20px;
-    align-items: flex-start;
-}
-
-.strategy-layout > .your-hand-section {
-    flex: 2;
-    min-width: 0;
-    margin-bottom: 0;
-}
-
 .strategy-dashboard {
-    flex: 1;
-    min-width: 280px;
-    max-width: 360px;
     background: rgba(255, 255, 255, 0.95);
     border-radius: 16px;
     padding: 20px 22px;
