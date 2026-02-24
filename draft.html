@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="Icons/Grain.webp">
     <title>Agricola Draft Tool</title>
-    <link rel="stylesheet" href="css/draft.css?v=3">
+    <link rel="stylesheet" href="css/draft.css?v=4">
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -97,9 +97,14 @@ function clearSavedState() {
 }
 
 // ─── CardSearch Component ───────────────────────────────────────────
-function CardSearch({ cards, onAddCard, allUsedCardNames, children }) {
+function CardSearch({ cards, onAddCard, onAddTempCard, allUsedCardNames, children }) {
     const [query, setQuery] = useState('');
     const [highlightIndex, setHighlightIndex] = useState(-1);
+    const [showTempForm, setShowTempForm] = useState(false);
+    const [tempName, setTempName] = useState('');
+    const [tempType, setTempType] = useState('Occupation');
+    const [tempDesc, setTempDesc] = useState('');
+    const [showDesc, setShowDesc] = useState(false);
     const inputRef = useRef(null);
     const suggestionsRef = useRef(null);
 
@@ -118,10 +123,12 @@ function CardSearch({ cards, onAddCard, allUsedCardNames, children }) {
         onAddCard(card);
         setQuery('');
         setHighlightIndex(-1);
+        setShowTempForm(false);
         setTimeout(() => inputRef.current?.focus(), 0);
     }, [onAddCard]);
 
     const handleKeyDown = useCallback((e) => {
+        if (showTempForm) return;
         if (matches.length === 0) return;
         if (e.key === 'ArrowDown') {
             e.preventDefault();
@@ -140,7 +147,31 @@ function CardSearch({ cards, onAddCard, allUsedCardNames, children }) {
             setQuery('');
             setHighlightIndex(-1);
         }
-    }, [matches, highlightIndex, selectCard]);
+    }, [matches, highlightIndex, selectCard, showTempForm]);
+
+    const openTempForm = useCallback(() => {
+        setTempName(query);
+        setTempType('Occupation');
+        setTempDesc('');
+        setShowDesc(false);
+        setShowTempForm(true);
+    }, [query]);
+
+    const handleTempSubmit = useCallback(() => {
+        if (!tempName.trim()) return;
+        onAddTempCard(tempName.trim(), tempType, tempDesc.trim());
+        setQuery('');
+        setShowTempForm(false);
+        setTempName('');
+        setTempDesc('');
+        setShowDesc(false);
+        setTimeout(() => inputRef.current?.focus(), 0);
+    }, [tempName, tempType, tempDesc, onAddTempCard]);
+
+    const cancelTempForm = useCallback(() => {
+        setShowTempForm(false);
+        setTimeout(() => inputRef.current?.focus(), 0);
+    }, []);
 
     useEffect(() => {
         if (highlightIndex >= 0 && suggestionsRef.current) {
@@ -151,6 +182,8 @@ function CardSearch({ cards, onAddCard, allUsedCardNames, children }) {
         }
     }, [highlightIndex]);
 
+    const showNoMatchPrompt = query.length > 1 && matches.length === 0 && !showTempForm;
+
     return (
         <div className="search-section">
             <div className="search-label">Search for a card to add to this hand</div>
@@ -160,7 +193,7 @@ function CardSearch({ cards, onAddCard, allUsedCardNames, children }) {
                 className="search-input"
                 placeholder="Type card name..."
                 value={query}
-                onChange={e => { setQuery(e.target.value); setHighlightIndex(-1); }}
+                onChange={e => { setQuery(e.target.value); setHighlightIndex(0); setShowTempForm(false); }}
                 onKeyDown={handleKeyDown}
                 autoComplete="off"
                 autoFocus
@@ -179,6 +212,66 @@ function CardSearch({ cards, onAddCard, allUsedCardNames, children }) {
                             <span className="suggestion-type">{card.type === 'Occupation' ? 'Occ' : 'Minor'}</span>
                         </div>
                     ))}
+                </div>
+            )}
+            {showNoMatchPrompt && (
+                <div className="temp-card-prompt">
+                    <span className="temp-card-prompt-text">No matching cards found.</span>
+                    <button className="temp-card-prompt-btn" onClick={openTempForm}>
+                        + Add "{query}" as temporary card
+                    </button>
+                </div>
+            )}
+            {showTempForm && (
+                <div className="temp-card-form">
+                    <div className="temp-card-form-row">
+                        <label>Name</label>
+                        <input
+                            type="text"
+                            value={tempName}
+                            onChange={e => setTempName(e.target.value)}
+                            className="temp-card-input"
+                            autoFocus
+                        />
+                    </div>
+                    <div className="temp-card-form-row">
+                        <label>Type</label>
+                        <div className="temp-card-type-toggle">
+                            <button
+                                className={`type-btn${tempType === 'Occupation' ? ' active' : ''}`}
+                                onClick={() => setTempType('Occupation')}
+                            >Occupation</button>
+                            <button
+                                className={`type-btn${tempType === 'Minor Improvement' ? ' active' : ''}`}
+                                onClick={() => setTempType('Minor Improvement')}
+                            >Minor Improvement</button>
+                        </div>
+                    </div>
+                    {!showDesc && (
+                        <button className="temp-card-add-desc" onClick={() => setShowDesc(true)}>
+                            + Add description
+                        </button>
+                    )}
+                    {showDesc && (
+                        <div className="temp-card-form-row">
+                            <label>Description</label>
+                            <textarea
+                                value={tempDesc}
+                                onChange={e => setTempDesc(e.target.value)}
+                                className="temp-card-textarea"
+                                rows={2}
+                                placeholder="Card text (optional)"
+                            />
+                        </div>
+                    )}
+                    <div className="temp-card-form-actions">
+                        <button className="btn btn-primary btn-sm" onClick={handleTempSubmit} disabled={!tempName.trim()}>
+                            Add to Hand
+                        </button>
+                        <button className="btn btn-secondary btn-sm" onClick={cancelTempForm}>
+                            Cancel
+                        </button>
+                    </div>
                 </div>
             )}
             {children}
@@ -268,7 +361,9 @@ function ScreenshotInput({ onImageCaptured, processing, disabled }) {
 }
 
 // ─── ScreenshotResults Component ────────────────────────────────────
-function ScreenshotResults({ results, error, onDismiss }) {
+function ScreenshotResults({ results, error, onDismiss, onAddTempCard }) {
+    const [addedTemp, setAddedTemp] = useState(new Set());
+
     // Auto-dismiss success banners after 10s (unless there are warnings)
     useEffect(() => {
         if (!results || error) return;
@@ -278,6 +373,9 @@ function ScreenshotResults({ results, error, onDismiss }) {
         const timer = setTimeout(onDismiss, 10000);
         return () => clearTimeout(timer);
     }, [results, error, onDismiss]);
+
+    // Reset addedTemp when results change
+    useEffect(() => { setAddedTemp(new Set()); }, [results]);
 
     if (!results && !error) return null;
 
@@ -304,13 +402,38 @@ function ScreenshotResults({ results, error, onDismiss }) {
                         (results.skippedOverflow && results.skippedOverflow.length > 0) ||
                         results.added === 0;
 
+    const handleAddTemp = (name, type) => {
+        if (onAddTempCard) {
+            onAddTempCard(name, type, '');
+            setAddedTemp(prev => new Set([...prev, name]));
+        }
+    };
+
+    const unmatchedToShow = (results.unmatched || []).filter(n => !addedTemp.has(n));
+
     return (
         <div className={`screenshot-banner ${hasWarnings ? 'screenshot-warning' : 'screenshot-success'}`}>
             <div>
                 <span>{parts.join('. ')}.</span>
-                {results.unmatched && results.unmatched.length > 0 && (
+                {unmatchedToShow.length > 0 && onAddTempCard && (
                     <div className="screenshot-unmatched">
-                        Not recognized: {results.unmatched.join(', ')}
+                        {unmatchedToShow.map(name => (
+                            <div key={name} className="unmatched-row">
+                                <span className="unmatched-name">{name}</span>
+                                <button className="unmatched-add-btn" onClick={() => handleAddTemp(name, 'Occupation')}>+ Occ</button>
+                                <button className="unmatched-add-btn" onClick={() => handleAddTemp(name, 'Minor Improvement')}>+ Minor</button>
+                            </div>
+                        ))}
+                    </div>
+                )}
+                {unmatchedToShow.length > 0 && !onAddTempCard && (
+                    <div className="screenshot-unmatched">
+                        Not recognized: {unmatchedToShow.join(', ')}
+                    </div>
+                )}
+                {addedTemp.size > 0 && (
+                    <div className="screenshot-unmatched" style={{ opacity: 0.6 }}>
+                        Added as temp: {[...addedTemp].join(', ')}
                     </div>
                 )}
                 {results.skippedOverflow && results.skippedOverflow.length > 0 && (
@@ -342,7 +465,7 @@ function TagPills({ tags, abbreviated = true }) {
 }
 
 // ─── HandColumn Component ───────────────────────────────────────────
-function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSelectCard, selectedCardName, showRemove, fadedCardNames, onToggleFaded, suggestions, expandedSuggestion, onToggleSuggestion }) {
+function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSelectCard, selectedCardName, showRemove, fadedCardNames, onToggleFaded, suggestions, expandedSuggestion, onToggleSuggestion, onEditTempCard }) {
     const count = cards.length;
     const fadedSet = useMemo(() => new Set(fadedCardNames || []), [fadedCardNames]);
     const availableCount = cards.filter(c => !fadedSet.has(c.name)).length;
@@ -359,6 +482,9 @@ function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSele
     const sortOption = SORT_OPTIONS.find(s => s.key === sortKey) || SORT_OPTIONS[0];
     const sortedCards = useMemo(() => {
         return [...cards].sort((a, b) => {
+            // Temp cards always sort to bottom
+            if (a.isTemporary && !b.isTemporary) return 1;
+            if (!a.isTemporary && b.isTemporary) return -1;
             const aVal = sortOption.getValue(a);
             const bVal = sortOption.getValue(b);
             if (aVal < bVal) return sortOption.ascending ? -1 : 1;
@@ -386,6 +512,7 @@ function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSele
                     const isFaded = fadedSet.has(card.name);
                     const suggestion = suggestionMap[card.name];
                     const isExpanded = expandedSuggestion === card.name;
+                    const isTemp = card.isTemporary;
                     const handleClick = () => {
                         if (onToggleFaded) {
                             onToggleFaded(card.name);
@@ -396,7 +523,7 @@ function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSele
                     return (
                         <React.Fragment key={card.name}>
                             <div
-                                className={`card-row${isSelected ? ' selected' : ''}${isFaded ? ' faded' : ''}${suggestion ? ' has-suggestion' : ''}`}
+                                className={`card-row${isSelected ? ' selected' : ''}${isFaded ? ' faded' : ''}${suggestion ? ' has-suggestion' : ''}${isTemp ? ' temp' : ''}`}
                                 onClick={handleClick}
                             >
                                 {suggestion && (
@@ -408,24 +535,34 @@ function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSele
                                         {suggestion.rank_number}
                                     </span>
                                 )}
+                                {isTemp && <span className="temp-badge">NEW</span>}
                                 <span className="card-name">{card.name}</span>
-                                <TagPills tags={card.tags} />
+                                {!isTemp && <TagPills tags={card.tags} />}
                                 <div className="card-stat">
                                     <div className="card-stat-label">Rank</div>
-                                    <div>#{card.rank}</div>
+                                    <div>{isTemp ? '—' : `#${card.rank}`}</div>
                                 </div>
                                 <div className="card-stat">
                                     <div className="card-stat-label">ADP</div>
-                                    <div>{card.adp}</div>
+                                    <div>{isTemp ? '—' : card.adp}</div>
                                 </div>
                                 <div className="card-stat">
                                     <div className="card-stat-label">Elo/Play</div>
-                                    <div>{card.elo_per_play || '—'}</div>
+                                    <div>{isTemp ? '—' : (card.elo_per_play || '—')}</div>
                                 </div>
                                 <div className="card-stat">
                                     <div className="card-stat-label">Value</div>
-                                    <div>{card.value ? parseFloat(card.value).toFixed(1) : '—'}</div>
+                                    <div>{isTemp ? '—' : (card.value ? parseFloat(card.value).toFixed(1) : '—')}</div>
                                 </div>
+                                {isTemp && onEditTempCard && (
+                                    <button
+                                        className="edit-temp-btn"
+                                        onClick={(e) => { e.stopPropagation(); onEditTempCard(card); }}
+                                        title="Edit temporary card"
+                                    >
+                                        ✎
+                                    </button>
+                                )}
                                 {showRemove && (
                                     <button
                                         className="remove-btn"
@@ -701,12 +838,13 @@ function YourHand({ draftedCards, cardMap, onCardClick }) {
     const draftedMins = allDrafted.filter(c => c.type === 'Minor Improvement').sort((a, b) => a.rank - b.rank);
 
     const renderDraftedCard = (card) => (
-        <div key={card.name} className="card-row clickable" onClick={(e) => onCardClick && onCardClick(card.name, e)}>
+        <div key={card.name} className={`card-row clickable${card.isTemporary ? ' temp' : ''}`} onClick={(e) => onCardClick && onCardClick(card.name, e)}>
+            {card.isTemporary && <span className="temp-badge">NEW</span>}
             <span className="card-name">{card.name}</span>
-            <TagPills tags={card.tags} abbreviated={false} />
-            <div className="card-stat"><div className="card-stat-label">Rank</div><div>#{card.rank}</div></div>
-            <div className="card-stat"><div className="card-stat-label">ADP</div><div>{card.adp}</div></div>
-            <div className="card-stat"><div className="card-stat-label">Elo/Play</div><div>{card.elo_per_play || '—'}</div></div>
+            {!card.isTemporary && <TagPills tags={card.tags} abbreviated={false} />}
+            <div className="card-stat"><div className="card-stat-label">Rank</div><div>{card.isTemporary ? '—' : `#${card.rank}`}</div></div>
+            <div className="card-stat"><div className="card-stat-label">ADP</div><div>{card.isTemporary ? '—' : card.adp}</div></div>
+            <div className="card-stat"><div className="card-stat-label">Elo/Play</div><div>{card.isTemporary ? '—' : (card.elo_per_play || '—')}</div></div>
             <div className="card-stat"><div className="card-stat-label">H{card._handNum}</div><div style={{ color: '#8B6914' }}><span className="pick-badge">{card._passNum}</span></div></div>
         </div>
     );
@@ -785,7 +923,7 @@ function CardDetailPopover({ card, anchorRect, onClose }) {
             <button className="popover-close" onClick={onClose}>&times;</button>
             <div className="popover-header">
                 <span className="popover-name">{card.name}</span>
-                <span className="popover-rank">#{card.rank}</span>
+                <span className="popover-rank">{card.isTemporary ? 'Temp' : `#${card.rank}`}</span>
             </div>
             <div className="popover-meta">
                 {card.type && <span className="popover-tag">{card.type}</span>}
@@ -888,13 +1026,16 @@ function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, 
 
     const renderSummaryCard = (card) => (
         <div key={card.name} className="summary-card clickable" onClick={(e) => onCardClick && onCardClick(card.name, e)}>
-            <div className="card-name">{card.name} <TagPills tags={card.tags} abbreviated={false} /></div>
+            <div className="card-name">
+                {card.isTemporary && <span className="temp-badge" style={{ marginRight: 6 }}>NEW</span>}
+                {card.name} {!card.isTemporary && <TagPills tags={card.tags} abbreviated={false} />}
+            </div>
             <div className="card-stats">
-                <span>Rank #{card.rank}</span>
-                <span>ADP {card.adp}</span>
-                <span>Elo/Play {card.elo_per_play || '—'}</span>
-                <span>Value {card.value ? parseFloat(card.value).toFixed(1) : '—'}</span>
-                <span>Play Rate {card.play_rate}</span>
+                <span>Rank {card.isTemporary ? '—' : `#${card.rank}`}</span>
+                <span>ADP {card.isTemporary ? '—' : card.adp}</span>
+                <span>Elo/Play {card.isTemporary ? '—' : (card.elo_per_play || '—')}</span>
+                <span>Value {card.isTemporary ? '—' : (card.value ? parseFloat(card.value).toFixed(1) : '—')}</span>
+                <span>Play Rate {card.isTemporary ? '—' : card.play_rate}</span>
             </div>
         </div>
     );
@@ -903,11 +1044,12 @@ function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, 
         <div key={`${card.name}-${card._drafter}`} className={`summary-card clickable${card._drafter === 'other' ? ' others-pick' : ''}`} onClick={(e) => onCardClick && onCardClick(card.name, e)}>
             <div className="card-name">
                 {card._drafter === 'other' && <span className="other-badge">Other</span>}
-                {card.name} <TagPills tags={card.tags} abbreviated={false} />
+                {card.isTemporary && <span className="temp-badge" style={{ marginRight: 6 }}>NEW</span>}
+                {card.name} {!card.isTemporary && <TagPills tags={card.tags} abbreviated={false} />}
             </div>
             <div className="card-stats">
-                <span>Rank #{card.rank}</span>
-                <span>ADP {card.adp}</span>
+                <span>Rank {card.isTemporary ? '—' : `#${card.rank}`}</span>
+                <span>ADP {card.isTemporary ? '—' : card.adp}</span>
                 <span>H{card._handNum}</span>
                 {card._drafter === 'you' && <span>Pass {card._passNum}</span>}
             </div>
@@ -990,6 +1132,9 @@ function DraftApp() {
     const [markingPhase, setMarkingPhase] = useState(false);
     const [othersDrafted, setOthersDrafted] = useState([]);
 
+    // Temporary cards (not in database)
+    const [tempCards, setTempCards] = useState({});
+
     // Screenshot processing state
     const [ocrAvailable, setOcrAvailable] = useState(false);
     const [screenshotProcessing, setScreenshotProcessing] = useState(false);
@@ -1049,7 +1194,14 @@ function DraftApp() {
                 if (!res.ok) throw new Error('Failed to load card data');
                 return res.json();
             })
-            .then(data => {
+            .then(rawData => {
+                // Deduplicate cards by name (keep first/higher-ranked entry)
+                const seen = new Set();
+                const data = rawData.filter(c => {
+                    if (seen.has(c.name)) return false;
+                    seen.add(c.name);
+                    return true;
+                });
                 setCards(data);
 
                 // Restore saved state after cards are loaded
@@ -1138,12 +1290,13 @@ function DraftApp() {
         return icons[Math.floor(Math.random() * icons.length)];
     });
 
-    // Card lookup map
+    // Card lookup map (includes temp cards)
     const cardMap = useMemo(() => {
         const map = {};
         cards.forEach(c => { map[c.name] = c; });
+        Object.values(tempCards).forEach(c => { map[c.name] = c; });
         return map;
-    }, [cards]);
+    }, [cards, tempCards]);
 
     // Is this a returning-hand round?
     const isReturningRound = currentRound >= 5 && currentRound <= 7;
@@ -1208,6 +1361,7 @@ function DraftApp() {
         setSortKey('rank');
         setMarkingPhase(false);
         setOthersDrafted([]);
+        setTempCards({});
         setFarmGrid(INITIAL_FARM_GRID());
         setStrategyNotes('');
         setStrategyResult(null);
@@ -1226,6 +1380,7 @@ function DraftApp() {
         setSortKey('rank');
         setMarkingPhase(false);
         setOthersDrafted([]);
+        setTempCards({});
         setFarmGrid(INITIAL_FARM_GRID());
         setStrategyNotes('');
         setStrategyResult(null);
@@ -1233,6 +1388,38 @@ function DraftApp() {
         setDraftStarted(false);
         clearSavedState();
     };
+
+    const addTempCard = useCallback((name, type, description) => {
+        const card = {
+            name, type, description: description || '',
+            isTemporary: true, rank: Infinity,
+            pwr: '—', adp: '—', elo_per_play: '—',
+            play_rate: '—', value: '—', value_when_played: '—',
+            tags: [],
+        };
+        setTempCards(prev => ({ ...prev, [name]: card }));
+        setCurrentHandNames(prev => {
+            if (prev.includes(name)) return prev;
+            const limit = HAND_SIZE_BY_ROUND[currentRound] || 10;
+            const typeCount = prev.map(n => cardMap[n]).filter(c => c && c.type === type).length;
+            if (typeCount >= limit) return prev;
+            return [...prev, name];
+        });
+    }, [cardMap, currentRound]);
+
+    const editTempCard = useCallback((oldName, newName, description) => {
+        setTempCards(prev => {
+            const card = prev[oldName];
+            if (!card) return prev;
+            const updated = { ...prev };
+            if (oldName !== newName) delete updated[oldName];
+            updated[newName] = { ...card, name: newName, description: description || '' };
+            return updated;
+        });
+        if (oldName !== newName) {
+            setCurrentHandNames(prev => prev.map(n => n === oldName ? newName : n));
+        }
+    }, []);
 
     const handleAddCard = useCallback((card) => {
         setCurrentHandNames(prev => {
@@ -1248,6 +1435,12 @@ function DraftApp() {
         setCurrentHandNames(prev => prev.filter(n => n !== cardName));
         if (cardName === selectedOccupation) setSelectedOccupation(null);
         if (cardName === selectedMinor) setSelectedMinor(null);
+        setTempCards(prev => {
+            if (!prev[cardName]) return prev;
+            const updated = { ...prev };
+            delete updated[cardName];
+            return updated;
+        });
     }, [selectedOccupation, selectedMinor]);
 
     // Batch add cards (used by screenshot processing)
@@ -1341,6 +1534,19 @@ function DraftApp() {
     const handleToggleSuggestion = useCallback((cardName) => {
         setExpandedSuggestion(prev => prev === cardName ? null : cardName);
     }, []);
+
+    // Temp card editing state
+    const [editingTempCard, setEditingTempCard] = useState(null);
+
+    const handleEditTempCard = useCallback((card) => {
+        setEditingTempCard({ originalName: card.name, name: card.name, description: card.description || '' });
+    }, []);
+
+    const handleSaveEditTempCard = useCallback(() => {
+        if (!editingTempCard || !editingTempCard.name.trim()) return;
+        editTempCard(editingTempCard.originalName, editingTempCard.name.trim(), editingTempCard.description.trim());
+        setEditingTempCard(null);
+    }, [editingTempCard, editTempCard]);
 
     const handleSelectOccupation = useCallback((cardName) => {
         if (othersDraftedSet.has(cardName)) return;
@@ -1485,6 +1691,7 @@ function DraftApp() {
                                 <CardSearch
                                     cards={cards}
                                     onAddCard={handleAddCard}
+                                    onAddTempCard={addTempCard}
                                     allUsedCardNames={allUsedCardNames}
                                 >
                                     {ocrAvailable && (
@@ -1498,6 +1705,7 @@ function DraftApp() {
                                         results={screenshotResults}
                                         error={screenshotError}
                                         onDismiss={() => { setScreenshotResults(null); setScreenshotError(null); }}
+                                        onAddTempCard={addTempCard}
                                     />
                                 </CardSearch>
                             )}
@@ -1573,6 +1781,7 @@ function DraftApp() {
                                                     suggestions={occSuggestions}
                                                     expandedSuggestion={expandedSuggestion}
                                                     onToggleSuggestion={handleToggleSuggestion}
+                                                    onEditTempCard={handleEditTempCard}
                                                 />
                                                 <HandColumn
                                                     title="Minor Improvements"
@@ -1588,6 +1797,7 @@ function DraftApp() {
                                                     suggestions={minSuggestions}
                                                     expandedSuggestion={expandedSuggestion}
                                                     onToggleSuggestion={handleToggleSuggestion}
+                                                    onEditTempCard={handleEditTempCard}
                                                 />
                                             </>
                                         );
@@ -1658,6 +1868,43 @@ function DraftApp() {
                     anchorRect={popoverAnchor}
                     onClose={handlePopoverClose}
                 />
+            )}
+
+            {/* Edit Temp Card Modal */}
+            {editingTempCard && (
+                <div className="temp-edit-overlay" onClick={() => setEditingTempCard(null)}>
+                    <div className="temp-edit-modal" onClick={(e) => e.stopPropagation()}>
+                        <div className="temp-edit-title">Edit Temporary Card</div>
+                        <div className="temp-card-form-row">
+                            <label>Name</label>
+                            <input
+                                type="text"
+                                className="temp-card-input"
+                                value={editingTempCard.name}
+                                onChange={(e) => setEditingTempCard(prev => ({ ...prev, name: e.target.value }))}
+                                autoFocus
+                            />
+                        </div>
+                        <div className="temp-card-form-row">
+                            <label>Description</label>
+                            <textarea
+                                className="temp-card-textarea"
+                                rows={3}
+                                value={editingTempCard.description}
+                                onChange={(e) => setEditingTempCard(prev => ({ ...prev, description: e.target.value }))}
+                                placeholder="Card text (optional)"
+                            />
+                        </div>
+                        <div className="temp-card-form-actions">
+                            <button className="btn btn-primary btn-sm" onClick={handleSaveEditTempCard} disabled={!editingTempCard.name.trim()}>
+                                Save
+                            </button>
+                            <button className="btn btn-secondary btn-sm" onClick={() => setEditingTempCard(null)}>
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );
