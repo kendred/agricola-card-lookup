@@ -742,7 +742,7 @@ function FarmGrid({ grid, onCellClick }) {
 }
 
 // ─── StrategyDashboard Component ────────────────────────────────────
-function StrategyDashboard({ strategyResult, strategyLoading, strategyError, strategyAvailable, farmGrid, onFarmCellClick, strategyNotes, onNotesChange, onGetAdvice, onDismissError }) {
+function StrategyDashboard({ strategyResult, strategyLoading, strategyError, strategyAvailable, hasCards, farmGrid, onFarmCellClick, strategyNotes, onNotesChange, onGetAdvice, onDismissError }) {
     const dims = strategyResult?.dimensions;
 
     const renderDimension = (label, key) => {
@@ -810,10 +810,10 @@ function StrategyDashboard({ strategyResult, strategyLoading, strategyError, str
             {/* Get AI Advice button */}
             <button
                 className={`strategy-btn${strategyLoading ? ' loading' : ''}`}
-                disabled={!strategyAvailable || strategyLoading}
+                disabled={!strategyAvailable || strategyLoading || !hasCards}
                 onClick={onGetAdvice}
             >
-                {strategyLoading ? 'Analyzing...' : (strategyAvailable ? 'Get AI Advice' : 'AI Advice (unavailable)')}
+                {strategyLoading ? 'Analyzing...' : (!strategyAvailable ? 'AI Advice (unavailable)' : (!hasCards ? 'Add cards to get advice' : 'Get AI Advice'))}
             </button>
         </div>
     );
@@ -1334,6 +1334,9 @@ function DraftApp() {
 
     const canConfirm = !markingPhase && selectedOccupation && selectedMinor;
 
+    // Can get AI advice if there are cards in the current hand OR previously drafted cards
+    const hasCardsForAdvice = currentHandNames.length > 0 || Object.values(draftedCards).some(p => p.occupation || p.minor);
+
     // ─── Auto-populate returning hands ─────────────────────────────
     useEffect(() => {
         if (!draftStarted || !isReturningRound || currentHandNames.length > 0) return;
@@ -1501,19 +1504,24 @@ function DraftApp() {
     // Strategy advisor handler
     const handleGetAdvice = useCallback(async () => {
         if (strategyLoading) return;
+
+        // Gather all drafted card names
+        const draftedNames = [];
+        Object.values(draftedCards).forEach(picks => {
+            if (picks.occupation) draftedNames.push(picks.occupation);
+            if (picks.minor) draftedNames.push(picks.minor);
+        });
+
+        // If current hand is empty, fall back to drafted cards for analysis
+        const handToSend = currentHandNames.length > 0 ? currentHandNames : draftedNames;
+        if (handToSend.length === 0) return; // button should be disabled, but guard anyway
+
         setStrategyLoading(true);
         setStrategyError(null);
 
         try {
-            // Gather all drafted card names
-            const draftedNames = [];
-            Object.values(draftedCards).forEach(picks => {
-                if (picks.occupation) draftedNames.push(picks.occupation);
-                if (picks.minor) draftedNames.push(picks.minor);
-            });
-
             const result = await strategyAdvisor.getAdvice(
-                currentHandNames,
+                handToSend,
                 draftedNames,
                 othersDrafted,
                 currentRound
@@ -1849,6 +1857,7 @@ function DraftApp() {
                                 strategyLoading={strategyLoading}
                                 strategyError={strategyError}
                                 strategyAvailable={strategyAvailable}
+                                hasCards={hasCardsForAdvice}
                                 farmGrid={farmGrid}
                                 onFarmCellClick={handleFarmCellClick}
                                 strategyNotes={strategyNotes}
