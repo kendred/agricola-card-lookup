@@ -195,7 +195,7 @@ var screenshotOCR = (function () {
                 }
 
                 // Already used in a prior round?
-                if (allUsedCardNames && allUsedCardNames.includes(name)) {
+                if (allUsedCardNames && allUsedCardNames.has(name)) {
                     duplicates.push(name);
                     return;
                 }
