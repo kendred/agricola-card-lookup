@@ -1350,6 +1350,15 @@ function DraftApp() {
         // Return all cards from the source hand except what the user drafted in that round
         const returningCards = sourceHand.filter(name => !userDraftedFromSource.has(name));
         setCurrentHandNames(returningCards);
+
+        // Pre-populate othersDrafted with ALL returning cards (inverted marking).
+        // All cards start faded; user clicks to un-fade the ones they still have.
+        // Append to existing othersDrafted (preserves entries from prior returning rounds).
+        setOthersDrafted(prev => {
+            const existingSet = new Set(prev);
+            const newEntries = returningCards.filter(name => !existingSet.has(name));
+            return [...prev, ...newEntries];
+        });
         setMarkingPhase(true);
     }, [currentRound, draftStarted, isReturningRound, currentHandNames.length, hands, draftedCards]);
 
@@ -1722,7 +1731,7 @@ function DraftApp() {
                             {isReturningRound && markingPhase && (
                                 <div className="marking-banner">
                                     <div className="marking-banner-text">
-                                        <strong>Marking Phase:</strong> Click cards that other players have drafted from this returning hand. Click "Done Marking" when ready to make your pick.
+                                        <strong>Marking Phase:</strong> Click the cards you still have in this returning hand to un-fade them. Unclicked cards are marked as drafted by others.
                                     </div>
                                     <button className="btn btn-primary" onClick={handleDoneMarking}>
                                         Done Marking
