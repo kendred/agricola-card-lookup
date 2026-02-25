@@ -137,7 +137,7 @@ module.exports = async function (context, req) {
 async function processImage(context, headers, endpoint, apiKey, deployment, imageBase64, mimeType) {
     // --- Call Azure OpenAI GPT-4o Vision ---
     // Azure OpenAI REST API format
-    const apiVersion = '2024-08-01-preview';
+    const apiVersion = '2024-10-21';
     const url = `${endpoint.replace(/\/$/, '')}/openai/deployments/${deployment}/chat/completions?api-version=${apiVersion}`;
 
     const requestBody = {

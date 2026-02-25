@@ -209,7 +209,7 @@ module.exports = async function (context, req) {
     const userMessage = buildUserMessage(body);
 
     // Call Azure OpenAI
-    const apiVersion = '2024-08-01-preview';
+    const apiVersion = '2024-10-21';
     const url = `${endpoint.replace(/\/$/, '')}/openai/deployments/${deployment}/chat/completions?api-version=${apiVersion}`;
 
     const requestBody = {
