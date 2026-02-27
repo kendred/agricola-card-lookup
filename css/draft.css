@@ -353,6 +353,11 @@ body {
     text-decoration: line-through;
 }
 
+.card-row.marked-remaining {
+    border-left: 3px solid #28a745;
+    background: rgba(40, 167, 69, 0.08);
+}
+
 .card-row .card-name {
     flex: 1;
     font-weight: 500;

@@ -394,6 +394,9 @@ function ScreenshotResults({ results, error, onDismiss, onAddTempCard }) {
     if (results.skippedOverflow && results.skippedOverflow.length > 0) {
         parts.push(`${results.skippedOverflow.length} skipped (slots full)`);
     }
+    if (results.unmatched && results.unmatched.length > 0) {
+        parts.push(`${results.unmatched.length} not recognized`);
+    }
     if (parts.length === 0 && (!results.unmatched || results.unmatched.length === 0)) {
         parts.push('No card names found. Make sure card titles are visible in the screenshot');
     }
@@ -465,10 +468,11 @@ function TagPills({ tags, abbreviated = true }) {
 }
 
 // ─── HandColumn Component ───────────────────────────────────────────
-function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSelectCard, selectedCardName, showRemove, fadedCardNames, onToggleFaded, suggestions, expandedSuggestion, onToggleSuggestion, onEditTempCard }) {
+function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSelectCard, selectedCardName, showRemove, fadedCardNames, onToggleFaded, highlightedCardNames, suggestions, expandedSuggestion, onToggleSuggestion, onEditTempCard }) {
     const count = cards.length;
     const fadedSet = useMemo(() => new Set(fadedCardNames || []), [fadedCardNames]);
-    const availableCount = cards.filter(c => !fadedSet.has(c.name)).length;
+    const highlightedSet = useMemo(() => new Set(highlightedCardNames || []), [highlightedCardNames]);
+    const availableCount = highlightedCardNames ? highlightedSet.size : cards.filter(c => !fadedSet.has(c.name)).length;
 
     // Build suggestion lookup: card_name -> { rank_number, rationale }
     const suggestionMap = useMemo(() => {
@@ -498,7 +502,7 @@ function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSele
             <div className="column-header">
                 <span>{title}</span>
                 <span className={`card-count${count === expectedCount ? ' complete' : ''}`}>
-                    {fadedCardNames ? `${availableCount} avail` : `${count}/${expectedCount}`}
+                    {fadedCardNames || highlightedCardNames ? `${availableCount} avail` : `${count}/${expectedCount}`}
                 </span>
             </div>
             <div className="card-list">
@@ -510,6 +514,7 @@ function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSele
                 {sortedCards.map(card => {
                     const isSelected = card.name === selectedCardName;
                     const isFaded = fadedSet.has(card.name);
+                    const isHighlighted = highlightedSet.has(card.name);
                     const suggestion = suggestionMap[card.name];
                     const isExpanded = expandedSuggestion === card.name;
                     const isTemp = card.isTemporary;
@@ -523,7 +528,7 @@ function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSele
                     return (
                         <React.Fragment key={card.name}>
                             <div
-                                className={`card-row${isSelected ? ' selected' : ''}${isFaded ? ' faded' : ''}${suggestion ? ' has-suggestion' : ''}${isTemp ? ' temp' : ''}`}
+                                className={`card-row${isSelected ? ' selected' : ''}${isFaded ? ' faded' : ''}${isHighlighted ? ' marked-remaining' : ''}${suggestion ? ' has-suggestion' : ''}${isTemp ? ' temp' : ''}`}
                                 onClick={handleClick}
                             >
                                 {suggestion && (
@@ -697,12 +702,12 @@ function PriorHands({ hands, draftedCards, cardMap, currentRound, othersDrafted,
                             <div className="prior-hand-header">Hand {handNum}</div>
                             <div style={{ display: 'flex', gap: '12px' }}>
                                 <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
-                                    <div style={{ fontSize: '0.75em', fontWeight: 600, color: '#888', marginBottom: '4px' }}>Occ</div>
-                                    {allOccs.map(name => renderMiniCard(name, getRoundForCard(name)))}
-                                </div>
-                                <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
                                     <div style={{ fontSize: '0.75em', fontWeight: 600, color: '#888', marginBottom: '4px' }}>Minor</div>
                                     {allMins.map(name => renderMiniCard(name, getRoundForCard(name)))}
+                                </div>
+                                <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
+                                    <div style={{ fontSize: '0.75em', fontWeight: 600, color: '#888', marginBottom: '4px' }}>Occ</div>
+                                    {allOccs.map(name => renderMiniCard(name, getRoundForCard(name)))}
                                 </div>
                             </div>
                         </div>
@@ -851,15 +856,15 @@ function YourHand({ draftedCards, cardMap, onCardClick }) {
 
     return (
         <div className="your-hand-section">
-            <div className="your-hand-title">Your Drafted Cards ({draftedOccs.length} occ, {draftedMins.length} minor)</div>
+            <div className="your-hand-title">Your Drafted Cards ({draftedMins.length} minor, {draftedOccs.length} occ)</div>
             <div className="hand-columns">
-                <div className="hand-column">
-                    <div className="column-header"><span>Occupations</span></div>
-                    <div className="card-list">{draftedOccs.map(renderDraftedCard)}</div>
-                </div>
                 <div className="hand-column">
                     <div className="column-header"><span>Minor Improvements</span></div>
                     <div className="card-list">{draftedMins.map(renderDraftedCard)}</div>
+                </div>
+                <div className="hand-column">
+                    <div className="column-header"><span>Occupations</span></div>
+                    <div className="card-list">{draftedOccs.map(renderDraftedCard)}</div>
                 </div>
             </div>
         </div>
@@ -1082,23 +1087,23 @@ function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, 
             {!showAllDrafted ? (
                 <div className="summary-columns">
                     <div>
-                        <div className="summary-column-title">Occupations ({occs.length}/7)</div>
-                        {occs.map(renderSummaryCard)}
-                    </div>
-                    <div>
                         <div className="summary-column-title">Minor Improvements ({mins.length}/7)</div>
                         {mins.map(renderSummaryCard)}
+                    </div>
+                    <div>
+                        <div className="summary-column-title">Occupations ({occs.length}/7)</div>
+                        {occs.map(renderSummaryCard)}
                     </div>
                 </div>
             ) : (
                 <div className="summary-columns">
                     <div>
-                        <div className="summary-column-title">Occupations ({allKnownOccs.length})</div>
-                        {allKnownOccs.map(renderAllDraftedCard)}
-                    </div>
-                    <div>
                         <div className="summary-column-title">Minor Improvements ({allKnownMins.length})</div>
                         {allKnownMins.map(renderAllDraftedCard)}
+                    </div>
+                    <div>
+                        <div className="summary-column-title">Occupations ({allKnownOccs.length})</div>
+                        {allKnownOccs.map(renderAllDraftedCard)}
                     </div>
                 </div>
             )}
@@ -1131,6 +1136,7 @@ function DraftApp() {
     // Rounds 5-7: marking phase + others' drafted cards
     const [markingPhase, setMarkingPhase] = useState(false);
     const [othersDrafted, setOthersDrafted] = useState([]);
+    const [markedRemaining, setMarkedRemaining] = useState(new Set());
 
     // Temporary cards (not in database)
     const [tempCards, setTempCards] = useState({});
@@ -1216,6 +1222,7 @@ function DraftApp() {
                     setCurrentHandNames(filterNames(saved.currentHandNames));
                     setSortKey(saved.sortKey || 'rank');
                     setMarkingPhase(saved.markingPhase || false);
+                    setMarkedRemaining(new Set(filterNames(saved.markedRemaining || [])));
                     setOthersDrafted(filterNames(saved.othersDrafted));
                     setSelectedOccupation(null);
                     setSelectedMinor(null);
@@ -1273,11 +1280,12 @@ function DraftApp() {
             draftedCards,
             sortKey,
             markingPhase,
+            markedRemaining: [...markedRemaining],
             othersDrafted,
             farmGrid,
             strategyNotes,
         });
-    }, [restoredFromStorage, currentRound, draftStarted, currentHandNames, hands, draftedCards, sortKey, markingPhase, othersDrafted, farmGrid, strategyNotes]);
+    }, [restoredFromStorage, currentRound, draftStarted, currentHandNames, hands, draftedCards, sortKey, markingPhase, markedRemaining, othersDrafted, farmGrid, strategyNotes]);
 
     // Random icon for title
     const [titleIcon] = useState(() => {
@@ -1350,15 +1358,7 @@ function DraftApp() {
         // Return all cards from the source hand except what the user drafted in that round
         const returningCards = sourceHand.filter(name => !userDraftedFromSource.has(name));
         setCurrentHandNames(returningCards);
-
-        // Pre-populate othersDrafted with ALL returning cards (inverted marking).
-        // All cards start faded; user clicks to un-fade the ones they still have.
-        // Append to existing othersDrafted (preserves entries from prior returning rounds).
-        setOthersDrafted(prev => {
-            const existingSet = new Set(prev);
-            const newEntries = returningCards.filter(name => !existingSet.has(name));
-            return [...prev, ...newEntries];
-        });
+        setMarkedRemaining(new Set());
         setMarkingPhase(true);
     }, [currentRound, draftStarted, isReturningRound, currentHandNames.length, hands, draftedCards]);
 
@@ -1486,18 +1486,37 @@ function DraftApp() {
 
             const result = await screenshotOCR.processImage(imageBlob, cards, cardMap, currentHandNames, allUsedCardNames, currentRound);
 
-            // Add matched cards
-            if (result.matched.length > 0) {
-                handleAddCards(result.matched);
+            if (isReturningRound && markingPhase) {
+                // In returning rounds, "duplicates" = cards in hand that screenshot confirmed
+                const confirmedRemaining = result.duplicates || [];
+                const newlyMarked = confirmedRemaining.filter(name => !markedRemaining.has(name));
+                if (newlyMarked.length > 0) {
+                    setMarkedRemaining(prev => {
+                        const next = new Set(prev);
+                        newlyMarked.forEach(n => next.add(n));
+                        return next;
+                    });
+                }
+                setScreenshotResults({
+                    added: newlyMarked.length,
+                    duplicates: confirmedRemaining.length - newlyMarked.length,
+                    unmatched: result.unmatched,
+                    skippedOverflow: [],
+                    total: result.total,
+                });
+            } else {
+                // Rounds 1-4: add matched cards to hand
+                if (result.matched.length > 0) {
+                    handleAddCards(result.matched);
+                }
+                setScreenshotResults({
+                    added: result.added.length,
+                    duplicates: result.duplicates.length,
+                    unmatched: result.unmatched,
+                    skippedOverflow: result.skippedOverflow,
+                    total: result.total,
+                });
             }
-
-            setScreenshotResults({
-                added: result.added.length,
-                duplicates: result.duplicates.length,
-                unmatched: result.unmatched,
-                skippedOverflow: result.skippedOverflow,
-                total: result.total,
-            });
         } catch (err) {
             console.error('Screenshot processing error:', err);
             if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
@@ -1508,7 +1527,7 @@ function DraftApp() {
         } finally {
             setScreenshotProcessing(false);
         }
-    }, [screenshotProcessing, cards, cardMap, currentHandNames, allUsedCardNames, currentRound, handleAddCards]);
+    }, [screenshotProcessing, cards, cardMap, currentHandNames, allUsedCardNames, currentRound, handleAddCards, isReturningRound, markingPhase, markedRemaining]);
 
     // Strategy advisor handler
     const handleGetAdvice = useCallback(async () => {
@@ -1583,6 +1602,15 @@ function DraftApp() {
         );
     }, []);
 
+    const handleToggleMarking = useCallback((cardName) => {
+        setMarkedRemaining(prev => {
+            const next = new Set(prev);
+            if (next.has(cardName)) next.delete(cardName);
+            else next.add(cardName);
+            return next;
+        });
+    }, []);
+
     const handleMiniCardClick = useCallback((cardName, event) => {
         const card = cardMap[cardName];
         if (!card) return;
@@ -1597,16 +1625,25 @@ function DraftApp() {
     }, []);
 
     const handleDoneMarking = useCallback(() => {
+        // Compute which cards were taken by others (not marked as remaining)
+        const takenByOthers = currentHandNames.filter(name => !markedRemaining.has(name));
+        setOthersDrafted(prev => [...prev, ...takenByOthers]);
+        setMarkedRemaining(new Set());
         setMarkingPhase(false);
         setSelectedOccupation(null);
         setSelectedMinor(null);
-    }, []);
+    }, [markedRemaining, currentHandNames]);
 
     const handleBackToMarking = useCallback(() => {
+        // Re-enter marking: move this round's othersDrafted entries back to unmarked state
+        // by removing current hand cards from othersDrafted and resetting markedRemaining
+        const currentHandSet = new Set(currentHandNames);
+        setOthersDrafted(prev => prev.filter(name => !currentHandSet.has(name)));
+        setMarkedRemaining(new Set());
         setMarkingPhase(true);
         setSelectedOccupation(null);
         setSelectedMinor(null);
-    }, []);
+    }, [currentHandNames]);
 
     const handleConfirmDraft = useCallback(() => {
         if (!selectedOccupation || !selectedMinor) return;
@@ -1688,23 +1725,20 @@ function DraftApp() {
                     </div>
                 )}
 
-                {/* Draft complete — Summary view */}
-                {draftComplete && (
-                    <>
-                        <PriorHands hands={hands} draftedCards={draftedCards} cardMap={cardMap} currentRound={currentRound} othersDrafted={othersDrafted} onCardClick={handleMiniCardClick} />
-                        <SummaryView draftedCards={draftedCards} cardMap={cardMap} onNewDraft={handleNewDraft} hands={hands} othersDrafted={othersDrafted} onCardClick={handleMiniCardClick} />
-                    </>
-                )}
-
-                {/* Active draft — rounds 1-7 */}
-                {draftStarted && !draftComplete && (
+                {/* Active draft (including post-completion) */}
+                {draftStarted && (
                     <div className="draft-wide-layout">
                         <div className="draft-main-col">
                             {/* Prior Hands */}
                             <PriorHands hands={hands} draftedCards={draftedCards} cardMap={cardMap} currentRound={currentRound} othersDrafted={othersDrafted} onCardClick={handleMiniCardClick} />
 
+                            {/* Summary view (after completion) */}
+                            {draftComplete && (
+                                <SummaryView draftedCards={draftedCards} cardMap={cardMap} onNewDraft={handleNewDraft} hands={hands} othersDrafted={othersDrafted} onCardClick={handleMiniCardClick} />
+                            )}
+
                             {/* Search + Screenshot (only for rounds 1-4 manual entry) */}
-                            {!isReturningRound && (
+                            {!draftComplete && !isReturningRound && (
                                 <CardSearch
                                     cards={cards}
                                     onAddCard={handleAddCard}
@@ -1728,19 +1762,36 @@ function DraftApp() {
                             )}
 
                             {/* Marking phase banner (rounds 5-7) */}
-                            {isReturningRound && markingPhase && (
-                                <div className="marking-banner">
-                                    <div className="marking-banner-text">
-                                        <strong>Marking Phase:</strong> Click the cards you still have in this returning hand to un-fade them. Unclicked cards are marked as drafted by others.
+                            {!draftComplete && isReturningRound && markingPhase && (
+                                <React.Fragment>
+                                    <div className="marking-banner">
+                                        <div className="marking-banner-text">
+                                            <strong>Marking Phase:</strong> Click the cards you still have in this returning hand, or paste a screenshot. Then click Done Marking.
+                                        </div>
+                                        <button className="btn btn-primary" onClick={handleDoneMarking}>
+                                            Done Marking
+                                        </button>
                                     </div>
-                                    <button className="btn btn-primary" onClick={handleDoneMarking}>
-                                        Done Marking
-                                    </button>
-                                </div>
+                                    {ocrAvailable && (
+                                        <div style={{ marginBottom: '12px' }}>
+                                            <ScreenshotInput
+                                                onImageCaptured={handleScreenshotProcess}
+                                                processing={screenshotProcessing}
+                                                disabled={false}
+                                            />
+                                            <ScreenshotResults
+                                                results={screenshotResults}
+                                                error={screenshotError}
+                                                onDismiss={() => { setScreenshotResults(null); setScreenshotError(null); }}
+                                                onAddTempCard={addTempCard}
+                                            />
+                                        </div>
+                                    )}
+                                </React.Fragment>
                             )}
 
                             {/* Back to marking button */}
-                            {isReturningRound && !markingPhase && (
+                            {!draftComplete && isReturningRound && !markingPhase && (
                                 <div className="marking-banner" style={{ background: '#d1ecf1', borderColor: '#bee5eb' }}>
                                     <div className="marking-banner-text" style={{ color: '#0c5460' }}>
                                         <strong>Draft Phase:</strong> Select 1 occupation and 1 minor improvement to draft.
@@ -1751,8 +1802,8 @@ function DraftApp() {
                                 </div>
                             )}
 
-                            {/* Current Hand */}
-                            <div className="hand-section">
+                            {/* Current Hand (hidden after completion) */}
+                            {!draftComplete && <div className="hand-section">
                                 <div className="sort-controls">
                                     <span style={{ fontSize: '0.85em', color: '#888', marginRight: '4px' }}>Sort by:</span>
                                     {SORT_OPTIONS.map(opt => (
@@ -1785,22 +1836,6 @@ function DraftApp() {
                                         return (
                                             <>
                                                 <HandColumn
-                                                    title="Occupations"
-                                                    cards={occupations}
-                                                    expectedCount={expectedHandSize}
-                                                    sortKey={sortKey}
-                                                    onRemoveCard={handleRemoveCard}
-                                                    onSelectCard={(!markingPhase && handIsFull) ? handleSelectOccupation : null}
-                                                    selectedCardName={!markingPhase ? selectedOccupation : null}
-                                                    showRemove={!isReturningRound && !handIsFull}
-                                                    fadedCardNames={isReturningRound ? othersDrafted : null}
-                                                    onToggleFaded={markingPhase ? handleToggleFaded : null}
-                                                    suggestions={occSuggestions}
-                                                    expandedSuggestion={expandedSuggestion}
-                                                    onToggleSuggestion={handleToggleSuggestion}
-                                                    onEditTempCard={handleEditTempCard}
-                                                />
-                                                <HandColumn
                                                     title="Minor Improvements"
                                                     cards={minors}
                                                     expectedCount={expectedHandSize}
@@ -1809,9 +1844,27 @@ function DraftApp() {
                                                     onSelectCard={(!markingPhase && handIsFull) ? handleSelectMinor : null}
                                                     selectedCardName={!markingPhase ? selectedMinor : null}
                                                     showRemove={!isReturningRound && !handIsFull}
-                                                    fadedCardNames={isReturningRound ? othersDrafted : null}
-                                                    onToggleFaded={markingPhase ? handleToggleFaded : null}
+                                                    fadedCardNames={isReturningRound && !markingPhase ? othersDrafted : null}
+                                                    onToggleFaded={markingPhase ? handleToggleMarking : null}
+                                                    highlightedCardNames={markingPhase ? [...markedRemaining] : null}
                                                     suggestions={minSuggestions}
+                                                    expandedSuggestion={expandedSuggestion}
+                                                    onToggleSuggestion={handleToggleSuggestion}
+                                                    onEditTempCard={handleEditTempCard}
+                                                />
+                                                <HandColumn
+                                                    title="Occupations"
+                                                    cards={occupations}
+                                                    expectedCount={expectedHandSize}
+                                                    sortKey={sortKey}
+                                                    onRemoveCard={handleRemoveCard}
+                                                    onSelectCard={(!markingPhase && handIsFull) ? handleSelectOccupation : null}
+                                                    selectedCardName={!markingPhase ? selectedOccupation : null}
+                                                    showRemove={!isReturningRound && !handIsFull}
+                                                    fadedCardNames={isReturningRound && !markingPhase ? othersDrafted : null}
+                                                    onToggleFaded={markingPhase ? handleToggleMarking : null}
+                                                    highlightedCardNames={markingPhase ? [...markedRemaining] : null}
+                                                    suggestions={occSuggestions}
                                                     expandedSuggestion={expandedSuggestion}
                                                     onToggleSuggestion={handleToggleSuggestion}
                                                     onEditTempCard={handleEditTempCard}
@@ -1835,8 +1888,8 @@ function DraftApp() {
                                             onClick={handleConfirmDraft}
                                         >
                                             {canConfirm
-                                                ? `Confirm Draft — ${cardMap[selectedOccupation]?.name} + ${cardMap[selectedMinor]?.name}`
-                                                : 'Select 1 Occupation + 1 Minor Improvement'}
+                                                ? `Confirm Draft — ${cardMap[selectedMinor]?.name} + ${cardMap[selectedOccupation]?.name}`
+                                                : 'Select 1 Minor Improvement + 1 Occupation'}
                                         </button>
                                     </div>
                                 )}
@@ -1849,11 +1902,11 @@ function DraftApp() {
                                             </button>
                                         )}
                                         <div style={{ fontSize: '0.9em', color: '#888', padding: '10px' }}>
-                                            Add {expectedHandSize - occupations.length} more occupation{expectedHandSize - occupations.length !== 1 ? 's' : ''} and {expectedHandSize - minors.length} more minor improvement{expectedHandSize - minors.length !== 1 ? 's' : ''} to this hand
+                                            Add {expectedHandSize - minors.length} more minor improvement{expectedHandSize - minors.length !== 1 ? 's' : ''} and {expectedHandSize - occupations.length} more occupation{expectedHandSize - occupations.length !== 1 ? 's' : ''} to this hand
                                         </div>
                                     </div>
                                 )}
-                            </div>
+                            </div>}
 
                             {/* Your Hand (drafted cards) */}
                             <YourHand draftedCards={draftedCards} cardMap={cardMap} onCardClick={handleMiniCardClick} />

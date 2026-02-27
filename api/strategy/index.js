@@ -56,15 +56,16 @@ You must respond with ONLY valid JSON matching this exact format — no markdown
   },
   "risks": "1-2 sentence risk assessment highlighting specific weaknesses or strategic vulnerabilities.",
   "suggestions": [
-    { "card_name": "Exact Card Name", "rank_number": 1, "rationale": "1-2 sentence explanation of why this card is the best pick given the current draft state." },
-    { "card_name": "Exact Card Name", "rank_number": 2, "rationale": "1-2 sentence explanation." },
-    { "card_name": "Exact Card Name", "rank_number": 3, "rationale": "1-2 sentence explanation." }
+    { "card_name": "Best Occupation", "rank_number": 1, "rationale": "1-2 sentence explanation of why this card is the best pick given the current draft state." },
+    { "card_name": "2nd Occupation", "rank_number": 2, "rationale": "1-2 sentence explanation." },
+    { "card_name": "Best Minor Improvement", "rank_number": 1, "rationale": "1-2 sentence explanation." },
+    { "card_name": "2nd Minor Improvement", "rank_number": 2, "rationale": "1-2 sentence explanation." }
   ]
 }
 
 Rules for suggestions:
-- Suggest 2-3 cards from the current hand (occupations and minor improvements combined).
-- rank_number is YOUR ranking (1 = best pick, 2 = second best, 3 = third best). NOT the card's database rank.
+- Suggest exactly 2 occupations and 2 minor improvements from the current hand (4 suggestions total). If fewer than 2 of a type are available, suggest as many as possible.
+- rank_number is your ranking within each type: 1 = best pick, 2 = second best. NOT the card's database rank.
 - card_name must exactly match a card name from the current hand.
 - Consider: current drafted cards, strategic coverage gaps, card synergies, what opponents likely took, card rank/ADP/play rate, and game flow timing.
 - Prefer cards that fill the biggest strategic gap. If food is weak, prioritize food. If growth is missing, prioritize growth enablers.
