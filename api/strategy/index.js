@@ -46,22 +46,28 @@ const SYSTEM_PROMPT = `You are an expert Agricola (board game) draft strategy ad
 You must respond with ONLY valid JSON matching this exact format — no markdown, no explanation, no text outside the JSON:
 
 {
-  "overall_analysis": "1-2 sentence narrative summarizing the draft state and what to prioritize next.",
+  "reasoning": "3-5 sentences of internal analysis. Assess: (a) what strategy archetypes are forming based on drafted card tags, (b) specific synergies between cards in the current hand and already-drafted cards, (c) what opponents' picks signal about contested action spaces, (d) what the biggest strategic gap is right now.",
+  "archetypes": ["Primary archetype", "Secondary archetype if applicable"],
+  "overall_analysis": "2-3 sentence narrative summarizing the draft state and what to prioritize next.",
   "dimensions": {
-    "food": "weak|adequate|strong",
-    "growth": "weak|adequate|strong",
-    "extra_actions": "weak|adequate|strong",
-    "point_ceiling": "low|medium|high",
-    "plow": "covered|not_covered"
+    "food": { "rating": "weak|adequate|strong", "reason": "Brief justification for this rating" },
+    "growth": { "rating": "weak|adequate|strong", "reason": "Brief justification" },
+    "extra_actions": { "rating": "weak|adequate|strong", "reason": "Brief justification" },
+    "point_ceiling": { "rating": "low|medium|high", "reason": "Brief justification" },
+    "plow": { "rating": "covered|not_covered", "reason": "Brief justification" }
   },
-  "risks": "1-2 sentence risk assessment highlighting specific weaknesses or strategic vulnerabilities.",
+  "risks": "2-3 sentences identifying specific weaknesses, contested action spaces based on opponent picks, and strategic vulnerabilities.",
   "suggestions": [
-    { "card_name": "Best Occupation", "rank_number": 1, "rationale": "1-2 sentence explanation of why this card is the best pick given the current draft state." },
-    { "card_name": "2nd Occupation", "rank_number": 2, "rationale": "1-2 sentence explanation." },
-    { "card_name": "Best Minor Improvement", "rank_number": 1, "rationale": "1-2 sentence explanation." },
-    { "card_name": "2nd Minor Improvement", "rank_number": 2, "rationale": "1-2 sentence explanation." }
+    { "card_name": "Best Occupation", "rank_number": 1, "rationale": "Explain: (1) how this card synergizes with already-drafted cards by name, (2) what strategic gap it fills, (3) why it's better than the next-best occupation in the hand." },
+    { "card_name": "2nd Occupation", "rank_number": 2, "rationale": "Same structure." },
+    { "card_name": "Best Minor Improvement", "rank_number": 1, "rationale": "Same structure." },
+    { "card_name": "2nd Minor Improvement", "rank_number": 2, "rationale": "Same structure." }
   ]
 }
+
+Rules for reasoning:
+- The "reasoning" field comes FIRST and must be filled with genuine analysis BEFORE producing the other fields. Think through the draft state carefully.
+- For "archetypes", list the 1-2 most prominent strategy directions forming from drafted card tags. Use archetype names from the strategy guide: Day Laborer, Fishing, Traveling Players, Grain, Sow, Major/Minor, Lesson, Big House, Small House, Stone House, Stable, Animal. If no clear archetype has emerged (typically rounds 1-2), use ["Flexible"].
 
 Rules for suggestions:
 - Suggest exactly 2 occupations and 2 minor improvements from the current hand (4 suggestions total). If fewer than 2 of a type are available, suggest as many as possible.
@@ -70,6 +76,7 @@ Rules for suggestions:
 - Consider: current drafted cards, strategic coverage gaps, card synergies, what opponents likely took, card rank/ADP/play rate, and game flow timing.
 - Prefer cards that fill the biggest strategic gap. If food is weak, prioritize food. If growth is missing, prioritize growth enablers.
 - Factor in whether a card is strategy-defining (requires commitment) vs complementary (enhances actions you'd take anyway).
+- For rationale, go beyond generic statements. Name specific already-drafted cards that synergize and explain WHY the synergy matters in terms of action efficiency or scoring. Explain what makes this pick better than the alternative.
 
 Draft stage awareness:
 - Calibrate depth to draft progress. The user message includes CURRENT ROUND and the number of drafted cards.
@@ -105,6 +112,14 @@ function enrichCards(names) {
         }));
 }
 
+// --- Light enrichment for opponent cards (type + tags for strategy inference) ---
+function enrichOpponentCards(names) {
+    return names
+        .map(name => CARD_MAP[name])
+        .filter(Boolean)
+        .map(c => ({ name: c.name, rank: c.rank, type: c.type, tags: c.tags }));
+}
+
 // --- Build user message from draft state ---
 function buildUserMessage(body) {
     const round = body.round || 1;
@@ -121,7 +136,8 @@ function buildUserMessage(body) {
     }
 
     if (othersDrafted.length > 0) {
-        msg += `CARDS TAKEN BY OPPONENTS (names only):\n${JSON.stringify(othersDrafted)}\n\n`;
+        const enrichedOpponents = enrichOpponentCards(othersDrafted);
+        msg += `CARDS TAKEN BY OPPONENTS (with type, rank, and strategy tags):\n${JSON.stringify(enrichedOpponents, null, 1)}\n\n`;
     }
 
     msg += 'Analyze my draft state and suggest the best picks from my current hand.';
@@ -133,12 +149,20 @@ function validateResponse(obj) {
     if (!obj || typeof obj !== 'object') return false;
     if (typeof obj.overall_analysis !== 'string') return false;
     if (!obj.dimensions || typeof obj.dimensions !== 'object') return false;
+
+    // Accept both old format (bare string) and new format ({ rating, reason })
+    const getDimRating = (dim) => {
+        if (typeof dim === 'string') return dim;
+        if (typeof dim === 'object' && dim !== null) return dim.rating;
+        return undefined;
+    };
+
     const dims = obj.dimensions;
-    if (!['weak', 'adequate', 'strong'].includes(dims.food)) return false;
-    if (!['weak', 'adequate', 'strong'].includes(dims.growth)) return false;
-    if (!['weak', 'adequate', 'strong'].includes(dims.extra_actions)) return false;
-    if (!['low', 'medium', 'high'].includes(dims.point_ceiling)) return false;
-    if (!['covered', 'not_covered'].includes(dims.plow)) return false;
+    if (!['weak', 'adequate', 'strong'].includes(getDimRating(dims.food))) return false;
+    if (!['weak', 'adequate', 'strong'].includes(getDimRating(dims.growth))) return false;
+    if (!['weak', 'adequate', 'strong'].includes(getDimRating(dims.extra_actions))) return false;
+    if (!['low', 'medium', 'high'].includes(getDimRating(dims.point_ceiling))) return false;
+    if (!['covered', 'not_covered'].includes(getDimRating(dims.plow))) return false;
     if (typeof obj.risks !== 'string') return false;
     if (!Array.isArray(obj.suggestions)) return false;
     for (const s of obj.suggestions) {
@@ -224,7 +248,7 @@ module.exports = async function (context, req) {
             { role: 'system', content: SYSTEM_PROMPT },
             { role: 'user', content: userMessage },
         ],
-        max_tokens: 1000,
+        max_tokens: 1500,
         temperature: 0.3,
         response_format: { type: 'json_object' },
     };

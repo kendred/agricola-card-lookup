@@ -749,15 +749,22 @@ function FarmGrid({ grid, onCellClick }) {
 // ─── StrategyDashboard Component ────────────────────────────────────
 function StrategyDashboard({ strategyResult, strategyLoading, strategyError, strategyAvailable, hasCards, farmGrid, onFarmCellClick, strategyNotes, onNotesChange, onGetAdvice, onDismissError }) {
     const dims = strategyResult?.dimensions;
+    const [showReasoning, setShowReasoning] = React.useState(false);
 
     const renderDimension = (label, key) => {
-        const value = dims?.[key];
-        const cls = value ? value.replace(/ /g, '_') : 'placeholder';
-        const display = value ? value.replace(/_/g, ' ') : '—';
+        const dim = dims?.[key];
+        // Support both old format (string) and new format ({ rating, reason })
+        const rating = typeof dim === 'object' ? dim?.rating : dim;
+        const reason = typeof dim === 'object' ? dim?.reason : null;
+        const cls = rating ? rating.replace(/ /g, '_') : 'placeholder';
+        const display = rating ? rating.replace(/_/g, ' ') : '—';
         return (
-            <div className="dimension-row">
+            <div className="dimension-row" title={reason || ''}>
                 <span className="dimension-label">{label}</span>
-                <span className={`dimension-value ${cls}`}>{display}</span>
+                <div className="dimension-value-group">
+                    <span className={`dimension-value ${cls}`}>{display}</span>
+                    {reason && <span className="dimension-reason">{reason}</span>}
+                </div>
             </div>
         );
     };
@@ -771,6 +778,35 @@ function StrategyDashboard({ strategyResult, strategyLoading, strategyError, str
             <div className={`strategy-analysis${strategyResult?.overall_analysis ? ' has-content' : ''}`}>
                 {strategyLoading ? 'Analyzing your draft...' : (strategyResult?.overall_analysis || 'Click "Get AI Advice" to analyze your draft.')}
             </div>
+
+            {/* Strategy Archetypes */}
+            {strategyResult?.archetypes && strategyResult.archetypes.length > 0 && (
+                <div className="archetype-section">
+                    <div className="strategy-section-label">Strategy Direction</div>
+                    <div className="archetype-badges">
+                        {strategyResult.archetypes.map((arch, i) => (
+                            <span key={i} className="archetype-badge">{arch}</span>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* Internal Reasoning (collapsible) */}
+            {strategyResult?.reasoning && (
+                <div className="reasoning-section">
+                    <button
+                        className="reasoning-toggle"
+                        onClick={() => setShowReasoning(prev => !prev)}
+                    >
+                        {showReasoning ? '▾ Hide AI Reasoning' : '▸ Show AI Reasoning'}
+                    </button>
+                    {showReasoning && (
+                        <div className="reasoning-content">
+                            {strategyResult.reasoning}
+                        </div>
+                    )}
+                </div>
+            )}
 
             {/* Dimensions */}
             <div className="dimension-section">
