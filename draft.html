@@ -423,8 +423,8 @@ function ScreenshotResults({ results, error, onDismiss, onAddTempCard }) {
                         {unmatchedToShow.map(name => (
                             <div key={name} className="unmatched-row">
                                 <span className="unmatched-name">{name}</span>
-                                <button className="unmatched-add-btn" onClick={() => handleAddTemp(name, 'Occupation')}>+ Occ</button>
-                                <button className="unmatched-add-btn" onClick={() => handleAddTemp(name, 'Minor Improvement')}>+ Minor</button>
+                                <button className="unmatched-add-btn" onClick={() => handleAddTemp(name, 'Occupation')}>Add as Occ</button>
+                                <button className="unmatched-add-btn" onClick={() => handleAddTemp(name, 'Minor Improvement')}>Add as Minor</button>
                             </div>
                         ))}
                     </div>
@@ -592,7 +592,7 @@ function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSele
 }
 
 // ─── PriorHands Component ───────────────────────────────────────────
-function PriorHands({ hands, draftedCards, cardMap, currentRound, othersDrafted, onCardClick }) {
+function PriorHands({ hands, draftedCards, cardMap, currentRound, othersDrafted, onCardClick, wheelWatch, onToggleWheelWatch }) {
     const othersDraftedSet = new Set(othersDrafted || []);
 
     // Determine which hand groups have at least one completed pass
@@ -608,6 +608,7 @@ function PriorHands({ hands, draftedCards, cardMap, currentRound, othersDrafted,
         const isOthersTook = othersDraftedSet.has(name);
         const passNum = isDrafted ? getPassNumber(round) : null;
         const card = cardMap[name];
+        const isWatched = !!(wheelWatch && wheelWatch[name]);
         const tagDots = (card?.tags || []).map(tag => {
             const def = TAG_DEFINITIONS[tag];
             return def ? (
@@ -618,12 +619,27 @@ function PriorHands({ hands, draftedCards, cardMap, currentRound, othersDrafted,
         return (
             <div
                 key={name}
-                className={`mini-card ${isDrafted ? 'drafted' : isOthersTook ? 'others-took' : 'passed'} clickable`}
+                className={`mini-card ${isDrafted ? 'drafted' : isOthersTook ? 'others-took' : 'passed'} clickable${isWatched ? ' wheel-watched' : ''}`}
                 onClick={(e) => onCardClick && onCardClick(name, e)}
             >
                 {passNum ? <span className="pick-badge">{passNum}</span> : isOthersTook ? '✗ ' : ''}
                 {tagDots.length > 0 && <span className="mini-tag-dots">{tagDots}</span>}
                 {name}
+                {isWatched && <span className="wheel-watch-indicator" title="Watching for wheel">👁</span>}
+                <span
+                    className={`wheel-watch-btn${isWatched ? ' active' : ''}`}
+                    title={isWatched ? 'Unwatch card' : 'Watch for wheel'}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        if (!isWatched) {
+                            onToggleWheelWatch && onToggleWheelWatch(name);
+                            const rect = e.currentTarget.closest('.mini-card').getBoundingClientRect();
+                            onCardClick && onCardClick(name, { currentTarget: { getBoundingClientRect: () => rect } });
+                        } else {
+                            onToggleWheelWatch && onToggleWheelWatch(name);
+                        }
+                    }}
+                >👁</span>
             </div>
         );
     };
@@ -908,7 +924,7 @@ function YourHand({ draftedCards, cardMap, onCardClick }) {
 }
 
 // ─── CardDetailPopover Component ─────────────────────────────────────
-function CardDetailPopover({ card, anchorRect, onClose }) {
+function CardDetailPopover({ card, anchorRect, onClose, wheelWatchNote, onWheelWatchNoteChange }) {
     const popoverRef = useRef(null);
     const [position, setPosition] = useState({ top: 0, left: 0 });
 
@@ -1001,6 +1017,21 @@ function CardDetailPopover({ card, anchorRect, onClose }) {
                 <div><span className="popover-stat-label">Value</span> {card.value ? parseFloat(card.value).toFixed(1) : '—'}</div>
                 <div><span className="popover-stat-label">VWP</span> {card.value_when_played ? parseFloat(card.value_when_played).toFixed(1) : '—'}</div>
             </div>
+            {wheelWatchNote !== null && wheelWatchNote !== undefined && (
+                <div className="popover-wheel-note">
+                    <label className="popover-wheel-note-label">👁 Wheel Watch Note</label>
+                    <input
+                        type="text"
+                        className="popover-wheel-note-input"
+                        placeholder="e.g., pairs with Seed Almanac"
+                        value={wheelWatchNote}
+                        onChange={(e) => onWheelWatchNoteChange && onWheelWatchNoteChange(e.target.value)}
+                        maxLength={100}
+                        onClick={(e) => e.stopPropagation()}
+                        onMouseDown={(e) => e.stopPropagation()}
+                    />
+                </div>
+            )}
         </div>
     );
 }
@@ -1211,6 +1242,7 @@ function DraftApp() {
     const [strategyLoading, setStrategyLoading] = useState(false);
     const [strategyError, setStrategyError] = useState(null);
     const [expandedSuggestion, setExpandedSuggestion] = useState(null);
+    const [wheelWatch, setWheelWatch] = useState({});
 
     const handleFarmCellClick = useCallback((index) => {
         setFarmGrid(prev => {
@@ -1291,6 +1323,9 @@ function DraftApp() {
                     if (saved.strategyNotes) {
                         setStrategyNotes(saved.strategyNotes);
                     }
+                    if (saved.wheelWatch && typeof saved.wheelWatch === 'object') {
+                        setWheelWatch(saved.wheelWatch);
+                    }
                 }
                 setRestoredFromStorage(true);
                 setLoading(false);
@@ -1320,8 +1355,9 @@ function DraftApp() {
             othersDrafted,
             farmGrid,
             strategyNotes,
+            wheelWatch,
         });
-    }, [restoredFromStorage, currentRound, draftStarted, currentHandNames, hands, draftedCards, sortKey, markingPhase, markedRemaining, othersDrafted, farmGrid, strategyNotes]);
+    }, [restoredFromStorage, currentRound, draftStarted, currentHandNames, hands, draftedCards, sortKey, markingPhase, markedRemaining, othersDrafted, farmGrid, strategyNotes, wheelWatch]);
 
     // Random icon for title
     const [titleIcon] = useState(() => {
@@ -1414,6 +1450,7 @@ function DraftApp() {
         setStrategyNotes('');
         setStrategyResult(null);
         setStrategyError(null);
+        setWheelWatch({});
         setDraftStarted(true);
     };
 
@@ -1433,6 +1470,7 @@ function DraftApp() {
         setStrategyNotes('');
         setStrategyResult(null);
         setStrategyError(null);
+        setWheelWatch({});
         setDraftStarted(false);
         clearSavedState();
     };
@@ -1647,6 +1685,25 @@ function DraftApp() {
         });
     }, []);
 
+    const handleToggleWheelWatch = useCallback((cardName) => {
+        setWheelWatch(prev => {
+            const next = { ...prev };
+            if (next[cardName]) {
+                delete next[cardName];
+            } else {
+                next[cardName] = { note: '' };
+            }
+            return next;
+        });
+    }, []);
+
+    const handleWheelWatchNote = useCallback((cardName, note) => {
+        setWheelWatch(prev => ({
+            ...prev,
+            [cardName]: { ...prev[cardName], note },
+        }));
+    }, []);
+
     const handleMiniCardClick = useCallback((cardName, event) => {
         const card = cardMap[cardName];
         if (!card) return;
@@ -1766,7 +1823,7 @@ function DraftApp() {
                     <div className="draft-wide-layout">
                         <div className="draft-main-col">
                             {/* Prior Hands */}
-                            <PriorHands hands={hands} draftedCards={draftedCards} cardMap={cardMap} currentRound={currentRound} othersDrafted={othersDrafted} onCardClick={handleMiniCardClick} />
+                            <PriorHands hands={hands} draftedCards={draftedCards} cardMap={cardMap} currentRound={currentRound} othersDrafted={othersDrafted} onCardClick={handleMiniCardClick} wheelWatch={wheelWatch} onToggleWheelWatch={handleToggleWheelWatch} />
 
                             {/* Summary view (after completion) */}
                             {draftComplete && (
@@ -1974,6 +2031,8 @@ function DraftApp() {
                     card={popoverCard}
                     anchorRect={popoverAnchor}
                     onClose={handlePopoverClose}
+                    wheelWatchNote={wheelWatch[popoverCard.name] !== undefined ? wheelWatch[popoverCard.name].note : null}
+                    onWheelWatchNoteChange={(note) => handleWheelWatchNote(popoverCard.name, note)}
                 />
             )}
 
