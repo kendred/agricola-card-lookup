@@ -1326,6 +1326,9 @@ function DraftApp() {
                     if (saved.wheelWatch && typeof saved.wheelWatch === 'object') {
                         setWheelWatch(saved.wheelWatch);
                     }
+                    if (saved.tempCards && typeof saved.tempCards === 'object') {
+                        setTempCards(saved.tempCards);
+                    }
                 }
                 setRestoredFromStorage(true);
                 setLoading(false);
@@ -1356,8 +1359,9 @@ function DraftApp() {
             farmGrid,
             strategyNotes,
             wheelWatch,
+            tempCards,
         });
-    }, [restoredFromStorage, currentRound, draftStarted, currentHandNames, hands, draftedCards, sortKey, markingPhase, markedRemaining, othersDrafted, farmGrid, strategyNotes, wheelWatch]);
+    }, [restoredFromStorage, currentRound, draftStarted, currentHandNames, hands, draftedCards, sortKey, markingPhase, markedRemaining, othersDrafted, farmGrid, strategyNotes, wheelWatch, tempCards]);
 
     // Random icon for title
     const [titleIcon] = useState(() => {
