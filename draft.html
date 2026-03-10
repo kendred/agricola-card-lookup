@@ -631,12 +631,10 @@ function PriorHands({ hands, draftedCards, cardMap, currentRound, othersDrafted,
                     title={isWatched ? 'Unwatch card' : 'Watch for wheel'}
                     onClick={(e) => {
                         e.stopPropagation();
+                        onToggleWheelWatch && onToggleWheelWatch(name);
                         if (!isWatched) {
-                            onToggleWheelWatch && onToggleWheelWatch(name);
                             const rect = e.currentTarget.closest('.mini-card').getBoundingClientRect();
                             onCardClick && onCardClick(name, { currentTarget: { getBoundingClientRect: () => rect } });
-                        } else {
-                            onToggleWheelWatch && onToggleWheelWatch(name);
                         }
                     }}
                 >👁</span>
@@ -1017,7 +1015,7 @@ function CardDetailPopover({ card, anchorRect, onClose, wheelWatchNote, onWheelW
                 <div><span className="popover-stat-label">Value</span> {card.value ? parseFloat(card.value).toFixed(1) : '—'}</div>
                 <div><span className="popover-stat-label">VWP</span> {card.value_when_played ? parseFloat(card.value_when_played).toFixed(1) : '—'}</div>
             </div>
-            {wheelWatchNote !== null && wheelWatchNote !== undefined && (
+            {wheelWatchNote != null && (
                 <div className="popover-wheel-note">
                     <label className="popover-wheel-note-label">👁 Wheel Watch Note</label>
                     <input
