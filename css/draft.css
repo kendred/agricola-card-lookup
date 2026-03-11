@@ -976,6 +976,34 @@ body {
     white-space: nowrap;
 }
 
+/* Played card toggle */
+.played-checkbox {
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+    accent-color: #888;
+    flex-shrink: 0;
+    margin: 0;
+}
+
+.summary-card-compact.played {
+    opacity: 0.4;
+}
+
+.summary-card-compact.played .card-name-inline {
+    text-decoration: line-through;
+}
+
+.summary-card-compact.played .tag-pill {
+    opacity: 0.5;
+}
+
+.remaining-count {
+    font-size: 0.8em;
+    font-weight: 400;
+    color: #999;
+}
+
 /* Subgroups within a summary column (e.g., Occupations / Minors under Your Hand) */
 .summary-subgroup {
     margin-bottom: 16px;
