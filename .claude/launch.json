@@ -4,7 +4,7 @@
     {
       "name": "dev-server",
       "runtimeExecutable": "ruby",
-      "runtimeArgs": ["-run", "-ehttpd", "/Users/rileyoneill/Documents/agricola-card-lookup", "-p8080"],
+      "runtimeArgs": ["-run", "-ehttpd", "/Users/rileyoneill/Projects/agricola-card-lookup", "-p8080"],
       "port": 8080
     }
   ]

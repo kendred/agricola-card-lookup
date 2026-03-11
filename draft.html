@@ -1036,7 +1036,7 @@ function CardDetailPopover({ card, anchorRect, onClose, wheelWatchNote, onWheelW
 
 // ─── SummaryView Component ──────────────────────────────────────────
 function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, onCardClick }) {
-    const [showAllDrafted, setShowAllDrafted] = useState(false);
+    const [viewMode, setViewMode] = useState('combined'); // 'combined' or 'myhand'
 
     const allDrafted = [];
     Object.entries(draftedCards).forEach(([round, picks]) => {
@@ -1053,23 +1053,9 @@ function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, 
     const occs = allDrafted.filter(c => c.type === 'Occupation').sort((a, b) => a.rank - b.rank);
     const mins = allDrafted.filter(c => c.type === 'Minor Improvement').sort((a, b) => a.rank - b.rank);
 
-    // Build all known drafted cards (user + others)
-    const allKnownDrafted = useMemo(() => {
+    // Build others' drafted cards with hand info
+    const othersDraftedCards = useMemo(() => {
         const result = [];
-
-        // User's drafted cards
-        Object.entries(draftedCards).forEach(([round, picks]) => {
-            const passNum = getPassNumber(round);
-            const handNum = getHandNumber(round);
-            if (picks.occupation && cardMap[picks.occupation]) {
-                result.push({ ...cardMap[picks.occupation], _round: parseInt(round), _passNum: passNum, _handNum: handNum, _drafter: 'you' });
-            }
-            if (picks.minor && cardMap[picks.minor]) {
-                result.push({ ...cardMap[picks.minor], _round: parseInt(round), _passNum: passNum, _handNum: handNum, _drafter: 'you' });
-            }
-        });
-
-        // Others' drafted cards — find which hand they appeared in
         const othersDraftedSet = new Set(othersDrafted || []);
         if (othersDraftedSet.size > 0) {
             const seen = new Set();
@@ -1079,77 +1065,110 @@ function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, 
                 handNames.forEach(name => {
                     if (othersDraftedSet.has(name) && cardMap[name] && !seen.has(name)) {
                         seen.add(name);
-                        result.push({
-                            ...cardMap[name],
-                            _round: roundNum,
-                            _handNum: handNum,
-                            _drafter: 'other',
-                        });
+                        result.push({ ...cardMap[name], _round: roundNum, _handNum: handNum });
                     }
                 });
             });
         }
-
-        result.sort((a, b) => a.rank - b.rank);
         return result;
-    }, [draftedCards, cardMap, hands, othersDrafted]);
+    }, [cardMap, hands, othersDrafted]);
+
+    // Group opponents' cards by hand number
+    const othersByHand = useMemo(() => {
+        const grouped = { 1: [], 2: [], 3: [], 4: [] };
+        othersDraftedCards.forEach(card => {
+            if (grouped[card._handNum]) {
+                grouped[card._handNum].push(card);
+            }
+        });
+        Object.values(grouped).forEach(arr => arr.sort((a, b) => a.rank - b.rank));
+        return grouped;
+    }, [othersDraftedCards]);
 
     const renderSummaryCard = (card) => (
-        <div key={card.name} className="summary-card clickable" onClick={(e) => onCardClick && onCardClick(card.name, e)}>
-            <div className="card-name">
-                {card.isTemporary && <span className="temp-badge" style={{ marginRight: 6 }}>NEW</span>}
-                {card.name} {!card.isTemporary && <TagPills tags={card.tags} abbreviated={false} />}
-            </div>
-            <div className="card-stats">
-                <span>Rank {card.isTemporary ? '—' : `#${card.rank}`}</span>
-                <span>ADP {card.isTemporary ? '—' : card.adp}</span>
-                <span>Elo/Play {card.isTemporary ? '—' : (card.elo_per_play || '—')}</span>
-                <span>Value {card.isTemporary ? '—' : (card.value ? parseFloat(card.value).toFixed(1) : '—')}</span>
-                <span>Play Rate {card.isTemporary ? '—' : card.play_rate}</span>
-            </div>
+        <div key={card.name} className="summary-card-compact clickable" onClick={(e) => onCardClick && onCardClick(card.name, e)}>
+            <span className="card-name-inline">
+                {card.isTemporary && <span className="temp-badge" style={{ marginRight: 4 }}>NEW</span>}
+                {card.name}
+            </span>
+            {!card.isTemporary && <TagPills tags={card.tags} abbreviated={false} />}
+            <span className="card-stats-inline">
+                <span>#{card.isTemporary ? '—' : card.rank}</span>
+            </span>
         </div>
     );
 
-    const renderAllDraftedCard = (card) => (
-        <div key={`${card.name}-${card._drafter}`} className={`summary-card clickable${card._drafter === 'other' ? ' others-pick' : ''}`} onClick={(e) => onCardClick && onCardClick(card.name, e)}>
-            <div className="card-name">
-                {card._drafter === 'other' && <span className="other-badge">Other</span>}
-                {card.isTemporary && <span className="temp-badge" style={{ marginRight: 6 }}>NEW</span>}
-                {card.name} {!card.isTemporary && <TagPills tags={card.tags} abbreviated={false} />}
-            </div>
-            <div className="card-stats">
-                <span>Rank {card.isTemporary ? '—' : `#${card.rank}`}</span>
-                <span>ADP {card.isTemporary ? '—' : card.adp}</span>
-                <span>H{card._handNum}</span>
-                {card._drafter === 'you' && <span>Pass {card._passNum}</span>}
-            </div>
+    const renderOpponentCard = (card) => (
+        <div key={card.name} className="summary-card-compact clickable others-pick" onClick={(e) => onCardClick && onCardClick(card.name, e)}>
+            <span className="card-name-inline">
+                {card.isTemporary && <span className="temp-badge" style={{ marginRight: 4 }}>NEW</span>}
+                {card.name}
+            </span>
+            {!card.isTemporary && <TagPills tags={card.tags} abbreviated={true} />}
+            <span className="card-stats-inline">
+                <span>#{card.isTemporary ? '—' : card.rank}</span>
+            </span>
         </div>
     );
 
-    const allKnownOccs = allKnownDrafted.filter(c => c.type === 'Occupation');
-    const allKnownMins = allKnownDrafted.filter(c => c.type === 'Minor Improvement');
+    // Only count opponents from hands 1-3 (hand 4 isn't shown — user has no insight on those picks)
+    const othersHands123 = othersDraftedCards.filter(c => c._handNum <= 3);
+    const totalOthers = othersHands123.length;
 
     return (
         <div className="summary-section">
             <div className="summary-title">
-                {showAllDrafted ? 'All Known Drafted Cards' : 'Draft Complete — Your Final Hand'}
+                {viewMode === 'combined' ? 'Draft Complete — Summary' : 'Draft Complete — Your Final Hand'}
             </div>
             <div className="summary-toggle">
                 <button
-                    className={`toggle-btn${!showAllDrafted ? ' active' : ''}`}
-                    onClick={() => setShowAllDrafted(false)}
+                    className={`toggle-btn${viewMode === 'combined' ? ' active' : ''}`}
+                    onClick={() => setViewMode('combined')}
                 >
-                    Your Hand
+                    Combined View
                 </button>
                 <button
-                    className={`toggle-btn${showAllDrafted ? ' active' : ''}`}
-                    onClick={() => setShowAllDrafted(true)}
+                    className={`toggle-btn${viewMode === 'myhand' ? ' active' : ''}`}
+                    onClick={() => setViewMode('myhand')}
                 >
-                    All Drafted ({allKnownDrafted.length})
+                    Just My Hand
                 </button>
             </div>
 
-            {!showAllDrafted ? (
+            {viewMode === 'combined' ? (
+                <div className="summary-columns">
+                    <div>
+                        <div className="summary-column-title">Your Hand ({allDrafted.length} cards)</div>
+                        <div className="summary-subgroup">
+                            <div className="summary-subgroup-title">Occupations ({occs.length})</div>
+                            {occs.map(renderSummaryCard)}
+                        </div>
+                        <div className="summary-subgroup">
+                            <div className="summary-subgroup-title">Minor Improvements ({mins.length})</div>
+                            {mins.map(renderSummaryCard)}
+                        </div>
+                    </div>
+                    <div>
+                        <div className="summary-column-title">Opponents' Cards ({totalOthers})</div>
+                        {totalOthers === 0 ? (
+                            <div style={{ color: '#999', fontStyle: 'italic', padding: '12px 0' }}>
+                                No opponent cards were marked during the draft.
+                            </div>
+                        ) : (
+                            [1, 2, 3].map(handNum => {
+                                const handCards = othersByHand[handNum];
+                                if (!handCards || handCards.length === 0) return null;
+                                return (
+                                    <div key={handNum} className="opponents-hand-group">
+                                        <div className="opponents-hand-header">Hand {handNum}</div>
+                                        {handCards.map(renderOpponentCard)}
+                                    </div>
+                                );
+                            })
+                        )}
+                    </div>
+                </div>
+            ) : (
                 <div className="summary-columns">
                     <div>
                         <div className="summary-column-title">Minor Improvements ({mins.length}/7)</div>
@@ -1158,17 +1177,6 @@ function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, 
                     <div>
                         <div className="summary-column-title">Occupations ({occs.length}/7)</div>
                         {occs.map(renderSummaryCard)}
-                    </div>
-                </div>
-            ) : (
-                <div className="summary-columns">
-                    <div>
-                        <div className="summary-column-title">Minor Improvements ({allKnownMins.length})</div>
-                        {allKnownMins.map(renderAllDraftedCard)}
-                    </div>
-                    <div>
-                        <div className="summary-column-title">Occupations ({allKnownOccs.length})</div>
-                        {allKnownOccs.map(renderAllDraftedCard)}
                     </div>
                 </div>
             )}
@@ -2003,8 +2011,8 @@ function DraftApp() {
                                 )}
                             </div>}
 
-                            {/* Your Hand (drafted cards) */}
-                            <YourHand draftedCards={draftedCards} cardMap={cardMap} onCardClick={handleMiniCardClick} />
+                            {/* Your Hand (drafted cards) — hidden post-completion since SummaryView covers it */}
+                            {!draftComplete && <YourHand draftedCards={draftedCards} cardMap={cardMap} onCardClick={handleMiniCardClick} />}
                         </div>
 
                         {/* Strategy sidebar */}
