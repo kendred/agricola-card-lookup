@@ -798,12 +798,13 @@ body {
 
 /* ─── Tag filter highlight/dim ───────────────────────────────────── */
 .mini-card.tag-highlighted {
-    background: rgba(139, 105, 20, 0.08);
     border-radius: 3px;
+    color: #333 !important;
+    font-weight: 600;
 }
 
 .mini-card.tag-dimmed {
-    opacity: 0.3;
+    opacity: 0.25;
 }
 
 /* ─── Clickable mini-cards in prior hands ─────────────────────────── */

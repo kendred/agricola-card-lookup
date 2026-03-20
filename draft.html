@@ -629,14 +629,16 @@ function PriorHands({ hands, draftedCards, cardMap, currentRound, othersDrafted,
             ) : null;
         }).filter(Boolean);
 
-        const tagFilterClass = selectedTags.size > 0
-            ? (cardTags.some(t => selectedTags.has(t)) ? ' tag-highlighted' : ' tag-dimmed')
-            : '';
+        const matchingTag = selectedTags.size > 0 ? cardTags.find(t => selectedTags.has(t)) : null;
+        const isTagMatch = selectedTags.size > 0 && !!matchingTag;
+        const tagFilterClass = selectedTags.size > 0 ? (isTagMatch ? ' tag-highlighted' : ' tag-dimmed') : '';
+        const highlightColor = isTagMatch ? TAG_DEFINITIONS[matchingTag]?.color : null;
 
         return (
             <div
                 key={name}
                 className={`mini-card ${isDrafted ? 'drafted' : isOthersTook ? 'others-took' : 'passed'} clickable${isWatched ? ' wheel-watched' : ''}${tagFilterClass}`}
+                style={highlightColor ? { background: highlightColor + '20', borderLeft: `2.5px solid ${highlightColor}` } : undefined}
                 onClick={(e) => onCardClick && onCardClick(name, e)}
             >
                 {passNum ? <span className="pick-badge">{passNum}</span> : isOthersTook ? '✗ ' : ''}
