@@ -1085,10 +1085,11 @@ body {
 /* ─── Screenshot paste hint (inline below search) ────────────────── */
 .screenshot-paste-hint {
     margin-top: 8px;
-    padding: 6px 0;
+    padding: 6px 12px;
     text-align: center;
     border-radius: 6px;
     transition: background 0.2s;
+    background: rgba(255, 255, 255, 0.85);
 }
 
 .screenshot-paste-hint.dragover {
