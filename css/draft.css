@@ -750,6 +750,39 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 3px;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 10px;
+    border: 1.5px solid transparent;
+    transition: background 0.15s, border-color 0.15s;
+    user-select: none;
+}
+
+.tag-legend-item:hover {
+    background: rgba(0, 0, 0, 0.06);
+}
+
+.tag-legend-item-active {
+    border-color: currentColor;
+    font-weight: 600;
+}
+
+.tag-filter-clear {
+    display: inline-flex;
+    align-items: center;
+    font-size: inherit;
+    color: #999;
+    cursor: pointer;
+    padding: 2px 8px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    transition: background 0.15s, color 0.15s;
+    user-select: none;
+}
+
+.tag-filter-clear:hover {
+    background: #eee;
+    color: #666;
 }
 
 .tag-legend-dot {
@@ -761,6 +794,16 @@ body {
 
 .tag-legend-label {
     font-weight: 500;
+}
+
+/* ─── Tag filter highlight/dim ───────────────────────────────────── */
+.mini-card.tag-highlighted {
+    background: rgba(139, 105, 20, 0.08);
+    border-radius: 3px;
+}
+
+.mini-card.tag-dimmed {
+    opacity: 0.3;
 }
 
 /* ─── Clickable mini-cards in prior hands ─────────────────────────── */

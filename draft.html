@@ -594,6 +594,18 @@ function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSele
 // ─── PriorHands Component ───────────────────────────────────────────
 function PriorHands({ hands, draftedCards, cardMap, currentRound, othersDrafted, onCardClick, wheelWatch, onToggleWheelWatch }) {
     const othersDraftedSet = new Set(othersDrafted || []);
+    const [selectedTags, setSelectedTags] = React.useState(new Set());
+
+    const toggleTag = React.useCallback((tagName) => {
+        setSelectedTags(prev => {
+            const next = new Set(prev);
+            if (next.has(tagName)) next.delete(tagName);
+            else next.add(tagName);
+            return next;
+        });
+    }, []);
+
+    const clearTags = React.useCallback(() => setSelectedTags(new Set()), []);
 
     // Determine which hand groups have at least one completed pass
     const visibleHandGroups = HAND_GROUPS.filter(hg =>
@@ -609,17 +621,22 @@ function PriorHands({ hands, draftedCards, cardMap, currentRound, othersDrafted,
         const passNum = isDrafted ? getPassNumber(round) : null;
         const card = cardMap[name];
         const isWatched = !!(wheelWatch && wheelWatch[name]);
-        const tagDots = (card?.tags || []).map(tag => {
+        const cardTags = card?.tags || [];
+        const tagDots = cardTags.map(tag => {
             const def = TAG_DEFINITIONS[tag];
             return def ? (
                 <span key={tag} className="mini-tag-dot" style={{ background: def.color }} title={tag}>{'\u200B'}</span>
             ) : null;
         }).filter(Boolean);
 
+        const tagFilterClass = selectedTags.size > 0
+            ? (cardTags.some(t => selectedTags.has(t)) ? ' tag-highlighted' : ' tag-dimmed')
+            : '';
+
         return (
             <div
                 key={name}
-                className={`mini-card ${isDrafted ? 'drafted' : isOthersTook ? 'others-took' : 'passed'} clickable${isWatched ? ' wheel-watched' : ''}`}
+                className={`mini-card ${isDrafted ? 'drafted' : isOthersTook ? 'others-took' : 'passed'} clickable${isWatched ? ' wheel-watched' : ''}${tagFilterClass}`}
                 onClick={(e) => onCardClick && onCardClick(name, e)}
             >
                 {passNum ? <span className="pick-badge">{passNum}</span> : isOthersTook ? '✗ ' : ''}
@@ -647,11 +664,16 @@ function PriorHands({ hands, draftedCards, cardMap, currentRound, othersDrafted,
             <div className="prior-hands-title">Prior Hands</div>
             <div className="tag-legend">
                 {Object.entries(TAG_DEFINITIONS).map(([name, def]) => (
-                    <span key={name} className="tag-legend-item">
+                    <span key={name} className={`tag-legend-item${selectedTags.has(name) ? ' tag-legend-item-active' : ''}`}
+                          onClick={() => toggleTag(name)}
+                          style={selectedTags.has(name) ? { background: def.color + '22', borderColor: def.color } : undefined}>
                         <span className="tag-legend-dot" style={{ background: def.color }}>{'\u200B'}</span>
                         <span className="tag-legend-label">{name}</span>
                     </span>
                 ))}
+                {selectedTags.size > 0 && (
+                    <span className="tag-filter-clear" onClick={clearTags}>Clear</span>
+                )}
             </div>
             <div className="prior-hands-grid">
                 {visibleHandGroups.map(({ handNum, pass1Round, pass2Round }) => {

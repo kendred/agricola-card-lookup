@@ -190,7 +190,7 @@ module.exports = async function (context, req) {
     // Validate environment
     const endpoint = process.env.AZURE_OPENAI_ENDPOINT;
     const apiKey = process.env.AZURE_OPENAI_KEY;
-    const deployment = process.env.AZURE_OPENAI_DEPLOYMENT || 'gpt-4o';
+    const deployment = process.env.AZURE_OPENAI_STRATEGY_DEPLOYMENT || process.env.AZURE_OPENAI_DEPLOYMENT || 'o3';
 
     if (!endpoint || !apiKey) {
         context.res = {
@@ -240,7 +240,7 @@ module.exports = async function (context, req) {
     const userMessage = buildUserMessage(body);
 
     // Call Azure OpenAI
-    const apiVersion = '2024-10-21';
+    const apiVersion = '2025-04-01-preview';
     const url = `${endpoint.replace(/\/$/, '')}/openai/deployments/${deployment}/chat/completions?api-version=${apiVersion}`;
 
     const requestBody = {
@@ -248,8 +248,7 @@ module.exports = async function (context, req) {
             { role: 'system', content: SYSTEM_PROMPT },
             { role: 'user', content: userMessage },
         ],
-        max_tokens: 1500,
-        temperature: 0.3,
+        max_completion_tokens: 16000,
         response_format: { type: 'json_object' },
     };
 
@@ -285,13 +284,24 @@ module.exports = async function (context, req) {
         try {
             parsed = JSON.parse(content);
         } catch (e) {
-            context.log.error(`Failed to parse LLM response: ${content}`);
-            context.res = {
-                status: 502,
-                headers,
-                body: JSON.stringify({ error: 'Strategy service returned an invalid response.' }),
-            };
-            return;
+            // o3 may occasionally wrap JSON in markdown code fences
+            const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/);
+            if (jsonMatch) {
+                try {
+                    parsed = JSON.parse(jsonMatch[1].trim());
+                } catch (e2) {
+                    // fall through to error
+                }
+            }
+            if (!parsed) {
+                context.log.error(`Failed to parse LLM response: ${content}`);
+                context.res = {
+                    status: 502,
+                    headers,
+                    body: JSON.stringify({ error: 'Strategy service returned an invalid response.' }),
+                };
+                return;
+            }
         }
 
         if (!validateResponse(parsed)) {
@@ -319,6 +329,7 @@ module.exports = async function (context, req) {
                 _usage: {
                     prompt_tokens: usage.prompt_tokens,
                     completion_tokens: usage.completion_tokens,
+                    reasoning_tokens: usage.completion_tokens_details?.reasoning_tokens,
                     total_tokens: usage.total_tokens,
                 },
             }),
