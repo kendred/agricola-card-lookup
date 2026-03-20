@@ -5710,7 +5710,8 @@ const cards = [
     "cost": "",
     "vps": "",
     "prerequisites": "",
-    "passing": false
+    "passing": false,
+    "tags": ["Stable"]
   },
   {
     "name": "Tutor",
