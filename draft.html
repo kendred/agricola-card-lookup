@@ -1323,6 +1323,9 @@ function DraftApp() {
                 if (saved && saved.draftStarted) {
                     // Validate card names still exist in the database
                     const validNames = new Set(data.map(c => c.name));
+                    if (saved.tempCards && typeof saved.tempCards === 'object') {
+                        Object.keys(saved.tempCards).forEach(n => validNames.add(n));
+                    }
                     const filterNames = (names) => (names || []).filter(n => validNames.has(n));
 
                     setCurrentRound(saved.currentRound || 1);

@@ -30,21 +30,37 @@ That's it — just two resources.
 2. You'll get $200 free credit for 30 days (new accounts)
 3. Create a **Resource Group** (e.g., `agricola-rg`) — this is just a folder for your resources
 
-### Step 2: Create Azure OpenAI Service
+### Step 2: Create Azure OpenAI via Azure AI Foundry
 
-1. In the Azure Portal, search for **"Azure OpenAI"** and click Create
-2. Pick your resource group (`agricola-rg`), give it a name (e.g., `agricola-openai`), pick a region
-3. Pricing tier: **Standard S0** (pay-per-use)
-4. Once created, go to the resource and note two things:
-   - **Endpoint** (e.g., `https://agricola-openai.openai.azure.com/`)
-   - **Keys** → copy **Key 1**
+The old method of creating an "Azure OpenAI" resource directly in the Azure Portal no longer works reliably for new accounts. Use **Azure AI Foundry** instead — it's now the primary way to set up OpenAI models on Azure.
 
-5. Go to **Azure AI Foundry** (link in the resource) → **Deployments** → **Create Deployment**:
+1. Go to [ai.azure.com](https://ai.azure.com) and sign in with your Azure credentials
+2. Create a **Hub** (this is the parent resource that provides shared infrastructure):
+   - Click **+ New hub** (or find it under Management)
+   - Name it (e.g., `agricola-hub`), pick your resource group (`agricola-rg`), and a region
+   - Azure will provision the hub along with associated resources (this may take a minute)
+3. Create a **Project** under the hub:
+   - From the hub overview, click **+ New project**
+   - Name it (e.g., `agricola-project`)
+   - Hub-level config (region, resource group) is inherited automatically
+4. **Deploy two models** from within your project:
+   - Go to **Deployments** (in the left sidebar) → **+ Deploy model** → **Deploy base model**
+
+   **Deployment 1 — OCR (screenshot → card names):**
    - Model: **gpt-4o**
    - Deployment name: `gpt-4o` (or any name — you'll reference it later)
-   - Keep default settings
+   - Keep default settings → **Deploy**
 
-> **Gotcha:** Azure OpenAI requires an approval request. If you haven't been approved yet, you'll need to fill out a form and wait (usually 1-2 business days). Apply early: https://aka.ms/oai/access
+   **Deployment 2 — Strategy advisor:**
+   - Model: **o3**
+   - Deployment name: `o3` (or any name — you'll reference it later)
+   - Keep default settings → **Deploy**
+
+5. **Get your endpoint and key** — after deployment, note two things:
+   - **Endpoint**: Use the base Azure AI Services URL, e.g., `https://your-resource.services.ai.azure.com` (found on the project overview page). **Important:** use only the base URL — do NOT include the `/api/projects/...` path that Foundry shows as the "Microsoft Foundry project endpoint."
+   - **API Key**: shown on the project overview page, or go to the Azure Portal → your underlying Azure AI Services resource → **Keys and Endpoint** → copy **Key 1**
+
+> **Note:** Standard Azure OpenAI access no longer requires a separate approval request for most users. However, if you need to modify content filters or use limited-access models, you may still need to apply at https://aka.ms/oai/access.
 
 ### Step 3: Create a `staticwebapp.config.json`
 
@@ -109,9 +125,10 @@ The Azure Functions need your OpenAI credentials. In the Azure Portal:
 
 | Name | Value |
 |------|-------|
-| `AZURE_OPENAI_ENDPOINT` | `https://agricola-openai.openai.azure.com/` |
+| `AZURE_OPENAI_ENDPOINT` | `https://your-resource.services.ai.azure.com` |
 | `AZURE_OPENAI_KEY` | Your Key 1 from Step 2 |
-| `AZURE_OPENAI_DEPLOYMENT` | `gpt-4o` (or whatever you named the deployment) |
+| `AZURE_OPENAI_DEPLOYMENT` | `gpt-4o` (or whatever you named the OCR deployment) |
+| `AZURE_OPENAI_STRATEGY_DEPLOYMENT` | `o3` (or whatever you named the strategy deployment) |
 
 4. Click **Save**
 
@@ -137,8 +154,8 @@ After the GitHub Action completes (~2-3 minutes):
 
 ## Things That Will Trip You Up
 
-### 1. Azure OpenAI Access Approval (Biggest Blocker)
-Azure OpenAI isn't instantly available — new accounts need to apply for access. This can take 1-2 business days. **Apply before doing anything else.**
+### 1. Use Azure AI Foundry, Not the Old Azure Portal Method
+Creating an "Azure OpenAI" resource directly from the Azure Portal search bar no longer works reliably for new accounts. Go to [ai.azure.com](https://ai.azure.com) and create a Hub → Project → Deployments instead (see Step 2). Standard access no longer requires a separate approval form, but if you hit access issues, apply at https://aka.ms/oai/access.
 
 ### 2. `fs.readFileSync` in Azure Functions
 The strategy function loads `data/agricola-cards.json` and `docs/agricola-strategy-guide.md` using `fs.readFileSync` with `path.join(__dirname, '..', '..')`. In Azure Static Web Apps, the function runtime's working directory may differ from local. The `__dirname`-relative paths should work because SWA deploys the full repo structure, but **test this immediately** — if files aren't found, you may need to adjust paths or embed the data differently.
@@ -176,7 +193,8 @@ There's no `local.settings.json` in the repo (correctly — it should be gitigno
     "FUNCTIONS_WORKER_RUNTIME": "node",
     "AZURE_OPENAI_ENDPOINT": "https://your-endpoint.openai.azure.com/",
     "AZURE_OPENAI_KEY": "your-key-here",
-    "AZURE_OPENAI_DEPLOYMENT": "gpt-4o"
+    "AZURE_OPENAI_DEPLOYMENT": "gpt-4o",
+    "AZURE_OPENAI_STRATEGY_DEPLOYMENT": "o3"
   }
 }
 ```
@@ -188,9 +206,9 @@ There's no `local.settings.json` in the repo (correctly — it should be gitigno
 | Item | Cost |
 |------|------|
 | Azure Static Web App (Free tier) | $0 |
-| Azure OpenAI — OCR calls (10/day x 30 days, ~2K tokens each) | ~$1.50 |
-| Azure OpenAI — Strategy calls (5/day x 30 days, ~10K tokens each) | ~$5 |
-| **Total for light personal use** | **~$6.50/mo** |
+| Azure OpenAI — OCR calls via gpt-4o (10/day x 30 days, ~2K tokens each) | ~$1.50 |
+| Azure OpenAI — Strategy calls via o3 (5/day x 30 days, ~10K tokens each) | ~$5–8 |
+| **Total for light personal use** | **~$7–10/mo** |
 
 The $200 free credit for new accounts covers many months of use.
 
@@ -212,7 +230,8 @@ The $200 free credit for new accounts covers many months of use.
 |----------|---------|-------------|
 | `AZURE_OPENAI_ENDPOINT` | Both functions | Full Azure OpenAI endpoint URL |
 | `AZURE_OPENAI_KEY` | Both functions | API key for Azure OpenAI |
-| `AZURE_OPENAI_DEPLOYMENT` | Both functions | Model deployment name (defaults to `gpt-4o`) |
+| `AZURE_OPENAI_DEPLOYMENT` | OCR function (+ strategy fallback) | Model deployment name for OCR (defaults to `gpt-4o`) |
+| `AZURE_OPENAI_STRATEGY_DEPLOYMENT` | Strategy function | Model deployment name for strategy advisor (defaults to `o3`) |
 
 ---
 
