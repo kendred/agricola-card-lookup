@@ -11,7 +11,7 @@ var strategyAdvisor = (function () {
     // draftedNames: array of card names already drafted
     // othersDrafted: array of card names taken by opponents
     // currentRound: number (1-7)
-    function getAdvice(handNames, draftedNames, othersDrafted, currentRound) {
+    function getAdvice(handNames, draftedNames, othersDrafted, currentRound, playerCount) {
         return fetch(STRATEGY_FUNCTION_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -20,6 +20,7 @@ var strategyAdvisor = (function () {
                 draftedNames: draftedNames,
                 othersDrafted: othersDrafted,
                 round: currentRound,
+                playerCount: playerCount === 3 ? 3 : 4,
             }),
         }).then(function (response) {
             if (response.status === 429) {

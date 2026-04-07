@@ -25,8 +25,32 @@ const { useState, useEffect, useRef, useCallback, useMemo } = React;
 // ─── Constants ──────────────────────────────────────────────────────
 const HAND_SIZE_BY_ROUND = { 1: 10, 2: 9, 3: 8, 4: 7, 5: 6, 6: 5, 7: 4 };
 
-// Rounds 5-7 get back hands from rounds 1-3 (4-player rotation)
-const RETURNING_HAND_SOURCE = { 5: 1, 6: 2, 7: 3 };
+// Rotation depends on player count.
+// 4p: H1,H2,H3,H4,H1,H2,H3 (4 distinct hands, each seen twice except H4)
+// 3p: H1,H2,H3,H1,H2,H3,H1 (3 distinct hands; H1 seen 3 times)
+function getRotation(playerCount) {
+    if (playerCount === 3) {
+        return {
+            roundToHand: { 1: 1, 2: 2, 3: 3, 4: 1, 5: 2, 6: 3, 7: 1 },
+            handGroups: [
+                { handNum: 1, passRounds: [1, 4, 7] },
+                { handNum: 2, passRounds: [2, 5] },
+                { handNum: 3, passRounds: [3, 6] },
+            ],
+            firstReturningRound: 4,
+        };
+    }
+    return {
+        roundToHand: { 1: 1, 2: 2, 3: 3, 4: 4, 5: 1, 6: 2, 7: 3 },
+        handGroups: [
+            { handNum: 1, passRounds: [1, 5] },
+            { handNum: 2, passRounds: [2, 6] },
+            { handNum: 3, passRounds: [3, 7] },
+            { handNum: 4, passRounds: [4] },
+        ],
+        firstReturningRound: 5,
+    };
+}
 
 const SORT_OPTIONS = [
     { key: 'rank', label: 'Rank', getValue: c => c.rank, ascending: true },
@@ -58,24 +82,22 @@ function getCardImagePath(cardName) {
     return filename ? `card-images/${filename}` : null;
 }
 
-// ─── Pass number helper ─────────────────────────────────────────────
-function getPassNumber(round) {
-    return parseInt(round) <= 4 ? 1 : 2;
-}
-
-// ─── Hand number helper (rounds 5-7 map back to hands 1-3) ─────────
-function getHandNumber(round) {
+// ─── Pass number helper (which visit of the hand is this round?) ───
+function getPassNumber(round, playerCount = 4) {
     const r = parseInt(round);
-    return RETURNING_HAND_SOURCE[r] || r;
+    const { handGroups } = getRotation(playerCount);
+    for (const hg of handGroups) {
+        const idx = hg.passRounds.indexOf(r);
+        if (idx >= 0) return idx + 1;
+    }
+    return 1;
 }
 
-// Hand grouping: which rounds belong to each hand
-const HAND_GROUPS = [
-    { handNum: 1, pass1Round: 1, pass2Round: 5 },
-    { handNum: 2, pass1Round: 2, pass2Round: 6 },
-    { handNum: 3, pass1Round: 3, pass2Round: 7 },
-    { handNum: 4, pass1Round: 4, pass2Round: null },
-];
+// ─── Hand number helper (round → hand number) ──────────────────────
+function getHandNumber(round, playerCount = 4) {
+    const r = parseInt(round);
+    return getRotation(playerCount).roundToHand[r] || r;
+}
 
 // ─── localStorage helpers ───────────────────────────────────────────
 function loadSavedState() {
@@ -592,7 +614,8 @@ function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSele
 }
 
 // ─── PriorHands Component ───────────────────────────────────────────
-function PriorHands({ hands, draftedCards, cardMap, currentRound, othersDrafted, onCardClick, wheelWatch, onToggleWheelWatch }) {
+function PriorHands({ hands, draftedCards, cardMap, currentRound, othersDrafted, onCardClick, wheelWatch, onToggleWheelWatch, playerCount = 4 }) {
+    const HAND_GROUPS = getRotation(playerCount).handGroups;
     const othersDraftedSet = new Set(othersDrafted || []);
     const [selectedTags, setSelectedTags] = React.useState(new Set());
 
@@ -609,7 +632,7 @@ function PriorHands({ hands, draftedCards, cardMap, currentRound, othersDrafted,
 
     // Determine which hand groups have at least one completed pass
     const visibleHandGroups = HAND_GROUPS.filter(hg =>
-        hands[hg.pass1Round] || (hg.pass2Round && hands[hg.pass2Round])
+        hg.passRounds.some(r => hands[r])
     );
     if (visibleHandGroups.length === 0) return null;
 
@@ -618,7 +641,7 @@ function PriorHands({ hands, draftedCards, cardMap, currentRound, othersDrafted,
         const draftedSet = new Set([drafted.occupation, drafted.minor].filter(Boolean));
         const isDrafted = draftedSet.has(name);
         const isOthersTook = othersDraftedSet.has(name);
-        const passNum = isDrafted ? getPassNumber(round) : null;
+        const passNum = isDrafted ? getPassNumber(round, playerCount) : null;
         const card = cardMap[name];
         const isWatched = !!(wheelWatch && wheelWatch[name]);
         const cardTags = card?.tags || [];
@@ -678,61 +701,59 @@ function PriorHands({ hands, draftedCards, cardMap, currentRound, othersDrafted,
                 )}
             </div>
             <div className="prior-hands-grid">
-                {visibleHandGroups.map(({ handNum, pass1Round, pass2Round }) => {
-                    const pass1Hand = hands[pass1Round] || [];
-                    const pass1Drafted = draftedCards[pass1Round] || {};
-                    const pass1DraftedSet = new Set([pass1Drafted.occupation, pass1Drafted.minor].filter(Boolean));
-                    const hasPass1 = !!hands[pass1Round];
+                {visibleHandGroups.map(({ handNum, passRounds }) => {
+                    // Per-pass info
+                    const passInfos = passRounds.map(r => {
+                        const handArr = hands[r] || [];
+                        const drafted = draftedCards[r] || {};
+                        const draftedSet = new Set([drafted.occupation, drafted.minor].filter(Boolean));
+                        return { round: r, handArr, drafted, draftedSet, present: !!hands[r] };
+                    });
+                    const firstPresent = passInfos.find(p => p.present);
+                    if (!firstPresent) return null;
+                    const lastPresent = [...passInfos].reverse().find(p => p.present);
 
-                    const pass2Hand = pass2Round ? (hands[pass2Round] || []) : [];
-                    const pass2Drafted = pass2Round ? (draftedCards[pass2Round] || {}) : {};
-                    const pass2DraftedSet = new Set([pass2Drafted.occupation, pass2Drafted.minor].filter(Boolean));
-                    const hasPass2 = pass2Round && !!hands[pass2Round];
-
-                    // Pass 1 drafted cards (occ + minor)
-                    const pass1OccPick = pass1Drafted.occupation;
-                    const pass1MinPick = pass1Drafted.minor;
-
-                    // Pass 2 drafted cards (occ + minor)
-                    const pass2OccPick = hasPass2 ? pass2Drafted.occupation : null;
-                    const pass2MinPick = hasPass2 ? pass2Drafted.minor : null;
-
-                    // Others-took cards from returning hand
-                    const othersTookCards = hasPass2
-                        ? pass2Hand.filter(n => othersDraftedSet.has(n))
+                    // The "latest" pass shows cards taken by opponents in that visit
+                    const othersTookCards = lastPresent
+                        ? lastPresent.handArr.filter(n => othersDraftedSet.has(n))
                         : [];
-
-                    // Remaining passed cards: in pass1Hand, not drafted by anyone in either pass, not others-took
-                    const allDraftedNames = new Set([
-                        ...pass1DraftedSet,
-                        ...pass2DraftedSet,
-                        ...othersTookCards,
-                    ]);
-
-                    // Helper to get the round a card belongs to (for renderMiniCard styling)
                     const othersTookSet = new Set(othersTookCards);
+
+                    // All names drafted (by user) across all passes of this hand
+                    const allUserDrafted = new Set();
+                    passInfos.forEach(p => p.draftedSet.forEach(n => allUserDrafted.add(n)));
+
+                    const allDraftedNames = new Set([...allUserDrafted, ...othersTookSet]);
+
+                    // Find which round a card belongs to (earliest pass it appears in / was picked in)
                     const getRoundForCard = (name) => {
-                        if (pass1DraftedSet.has(name)) return pass1Round;
-                        if (pass2DraftedSet.has(name)) return pass2Round;
-                        if (othersTookSet.has(name)) return pass2Round;
-                        return pass1Round; // passed cards
+                        for (const p of passInfos) {
+                            if (p.draftedSet.has(name)) return p.round;
+                        }
+                        if (othersTookSet.has(name) && lastPresent) return lastPresent.round;
+                        return firstPresent.round;
                     };
 
-                    // Build all cards for each column, sorted by rank
+                    // Pool of passed-through (not drafted by anyone) cards: from the first pass present
+                    const passedPool = firstPresent.handArr.filter(n => !allDraftedNames.has(n));
+
+                    // Build columns: include user picks (each pass), passed pool, and others-took
                     const byRank = (a, b) => (cardMap[a]?.rank || 999) - (cardMap[b]?.rank || 999);
+                    const userPicksByType = (type) => passInfos
+                        .filter(p => p.present)
+                        .map(p => type === 'Occupation' ? p.drafted.occupation : p.drafted.minor)
+                        .filter(Boolean);
 
                     const allOccs = [...new Set([
-                        ...(hasPass1 && pass1OccPick ? [pass1OccPick] : []),
-                        ...pass1Hand.filter(n => cardMap[n]?.type === 'Occupation' && !allDraftedNames.has(n)),
+                        ...userPicksByType('Occupation'),
+                        ...passedPool.filter(n => cardMap[n]?.type === 'Occupation'),
                         ...othersTookCards.filter(n => cardMap[n]?.type === 'Occupation'),
-                        ...(hasPass2 && pass2OccPick ? [pass2OccPick] : []),
                     ])].sort(byRank);
 
                     const allMins = [...new Set([
-                        ...(hasPass1 && pass1MinPick ? [pass1MinPick] : []),
-                        ...pass1Hand.filter(n => cardMap[n]?.type === 'Minor Improvement' && !allDraftedNames.has(n)),
+                        ...userPicksByType('Minor Improvement'),
+                        ...passedPool.filter(n => cardMap[n]?.type === 'Minor Improvement'),
                         ...othersTookCards.filter(n => cardMap[n]?.type === 'Minor Improvement'),
-                        ...(hasPass2 && pass2MinPick ? [pass2MinPick] : []),
                     ])].sort(byRank);
 
                     return (
@@ -1230,6 +1251,7 @@ function DraftApp() {
 
     // Draft state — all of these get persisted to localStorage
     const [currentRound, setCurrentRound] = useState(1);
+    const [playerCount, setPlayerCount] = useState(4);
     const [draftStarted, setDraftStarted] = useState(false);
     const [currentHandNames, setCurrentHandNames] = useState([]);
     const [hands, setHands] = useState({});
@@ -1329,6 +1351,7 @@ function DraftApp() {
                     const filterNames = (names) => (names || []).filter(n => validNames.has(n));
 
                     setCurrentRound(saved.currentRound || 1);
+                    setPlayerCount(saved.playerCount === 3 ? 3 : 4);
                     setDraftStarted(true);
                     setCurrentHandNames(filterNames(saved.currentHandNames));
                     setSortKey(saved.sortKey || 'rank');
@@ -1394,6 +1417,7 @@ function DraftApp() {
         }
         saveState({
             currentRound,
+            playerCount,
             draftStarted,
             currentHandNames,
             hands,
@@ -1408,7 +1432,7 @@ function DraftApp() {
             tempCards,
             playedCards: [...playedCards],
         });
-    }, [restoredFromStorage, currentRound, draftStarted, currentHandNames, hands, draftedCards, sortKey, markingPhase, markedRemaining, othersDrafted, farmGrid, strategyNotes, wheelWatch, tempCards, playedCards]);
+    }, [restoredFromStorage, currentRound, playerCount, draftStarted, currentHandNames, hands, draftedCards, sortKey, markingPhase, markedRemaining, othersDrafted, farmGrid, strategyNotes, wheelWatch, tempCards, playedCards]);
 
     // Auto-trigger AI advice when draft completes
     const draftComplete = draftStarted && currentRound > 7;
@@ -1439,7 +1463,8 @@ function DraftApp() {
     }, [cards, tempCards]);
 
     // Is this a returning-hand round?
-    const isReturningRound = currentRound >= 5 && currentRound <= 7;
+    const rotation = useMemo(() => getRotation(playerCount), [playerCount]);
+    const isReturningRound = currentRound >= rotation.firstReturningRound && currentRound <= 7;
 
     // Current hand card objects split by type
     const currentHandCards = useMemo(() => {
@@ -1480,22 +1505,34 @@ function DraftApp() {
     // ─── Auto-populate returning hands ─────────────────────────────
     useEffect(() => {
         if (!draftStarted || !isReturningRound || currentHandNames.length > 0) return;
-        const sourceRound = RETURNING_HAND_SOURCE[currentRound];
+        // Find the most recent prior round that maps to the same hand number
+        const targetHand = rotation.roundToHand[currentRound];
+        if (!targetHand) return;
+        const priorRoundsSameHand = [];
+        for (let r = currentRound - 1; r >= 1; r--) {
+            if (rotation.roundToHand[r] === targetHand) priorRoundsSameHand.push(r);
+        }
+        const sourceRound = priorRoundsSameHand[0];
         if (!sourceRound || !hands[sourceRound]) return;
 
-        const sourceHand = hands[sourceRound];
-        const sourceDrafted = draftedCards[sourceRound] || {};
-        const userDraftedFromSource = new Set([sourceDrafted.occupation, sourceDrafted.minor].filter(Boolean));
+        // Remove all cards the user has drafted in any prior visit to this hand
+        const userDraftedFromHand = new Set();
+        priorRoundsSameHand.forEach(r => {
+            const d = draftedCards[r] || {};
+            if (d.occupation) userDraftedFromHand.add(d.occupation);
+            if (d.minor) userDraftedFromHand.add(d.minor);
+        });
 
-        // Return all cards from the source hand except what the user drafted in that round
-        const returningCards = sourceHand.filter(name => !userDraftedFromSource.has(name));
+        const sourceHand = hands[sourceRound];
+        const returningCards = sourceHand.filter(name => !userDraftedFromHand.has(name));
         setCurrentHandNames(returningCards);
         setMarkedRemaining(new Set());
         setMarkingPhase(true);
-    }, [currentRound, draftStarted, isReturningRound, currentHandNames.length, hands, draftedCards]);
+    }, [currentRound, draftStarted, isReturningRound, currentHandNames.length, hands, draftedCards, rotation]);
 
     // ─── Handlers ──────────────────────────────────────────────────
-    const handleNewDraft = () => {
+    const handleNewDraft = (pc = 4) => {
+        setPlayerCount(pc === 3 ? 3 : 4);
         setCurrentRound(1);
         setCurrentHandNames([]);
         setHands({});
@@ -1690,7 +1727,8 @@ function DraftApp() {
                 handToSend,
                 draftedNames,
                 othersDrafted,
-                currentRound
+                currentRound,
+                playerCount
             );
             setStrategyResult(result);
         } catch (err) {
@@ -1703,7 +1741,7 @@ function DraftApp() {
         } finally {
             setStrategyLoading(false);
         }
-    }, [strategyLoading, currentHandNames, draftedCards, othersDrafted, currentRound]);
+    }, [strategyLoading, currentHandNames, draftedCards, othersDrafted, currentRound, playerCount]);
 
     const handleToggleSuggestion = useCallback((cardName) => {
         setExpandedSuggestion(prev => prev === cardName ? null : cardName);
@@ -1872,9 +1910,10 @@ function DraftApp() {
                                 Draft Complete
                             </div>
                         )}
-                        {!draftStarted ? (
-                            <button className="btn btn-primary" onClick={handleNewDraft}>New Draft</button>
-                        ) : (
+                        {draftStarted && (
+                            <span style={{ fontSize: '0.85em', color: '#888', marginRight: '8px' }}>{playerCount}-Player</span>
+                        )}
+                        {draftStarted && (
                             <button className="btn btn-danger" onClick={handleResetDraft}>Reset Draft</button>
                         )}
                     </div>
@@ -1883,8 +1922,15 @@ function DraftApp() {
                 {/* Welcome state */}
                 {!draftStarted && (
                     <div className="hand-section">
-                        <div className="empty-hand">
-                            Click "New Draft" to begin. You'll enter your starting hand of 10 occupations and 10 minor improvements, then draft 7 of each across 7 rounds.
+                        <div className="empty-hand" style={{ textAlign: 'center' }}>
+                            <div style={{ fontSize: '1.1em', marginBottom: '16px' }}>How many players?</div>
+                            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+                                <button className="btn btn-primary" onClick={() => handleNewDraft(3)}>Start 3-Player Draft</button>
+                                <button className="btn btn-primary" onClick={() => handleNewDraft(4)}>Start 4-Player Draft</button>
+                            </div>
+                            <div style={{ fontSize: '0.85em', color: '#888', marginTop: '16px' }}>
+                                You'll enter each hand as it's dealt, then draft 1 occupation + 1 minor improvement per round across 7 rounds.
+                            </div>
                         </div>
                     </div>
                 )}
@@ -1894,7 +1940,7 @@ function DraftApp() {
                     <div className="draft-wide-layout">
                         <div className="draft-main-col">
                             {/* Prior Hands */}
-                            <PriorHands hands={hands} draftedCards={draftedCards} cardMap={cardMap} currentRound={currentRound} othersDrafted={othersDrafted} onCardClick={handleMiniCardClick} wheelWatch={wheelWatch} onToggleWheelWatch={handleToggleWheelWatch} />
+                            <PriorHands hands={hands} draftedCards={draftedCards} cardMap={cardMap} currentRound={currentRound} othersDrafted={othersDrafted} onCardClick={handleMiniCardClick} wheelWatch={wheelWatch} onToggleWheelWatch={handleToggleWheelWatch} playerCount={playerCount} />
 
                             {/* Summary view (after completion) */}
                             {draftComplete && (

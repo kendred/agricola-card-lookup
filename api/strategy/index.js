@@ -40,8 +40,18 @@ const STRATEGY_GUIDE = fs.readFileSync(
     path.join(__dirname, '..', 'docs', 'agricola-strategy-guide.md'), 'utf8'
 );
 
-// --- System prompt (static — enables Azure OpenAI prompt caching) ---
-const SYSTEM_PROMPT = `You are an expert Agricola (board game) draft strategy advisor for 4-player games. You analyze a player's draft state and provide strategic guidance.
+// --- System prompt builder (cached per player count) ---
+function buildSystemPrompt(playerCount) {
+    const pc = playerCount === 3 ? 3 : 4;
+    const rotationNote = pc === 3
+        ? `This is a 3-player draft. Each of 3 distinct hands passes around the table 3 times. The round-to-hand mapping is: R1=H1, R2=H2, R3=H3, R4=H1 (returning), R5=H2 (returning), R6=H3 (returning), R7=H1 (returning a second time). Returning rounds begin at round 4.`
+        : `This is a 4-player draft. There are 4 distinct hands. The round-to-hand mapping is: R1=H1, R2=H2, R3=H3, R4=H4, R5=H1 (returning), R6=H2 (returning), R7=H3 (returning). Returning rounds begin at round 5. Hand 4 is seen only once.`;
+    return SYSTEM_PROMPT_TEMPLATE.replace('{{PLAYER_COUNT}}', String(pc)).replace('{{ROTATION_NOTE}}', rotationNote);
+}
+
+const SYSTEM_PROMPT_TEMPLATE = `You are an expert Agricola (board game) draft strategy advisor for {{PLAYER_COUNT}}-player games. You analyze a player's draft state and provide strategic guidance.
+
+GAME FORMAT: {{ROTATION_NOTE}}
 
 You must respond with ONLY valid JSON matching this exact format — no markdown, no explanation, no text outside the JSON:
 
@@ -70,7 +80,7 @@ Rules for reasoning:
 - For "archetypes", list the 1-2 most prominent strategy directions forming from drafted card tags. Use archetype names from the strategy guide: Day Laborer, Fishing, Traveling Players, Grain, Sow, Major/Minor, Lesson, Big House, Small House, Stone House, Stable, Animal. If no clear archetype has emerged (typically rounds 1-2), use ["Flexible"].
 
 Rules for suggestions:
-- Suggest exactly 2 occupations and 2 minor improvements from the current hand (4 suggestions total). If fewer than 2 of a type are available, suggest as many as possible.
+- You MUST return exactly 2 Occupation suggestions and exactly 2 Minor Improvement suggestions (4 total). Never return 3 of one type and 1 of the other — count the types in your suggestions array before responding. Only return fewer than 2 of a type if the current hand genuinely contains fewer than 2 cards of that type.
 - rank_number is your ranking within each type: 1 = best pick, 2 = second best. NOT the card's database rank.
 - card_name must exactly match a card name from the current hand.
 - Consider: current drafted cards, strategic coverage gaps, card synergies, what opponents likely took, card rank/ADP/play rate, and game flow timing.
@@ -127,7 +137,8 @@ function buildUserMessage(body) {
     const draftedCards = enrichCards(body.draftedNames || []);
     const othersDrafted = body.othersDrafted || [];
 
-    let msg = `CURRENT ROUND: ${round}\n\n`;
+    const playerCount = body.playerCount === 3 ? 3 : 4;
+    let msg = `PLAYER COUNT: ${playerCount}\nCURRENT ROUND: ${round}\n\n`;
 
     msg += `CURRENT HAND (choose from these cards):\n${JSON.stringify(handCards, null, 1)}\n\n`;
 
@@ -171,6 +182,31 @@ function validateResponse(obj) {
         if (typeof s.rationale !== 'string') return false;
     }
     return true;
+}
+
+// --- Normalize suggestions to at most 2 occupations + 2 minor improvements ---
+function normalizeSuggestions(parsed, handNames, context) {
+    if (!parsed || !Array.isArray(parsed.suggestions)) return;
+    const handSet = new Set(handNames || []);
+    const occs = [];
+    const mins = [];
+    const dropped = [];
+    for (const s of parsed.suggestions) {
+        const card = CARD_MAP[s.card_name];
+        if (!card || !handSet.has(s.card_name)) {
+            dropped.push(s.card_name);
+            continue;
+        }
+        if (card.type === 'Occupation') occs.push(s);
+        else if (card.type === 'Minor Improvement') mins.push(s);
+        else dropped.push(s.card_name);
+    }
+    const trimmedOccs = occs.slice(0, 2).map((s, i) => ({ ...s, rank_number: i + 1 }));
+    const trimmedMins = mins.slice(0, 2).map((s, i) => ({ ...s, rank_number: i + 1 }));
+    if (occs.length > 2 || mins.length > 2 || dropped.length > 0) {
+        context.log.warn(`normalizeSuggestions adjusted output: occs=${occs.length}->${trimmedOccs.length}, mins=${mins.length}->${trimmedMins.length}, dropped=${dropped.join(',') || 'none'}`);
+    }
+    parsed.suggestions = [...trimmedOccs, ...trimmedMins];
 }
 
 module.exports = async function (context, req) {
@@ -245,7 +281,7 @@ module.exports = async function (context, req) {
 
     const requestBody = {
         messages: [
-            { role: 'system', content: SYSTEM_PROMPT },
+            { role: 'system', content: buildSystemPrompt(body.playerCount) },
             { role: 'user', content: userMessage },
         ],
         max_completion_tokens: 16000,
@@ -303,6 +339,8 @@ module.exports = async function (context, req) {
                 return;
             }
         }
+
+        normalizeSuggestions(parsed, body.handNames, context);
 
         if (!validateResponse(parsed)) {
             context.log.warn(`LLM response failed validation: ${content}`);
