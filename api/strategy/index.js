@@ -40,18 +40,10 @@ const STRATEGY_GUIDE = fs.readFileSync(
     path.join(__dirname, '..', 'docs', 'agricola-strategy-guide.md'), 'utf8'
 );
 
-// --- System prompt builder (cached per player count) ---
-function buildSystemPrompt(playerCount) {
-    const pc = playerCount === 3 ? 3 : 4;
-    const rotationNote = pc === 3
-        ? `This is a 3-player draft. Each of 3 distinct hands passes around the table 3 times. The round-to-hand mapping is: R1=H1, R2=H2, R3=H3, R4=H1 (returning), R5=H2 (returning), R6=H3 (returning), R7=H1 (returning a second time). Returning rounds begin at round 4.`
-        : `This is a 4-player draft. There are 4 distinct hands. The round-to-hand mapping is: R1=H1, R2=H2, R3=H3, R4=H4, R5=H1 (returning), R6=H2 (returning), R7=H3 (returning). Returning rounds begin at round 5. Hand 4 is seen only once.`;
-    return SYSTEM_PROMPT_TEMPLATE.replace('{{PLAYER_COUNT}}', String(pc)).replace('{{ROTATION_NOTE}}', rotationNote);
-}
-
-const SYSTEM_PROMPT_TEMPLATE = `You are an expert Agricola (board game) draft strategy advisor for {{PLAYER_COUNT}}-player games. You analyze a player's draft state and provide strategic guidance.
-
-GAME FORMAT: {{ROTATION_NOTE}}
+// --- System prompt (static — enables Azure OpenAI prompt caching across all requests) ---
+// Player-count-specific rotation details are passed in the user message instead of here,
+// so the cacheable prefix stays identical regardless of game format.
+const SYSTEM_PROMPT = `You are an expert Agricola (board game) draft strategy advisor for 3- and 4-player games. You analyze a player's draft state and provide strategic guidance. The user message will tell you the exact PLAYER COUNT and round-to-hand rotation for this draft.
 
 You must respond with ONLY valid JSON matching this exact format — no markdown, no explanation, no text outside the JSON:
 
@@ -138,7 +130,10 @@ function buildUserMessage(body) {
     const othersDrafted = body.othersDrafted || [];
 
     const playerCount = body.playerCount === 3 ? 3 : 4;
-    let msg = `PLAYER COUNT: ${playerCount}\nCURRENT ROUND: ${round}\n\n`;
+    const rotationNote = playerCount === 3
+        ? '3-player draft: 3 distinct hands, each passes around 3 times. Rotation R1=H1, R2=H2, R3=H3, R4=H1, R5=H2, R6=H3, R7=H1. Returning rounds start at R4. H1 is seen 3 times, H2/H3 twice.'
+        : '4-player draft: 4 distinct hands. Rotation R1=H1, R2=H2, R3=H3, R4=H4, R5=H1, R6=H2, R7=H3. Returning rounds start at R5. H4 is seen only once.';
+    let msg = `PLAYER COUNT: ${playerCount}\nGAME FORMAT: ${rotationNote}\nCURRENT ROUND: ${round}\n\n`;
 
     msg += `CURRENT HAND (choose from these cards):\n${JSON.stringify(handCards, null, 1)}\n\n`;
 
@@ -276,7 +271,7 @@ module.exports = async function (context, req) {
 
     const requestBody = {
         messages: [
-            { role: 'system', content: buildSystemPrompt(body.playerCount) },
+            { role: 'system', content: SYSTEM_PROMPT },
             { role: 'user', content: userMessage },
         ],
         max_completion_tokens: 16000,
