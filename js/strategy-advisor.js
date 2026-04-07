@@ -28,7 +28,11 @@ var strategyAdvisor = (function () {
             }
             if (!response.ok) {
                 return response.json().catch(function () { return {}; }).then(function (data) {
-                    if (data.error) throw new Error(data.error);
+                    if (data && data.detail) {
+                        console.error('[strategy] server detail:', data.detail, 'elapsed_ms:', data.elapsed_ms);
+                    }
+                    if (data && data.error) throw new Error(data.error);
+                    if (response.status === 504) throw new Error('The strategy service timed out. Please try again.');
                     if (response.status === 501) throw new Error('The strategy service is not set up yet.');
                     if (response.status === 503) throw new Error('The strategy service is temporarily unavailable. Try again later.');
                     if (response.status >= 500) throw new Error('The strategy service ran into a problem. Please try again.');

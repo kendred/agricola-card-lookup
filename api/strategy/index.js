@@ -274,9 +274,17 @@ module.exports = async function (context, req) {
             { role: 'system', content: SYSTEM_PROMPT },
             { role: 'user', content: userMessage },
         ],
+        // o4-mini counts reasoning tokens against this cap. 3-8k reasoning is common
+        // for this prompt, so keep generous headroom or responses get truncated to empty.
         max_completion_tokens: 16000,
         response_format: { type: 'json_object' },
     };
+
+    // Abort the upstream call before the Azure Functions gateway timeout kicks in
+    const controller = new AbortController();
+    const UPSTREAM_TIMEOUT_MS = 180000;
+    const timeoutId = setTimeout(() => controller.abort(), UPSTREAM_TIMEOUT_MS);
+    const startedAt = Date.now();
 
     try {
         const response = await fetch(url, {
@@ -286,6 +294,7 @@ module.exports = async function (context, req) {
                 'api-key': apiKey,
             },
             body: JSON.stringify(requestBody),
+            signal: controller.signal,
         });
 
         if (!response.ok) {
@@ -303,7 +312,26 @@ module.exports = async function (context, req) {
         }
 
         const result = await response.json();
-        const content = result.choices?.[0]?.message?.content || '';
+        const choice = result.choices?.[0] || {};
+        const content = choice.message?.content || '';
+        const finishReason = choice.finish_reason;
+        const usage = result.usage || {};
+
+        // Detect reasoning-model truncation: finish_reason=length with empty content
+        // means reasoning tokens consumed the entire budget before producing output.
+        if (finishReason === 'length' && !content) {
+            const reasoningTokens = usage.completion_tokens_details?.reasoning_tokens;
+            context.log.error(`LLM hit max_completion_tokens before producing output. reasoning_tokens=${reasoningTokens} total=${usage.total_tokens}`);
+            context.res = {
+                status: 502,
+                headers,
+                body: JSON.stringify({
+                    error: 'The strategy service ran out of reasoning budget before producing a response. Try again, or reduce prompt complexity.',
+                    detail: `finish_reason=length, reasoning_tokens=${reasoningTokens}`,
+                }),
+            };
+            return;
+        }
 
         // Parse and validate response
         let parsed;
@@ -346,9 +374,7 @@ module.exports = async function (context, req) {
             return;
         }
 
-        // Token usage for monitoring
-        const usage = result.usage || {};
-
+        // Token usage for monitoring (already read above)
         context.res = {
             status: 200,
             headers,
@@ -363,11 +389,21 @@ module.exports = async function (context, req) {
             }),
         };
     } catch (err) {
-        context.log.error(`Function error: ${err.message}`);
+        const elapsed = Date.now() - startedAt;
+        const isAbort = err.name === 'AbortError';
+        context.log.error(`Function error after ${elapsed}ms: ${err.name}: ${err.message}`);
         context.res = {
-            status: 500,
+            status: isAbort ? 504 : 500,
             headers,
-            body: JSON.stringify({ error: 'Internal error processing strategy request.' }),
+            body: JSON.stringify({
+                error: isAbort
+                    ? `The strategy service timed out after ${Math.round(elapsed / 1000)}s. Please try again.`
+                    : 'Internal error processing strategy request.',
+                detail: `${err.name}: ${err.message}`,
+                elapsed_ms: elapsed,
+            }),
         };
+    } finally {
+        clearTimeout(timeoutId);
     }
 };
