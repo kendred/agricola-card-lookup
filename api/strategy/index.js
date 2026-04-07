@@ -12,10 +12,13 @@ const CARDS = JSON.parse(
 const CARD_MAP = {};
 CARDS.forEach(card => { CARD_MAP[card.name] = card; });
 
-// --- Build compact card index for system prompt (name, rank, ADP, type) ---
-const COMPACT_INDEX = JSON.stringify(
-    CARDS.map(c => ({ name: c.name, rank: c.rank, adp: c.adp, type: c.type }))
-);
+// --- Compact card index for system prompt ---
+// Format: one line per card, pipe-delimited: name|rank|adp|type-initial (O=Occupation, M=Minor)
+// ~6k tokens total vs ~13.7k as JSON. Lets the LLM reason about the full pool
+// for "what might still be drafted" without blowing the TPM budget every request.
+const COMPACT_INDEX = CARDS
+    .map(c => `${c.name}|${c.rank}|${c.adp}|${c.type === 'Occupation' ? 'O' : 'M'}`)
+    .join('\n');
 
 // --- Rate limiting (in-memory, resets on cold start) ---
 const rateLimitMap = new Map();
@@ -90,7 +93,7 @@ STRATEGIC FRAMEWORK:
 
 ${STRATEGY_GUIDE}
 
-COMPLETE CARD INDEX (773 cards — name, rank, ADP, type):
+COMPLETE CARD INDEX (773 cards — format "name|rank|adp|type" where type is O=Occupation, M=Minor Improvement). Use this to reason about what cards may still appear in future hands and what the opponents could potentially draft. Fully-enriched details (description, tags, play rate, elo, cost, VPs) for the player's current hand and drafted cards are provided in the user message — rely on that for detailed analysis.
 
 ${COMPACT_INDEX}`;
 
