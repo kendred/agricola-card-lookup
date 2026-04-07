@@ -187,26 +187,21 @@ function validateResponse(obj) {
 // --- Normalize suggestions to at most 2 occupations + 2 minor improvements ---
 function normalizeSuggestions(parsed, handNames, context) {
     if (!parsed || !Array.isArray(parsed.suggestions)) return;
-    const handSet = new Set(handNames || []);
     const occs = [];
     const mins = [];
-    const dropped = [];
+    const unknown = [];
     for (const s of parsed.suggestions) {
         const card = CARD_MAP[s.card_name];
-        if (!card || !handSet.has(s.card_name)) {
-            dropped.push(s.card_name);
-            continue;
-        }
-        if (card.type === 'Occupation') occs.push(s);
-        else if (card.type === 'Minor Improvement') mins.push(s);
-        else dropped.push(s.card_name);
+        if (card && card.type === 'Occupation') occs.push(s);
+        else if (card && card.type === 'Minor Improvement') mins.push(s);
+        else unknown.push(s); // unknown type — keep, but at end so it doesn't crowd out typed picks
     }
     const trimmedOccs = occs.slice(0, 2).map((s, i) => ({ ...s, rank_number: i + 1 }));
     const trimmedMins = mins.slice(0, 2).map((s, i) => ({ ...s, rank_number: i + 1 }));
-    if (occs.length > 2 || mins.length > 2 || dropped.length > 0) {
-        context.log.warn(`normalizeSuggestions adjusted output: occs=${occs.length}->${trimmedOccs.length}, mins=${mins.length}->${trimmedMins.length}, dropped=${dropped.join(',') || 'none'}`);
+    if (occs.length > 2 || mins.length > 2) {
+        try { context.log.warn(`normalizeSuggestions trimmed: occs=${occs.length}->2, mins=${mins.length}->2`); } catch {}
     }
-    parsed.suggestions = [...trimmedOccs, ...trimmedMins];
+    parsed.suggestions = [...trimmedOccs, ...trimmedMins, ...unknown];
 }
 
 module.exports = async function (context, req) {
