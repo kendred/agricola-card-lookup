@@ -1667,6 +1667,12 @@ body {
     background: #fdf6e3;
 }
 
+.card-row.temp.selected {
+    border: 1px solid #8B6914;
+    border-left: 3px solid #8B6914;
+    background: #fdf6e3;
+}
+
 /* "NEW" badge replacing rank for temp cards */
 .temp-badge {
     display: inline-flex;

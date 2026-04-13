@@ -82,6 +82,17 @@ module.exports = async function (context, req) {
 
     // --- Validate request body ---
     const body = req.body;
+
+    // Health probe from client checkAvailability() — respond 200 without calling the model
+    if (body && typeof body === 'object' && !Buffer.isBuffer(body) && Object.keys(body).length === 0) {
+        context.res = {
+            status: 200,
+            headers,
+            body: JSON.stringify({ available: true }),
+        };
+        return;
+    }
+
     if (!body || !Buffer.isBuffer(body)) {
         // Try to handle base64 JSON body as fallback
         if (body && typeof body === 'object' && body.image) {

@@ -256,6 +256,17 @@ module.exports = async function (context, req) {
         return;
     }
 
+    // Health probe: client checkAvailability() sends {} — answer 200 so we don't
+    // spam the console with red 400s on every page load.
+    if (Object.keys(body).length === 0 || body.probe === true) {
+        context.res = {
+            status: 200,
+            headers,
+            body: JSON.stringify({ available: true }),
+        };
+        return;
+    }
+
     if (!Array.isArray(body.handNames) || body.handNames.length === 0) {
         context.res = {
             status: 400,
