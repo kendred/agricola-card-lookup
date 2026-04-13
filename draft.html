@@ -126,7 +126,10 @@ function CardSearch({ cards, onAddCard, onAddTempCard, allUsedCardNames, childre
     const [tempName, setTempName] = useState('');
     const [tempType, setTempType] = useState('Occupation');
     const [tempDesc, setTempDesc] = useState('');
-    const [showDesc, setShowDesc] = useState(false);
+    const [tempCost, setTempCost] = useState('');
+    const [tempPrereqs, setTempPrereqs] = useState('');
+    const [tempVps, setTempVps] = useState('');
+    const [showDetails, setShowDetails] = useState(false);
     const inputRef = useRef(null);
     const suggestionsRef = useRef(null);
 
@@ -175,20 +178,26 @@ function CardSearch({ cards, onAddCard, onAddTempCard, allUsedCardNames, childre
         setTempName(query);
         setTempType('Occupation');
         setTempDesc('');
-        setShowDesc(false);
+        setTempCost('');
+        setTempPrereqs('');
+        setTempVps('');
+        setShowDetails(false);
         setShowTempForm(true);
     }, [query]);
 
     const handleTempSubmit = useCallback(() => {
         if (!tempName.trim()) return;
-        onAddTempCard(tempName.trim(), tempType, tempDesc.trim());
+        onAddTempCard(tempName.trim(), tempType, { description: tempDesc.trim(), cost: tempCost.trim(), prerequisites: tempPrereqs.trim(), vps: tempVps.trim() });
         setQuery('');
         setShowTempForm(false);
         setTempName('');
         setTempDesc('');
-        setShowDesc(false);
+        setTempCost('');
+        setTempPrereqs('');
+        setTempVps('');
+        setShowDetails(false);
         setTimeout(() => inputRef.current?.focus(), 0);
-    }, [tempName, tempType, tempDesc, onAddTempCard]);
+    }, [tempName, tempType, tempDesc, tempCost, tempPrereqs, tempVps, onAddTempCard]);
 
     const cancelTempForm = useCallback(() => {
         setShowTempForm(false);
@@ -269,12 +278,45 @@ function CardSearch({ cards, onAddCard, onAddTempCard, allUsedCardNames, childre
                             >Minor Improvement</button>
                         </div>
                     </div>
-                    {!showDesc && (
-                        <button className="temp-card-add-desc" onClick={() => setShowDesc(true)}>
-                            + Add description
+                    {!showDetails && (
+                        <button className="temp-card-add-desc" onClick={() => setShowDetails(true)}>
+                            + Add details
                         </button>
                     )}
-                    {showDesc && (
+                    {showDetails && (<>
+                        <button className="temp-card-add-desc" onClick={() => setShowDetails(false)}>
+                            − Hide details
+                        </button>
+                        <div className="temp-card-form-row">
+                            <label>Cost</label>
+                            <input
+                                type="text"
+                                value={tempCost}
+                                onChange={e => setTempCost(e.target.value)}
+                                className="temp-card-input"
+                                placeholder="e.g. 1 food (optional)"
+                            />
+                        </div>
+                        <div className="temp-card-form-row">
+                            <label>Prerequisites</label>
+                            <input
+                                type="text"
+                                value={tempPrereqs}
+                                onChange={e => setTempPrereqs(e.target.value)}
+                                className="temp-card-input"
+                                placeholder="e.g. 3 occupations (optional)"
+                            />
+                        </div>
+                        <div className="temp-card-form-row">
+                            <label>Victory pts</label>
+                            <input
+                                type="text"
+                                value={tempVps}
+                                onChange={e => setTempVps(e.target.value)}
+                                className="temp-card-input"
+                                placeholder="e.g. 1 (optional)"
+                            />
+                        </div>
                         <div className="temp-card-form-row">
                             <label>Description</label>
                             <textarea
@@ -285,7 +327,7 @@ function CardSearch({ cards, onAddCard, onAddTempCard, allUsedCardNames, childre
                                 placeholder="Card text (optional)"
                             />
                         </div>
-                    )}
+                    </>)}
                     <div className="temp-card-form-actions">
                         <button className="btn btn-primary btn-sm" onClick={handleTempSubmit} disabled={!tempName.trim()}>
                             Add to Hand
@@ -416,6 +458,9 @@ function ScreenshotResults({ results, error, onDismiss, onAddTempCard }) {
     if (results.skippedOverflow && results.skippedOverflow.length > 0) {
         parts.push(`${results.skippedOverflow.length} skipped (slots full)`);
     }
+    if (results.autoAdded && results.autoAdded.length > 0) {
+        parts.push(`${results.autoAdded.length} new card${results.autoAdded.length !== 1 ? 's' : ''} auto-submitted for review`);
+    }
     if (results.unmatched && results.unmatched.length > 0) {
         parts.push(`${results.unmatched.length} not recognized`);
     }
@@ -429,7 +474,7 @@ function ScreenshotResults({ results, error, onDismiss, onAddTempCard }) {
 
     const handleAddTemp = (name, type) => {
         if (onAddTempCard) {
-            onAddTempCard(name, type, '');
+            onAddTempCard(name, type, {});
             setAddedTemp(prev => new Set([...prev, name]));
         }
     };
@@ -454,6 +499,11 @@ function ScreenshotResults({ results, error, onDismiss, onAddTempCard }) {
                 {unmatchedToShow.length > 0 && !onAddTempCard && (
                     <div className="screenshot-unmatched">
                         Not recognized: {unmatchedToShow.join(', ')}
+                    </div>
+                )}
+                {results.autoAdded && results.autoAdded.length > 0 && (
+                    <div className="screenshot-unmatched" style={{ opacity: 0.7 }}>
+                        Auto-added with details: {results.autoAdded.join(', ')}
                     </div>
                 )}
                 {addedTemp.size > 0 && (
@@ -1576,9 +1626,28 @@ function DraftApp() {
         clearSavedState();
     };
 
-    const addTempCard = useCallback((name, type, description) => {
+    // --- Background card submission (fire-and-forget) ---
+    const _submittedCardsRef = useRef(new Set());
+    const submitCardInBackground = useCallback(({ name, type, description, cost, prerequisites, vps }) => {
+        const dedupKey = `${name.toLowerCase()}::${type.toLowerCase()}`;
+        if (_submittedCardsRef.current.has(dedupKey)) return;
+        _submittedCardsRef.current.add(dedupKey);
+        fetch('/api/submit-card', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, type, description, cost, prerequisites, vps }),
+        })
+        .then(res => res.json().then(data => {
+            if (res.ok) console.log('[card-submit] Submitted:', name, data);
+            else console.warn('[card-submit] Server responded:', res.status, data);
+        }))
+        .catch(err => console.warn('[card-submit] Network error (non-blocking):', err.message));
+    }, []);
+
+    const addTempCard = useCallback((name, type, { description, cost, prerequisites, vps } = {}) => {
         const card = {
             name, type, description: description || '',
+            cost: cost || '', prerequisites: prerequisites || '', vps: vps || '',
             isTemporary: true, rank: Infinity,
             pwr: '—', adp: '—', elo_per_play: '—',
             play_rate: '—', value: '—', value_when_played: '—',
@@ -1592,21 +1661,23 @@ function DraftApp() {
             if (typeCount >= limit) return prev;
             return [...prev, name];
         });
-    }, [cardMap, currentRound]);
+        submitCardInBackground({ name, type, description: description || '', cost: cost || '', prerequisites: prerequisites || '', vps: vps || '' });
+    }, [cardMap, currentRound, submitCardInBackground]);
 
-    const editTempCard = useCallback((oldName, newName, description) => {
+    const editTempCard = useCallback((oldName, newName, { description, cost, prerequisites, vps } = {}) => {
         setTempCards(prev => {
             const card = prev[oldName];
             if (!card) return prev;
             const updated = { ...prev };
             if (oldName !== newName) delete updated[oldName];
-            updated[newName] = { ...card, name: newName, description: description || '' };
+            updated[newName] = { ...card, name: newName, description: description || '', cost: cost || '', prerequisites: prerequisites || '', vps: vps || '' };
             return updated;
         });
         if (oldName !== newName) {
             setCurrentHandNames(prev => prev.map(n => n === oldName ? newName : n));
         }
-    }, []);
+        submitCardInBackground({ name: newName, type: (tempCards[oldName] || {}).type || 'Occupation', description: description || '', cost: cost || '', prerequisites: prerequisites || '', vps: vps || '' });
+    }, [submitCardInBackground, tempCards]);
 
     const handleAddCard = useCallback((card) => {
         setCurrentHandNames(prev => {
@@ -1692,6 +1763,33 @@ function DraftApp() {
                     total: result.total,
                 });
             }
+
+            // Second pass: auto-extract details for unmatched cards and create temp cards
+            if (result.unmatched.length > 0 && typeof screenshotOCR.extractCardDetails === 'function') {
+                screenshotOCR.extractCardDetails(imageBlob, result.unmatched).then(function (detailedCards) {
+                    if (!detailedCards || detailedCards.length === 0) return;
+                    const autoAddedNames = [];
+                    detailedCards.forEach(function (card) {
+                        if (!card.name || !card.type) return;
+                        addTempCard(card.name, card.type, {
+                            description: card.description || '',
+                            cost: card.cost || '',
+                            prerequisites: card.prerequisites || '',
+                            vps: card.vps || '',
+                        });
+                        autoAddedNames.push(card.name);
+                    });
+                    if (autoAddedNames.length > 0) {
+                        console.log('[ocr] Auto-added unmatched cards with details:', autoAddedNames);
+                        // Update screenshot results to reflect auto-added cards
+                        setScreenshotResults(prev => prev ? {
+                            ...prev,
+                            autoAdded: autoAddedNames,
+                            unmatched: prev.unmatched.filter(n => !autoAddedNames.some(a => a.toLowerCase() === n.toLowerCase())),
+                        } : prev);
+                    }
+                });
+            }
         } catch (err) {
             console.error('Screenshot processing error:', err);
             if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
@@ -1702,7 +1800,7 @@ function DraftApp() {
         } finally {
             setScreenshotProcessing(false);
         }
-    }, [screenshotProcessing, cards, cardMap, currentHandNames, allUsedCardNames, currentRound, handleAddCards, isReturningRound, markingPhase, markedRemaining]);
+    }, [screenshotProcessing, cards, cardMap, currentHandNames, allUsedCardNames, currentRound, handleAddCards, isReturningRound, markingPhase, markedRemaining, addTempCard]);
 
     // Strategy advisor handler
     const handleGetAdvice = useCallback(async () => {
@@ -1751,12 +1849,12 @@ function DraftApp() {
     const [editingTempCard, setEditingTempCard] = useState(null);
 
     const handleEditTempCard = useCallback((card) => {
-        setEditingTempCard({ originalName: card.name, name: card.name, description: card.description || '' });
+        setEditingTempCard({ originalName: card.name, name: card.name, description: card.description || '', cost: card.cost || '', prerequisites: card.prerequisites || '', vps: card.vps || '' });
     }, []);
 
     const handleSaveEditTempCard = useCallback(() => {
         if (!editingTempCard || !editingTempCard.name.trim()) return;
-        editTempCard(editingTempCard.originalName, editingTempCard.name.trim(), editingTempCard.description.trim());
+        editTempCard(editingTempCard.originalName, editingTempCard.name.trim(), { description: editingTempCard.description.trim(), cost: editingTempCard.cost.trim(), prerequisites: editingTempCard.prerequisites.trim(), vps: editingTempCard.vps.trim() });
         setEditingTempCard(null);
     }, [editingTempCard, editTempCard]);
 
@@ -2166,6 +2264,36 @@ function DraftApp() {
                                 value={editingTempCard.name}
                                 onChange={(e) => setEditingTempCard(prev => ({ ...prev, name: e.target.value }))}
                                 autoFocus
+                            />
+                        </div>
+                        <div className="temp-card-form-row">
+                            <label>Cost</label>
+                            <input
+                                type="text"
+                                className="temp-card-input"
+                                value={editingTempCard.cost}
+                                onChange={(e) => setEditingTempCard(prev => ({ ...prev, cost: e.target.value }))}
+                                placeholder="e.g. 1 food (optional)"
+                            />
+                        </div>
+                        <div className="temp-card-form-row">
+                            <label>Prerequisites</label>
+                            <input
+                                type="text"
+                                className="temp-card-input"
+                                value={editingTempCard.prerequisites}
+                                onChange={(e) => setEditingTempCard(prev => ({ ...prev, prerequisites: e.target.value }))}
+                                placeholder="e.g. 3 occupations (optional)"
+                            />
+                        </div>
+                        <div className="temp-card-form-row">
+                            <label>Victory pts</label>
+                            <input
+                                type="text"
+                                className="temp-card-input"
+                                value={editingTempCard.vps}
+                                onChange={(e) => setEditingTempCard(prev => ({ ...prev, vps: e.target.value }))}
+                                placeholder="e.g. 1 (optional)"
                             />
                         </div>
                         <div className="temp-card-form-row">

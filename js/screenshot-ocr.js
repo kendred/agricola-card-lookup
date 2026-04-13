@@ -226,6 +226,32 @@ var screenshotOCR = (function () {
         });
     }
 
+    // --- Extract full card details for unmatched cards ---
+    // Second-pass call: sends the same image back with a list of unmatched names,
+    // asks the LLM to extract type, description, cost, prerequisites, vps.
+    function extractCardDetails(imageBlob, unmatchedNames) {
+        return resizeImage(imageBlob, 2048).then(function (resizedBlob) {
+            return blobToDataURL(resizedBlob);
+        }).then(function (dataURL) {
+            return fetch(OCR_FUNCTION_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ image: dataURL, mode: 'extract-details', unmatchedNames: unmatchedNames }),
+            });
+        }).then(function (response) {
+            if (!response.ok) {
+                console.warn('[extract-details] Server responded:', response.status);
+                return [];
+            }
+            return response.json();
+        }).then(function (data) {
+            return data.cards || [];
+        }).catch(function (err) {
+            console.warn('[extract-details] Failed (non-blocking):', err.message);
+            return [];
+        });
+    }
+
     // --- Check if the OCR endpoint is reachable ---
     // Returns a Promise<boolean>. Sends an OPTIONS preflight or a tiny POST
     // that the function will reject (400) but proves the server is up.
@@ -244,6 +270,7 @@ var screenshotOCR = (function () {
         processImage: processImage,
         matchNames: matchNames,
         resizeImage: resizeImage,
+        extractCardDetails: extractCardDetails,
         checkAvailability: checkAvailability,
         // Exposed for testing:
         _levenshtein: levenshtein,

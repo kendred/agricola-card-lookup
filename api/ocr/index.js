@@ -36,6 +36,22 @@ Example output: ["Lover", "Basket Carrier", "Cesspit"]
 Here are all valid card names:
 ${JSON.stringify(CARD_NAMES)}`;
 
+const DETAIL_EXTRACTION_PROMPT = `You are analyzing a screenshot from the board game Agricola on Board Game Arena (BGA).
+You need to find specific cards in this screenshot and extract their full details.
+
+For each card, extract:
+- "name": The card name as printed on the card
+- "type": Either "Occupation" or "Minor Improvement". On BGA, Occupations have an orange/brown header and Minor Improvements have a yellow/gold header.
+- "description": The full rules text on the card body
+- "cost": The resource cost shown (e.g. "1 food", "2 wood"). Empty string if none.
+- "prerequisites": Prerequisites shown (e.g. "3 occupations", "2 minor improvements"). Empty string if none.
+- "vps": Victory points if shown on the card. Empty string if none.
+
+Return ONLY a JSON array of objects. Do not include any explanation, markdown formatting, or text outside the JSON array.
+
+Example output:
+[{"name": "Example Card", "type": "Occupation", "description": "When you use the Day Laborer action...", "cost": "1 food", "prerequisites": "3 occupations", "vps": "1"}]`;
+
 module.exports = async function (context, req) {
     // --- CORS headers ---
     const headers = {
@@ -109,6 +125,12 @@ module.exports = async function (context, req) {
                 }
                 const imageBase64 = base64Match[1];
                 const mimeType = body.image.match(/^data:(image\/\w+);/)[1];
+
+                // Route to detail extraction if mode is specified
+                if (body.mode === 'extract-details' && Array.isArray(body.unmatchedNames) && body.unmatchedNames.length > 0) {
+                    return await processDetailExtraction(context, headers, endpoint, apiKey, deployment, imageBase64, mimeType, body.unmatchedNames);
+                }
+
                 return await processImage(context, headers, endpoint, apiKey, deployment, imageBase64, mimeType);
             } catch (e) {
                 context.res = {
@@ -242,6 +264,101 @@ async function processImage(context, headers, endpoint, apiKey, deployment, imag
             status: 500,
             headers,
             body: JSON.stringify({ error: 'Internal error processing the screenshot.' }),
+        };
+    }
+}
+
+async function processDetailExtraction(context, headers, endpoint, apiKey, deployment, imageBase64, mimeType, unmatchedNames) {
+    const apiVersion = '2024-10-21';
+    const url = `${endpoint.replace(/\/$/, '')}/openai/deployments/${deployment}/chat/completions?api-version=${apiVersion}`;
+
+    const requestBody = {
+        messages: [
+            { role: 'system', content: DETAIL_EXTRACTION_PROMPT },
+            {
+                role: 'user',
+                content: [
+                    {
+                        type: 'image_url',
+                        image_url: {
+                            url: `data:${mimeType};base64,${imageBase64}`,
+                            detail: 'high',
+                        },
+                    },
+                    {
+                        type: 'text',
+                        text: `Find these specific cards in the screenshot and extract their full details:\n${unmatchedNames.join(', ')}`,
+                    },
+                ],
+            },
+        ],
+        max_tokens: 2000,
+        temperature: 0.1,
+    };
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'api-key': apiKey,
+            },
+            body: JSON.stringify(requestBody),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            context.log.error(`Azure OpenAI detail extraction error: ${response.status} ${errorText}`);
+            context.res = {
+                status: 502,
+                headers,
+                body: JSON.stringify({ error: 'Detail extraction failed. Please try again.' }),
+            };
+            return;
+        }
+
+        const result = await response.json();
+        const content = result.choices?.[0]?.message?.content || '';
+
+        // Parse response — expect JSON array of card objects
+        let cards = [];
+        try {
+            cards = JSON.parse(content);
+        } catch (e) {
+            const arrayMatch = content.match(/\[[\s\S]*\]/);
+            if (arrayMatch) {
+                try {
+                    cards = JSON.parse(arrayMatch[0]);
+                } catch (e2) {
+                    context.log.warn('Could not parse detail extraction response:', content);
+                }
+            }
+        }
+
+        // Validate and sanitize each card object
+        const VALID_TYPES = ['Occupation', 'Minor Improvement'];
+        cards = (Array.isArray(cards) ? cards : [])
+            .filter(c => c && typeof c === 'object' && typeof c.name === 'string' && c.name.trim())
+            .map(c => ({
+                name: c.name.trim(),
+                type: VALID_TYPES.includes(c.type) ? c.type : 'Occupation',
+                description: (typeof c.description === 'string' ? c.description : '').trim(),
+                cost: (typeof c.cost === 'string' ? c.cost : '').trim(),
+                prerequisites: (typeof c.prerequisites === 'string' ? c.prerequisites : '').trim(),
+                vps: (typeof c.vps === 'string' ? c.vps : '').trim(),
+            }));
+
+        context.res = {
+            status: 200,
+            headers,
+            body: JSON.stringify({ cards, raw: content }),
+        };
+    } catch (err) {
+        context.log.error(`Detail extraction error: ${err.message}`);
+        context.res = {
+            status: 500,
+            headers,
+            body: JSON.stringify({ error: 'Internal error during detail extraction.' }),
         };
     }
 }
