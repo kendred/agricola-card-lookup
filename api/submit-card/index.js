@@ -47,7 +47,7 @@ module.exports = async function (context, req) {
 
     // --- Environment ---
     const githubToken = process.env.GITHUB_TOKEN;
-    const githubRepo = process.env.GITHUB_REPO || 'riley-m-oneill/agricola-card-lookup';
+    const githubRepo = process.env.GITHUB_REPO || 'kendred/agricola-card-lookup';
 
     if (!githubToken) {
         context.res = {

@@ -14,7 +14,7 @@ The Azure Function creates issues with `labels: ['card-submission']`. GitHub rej
 gh label create card-submission \
   --description "Unrecognized card submitted via draft tool" \
   --color "d4c5f9" \
-  --repo riley-m-oneill/agricola-card-lookup
+  --repo kendred/agricola-card-lookup
 ```
 
 ### 2. Create a fine-grained Personal Access Token (PAT)
@@ -36,7 +36,7 @@ gh label create card-submission \
    - **Value:** the PAT from step 2
 5. Click **Save**
 
-The function also reads `GITHUB_REPO` but defaults to `riley-m-oneill/agricola-card-lookup`, so you only need to set it if the repo name ever changes.
+The function also reads `GITHUB_REPO` but defaults to `kendred/agricola-card-lookup`, so you only need to set it if the repo name ever changes.
 
 ## Verification
 
@@ -62,7 +62,7 @@ After deploying:
 | Variable | Required | Default | Purpose |
 |----------|----------|---------|---------|
 | `GITHUB_TOKEN` | Yes | — | Fine-grained PAT with Issues read/write |
-| `GITHUB_REPO` | No | `riley-m-oneill/agricola-card-lookup` | Target repo for issue creation |
+| `GITHUB_REPO` | No | `kendred/agricola-card-lookup` | Target repo for issue creation |
 
 ## Token Rotation
 
