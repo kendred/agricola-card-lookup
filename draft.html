@@ -425,18 +425,18 @@ function ScreenshotInput({ onImageCaptured, processing, disabled }) {
 }
 
 // ─── ScreenshotResults Component ────────────────────────────────────
-function ScreenshotResults({ results, error, onDismiss, onAddTempCard }) {
+function ScreenshotResults({ results, error, onDismiss, onAddTempCard, extractingDetails }) {
     const [addedTemp, setAddedTemp] = useState(new Set());
 
-    // Auto-dismiss success banners after 10s (unless there are warnings)
+    // Auto-dismiss success banners after 10s (unless there are warnings or still extracting)
     useEffect(() => {
-        if (!results || error) return;
+        if (!results || error || extractingDetails) return;
         const hasWarnings = (results.unmatched && results.unmatched.length > 0) ||
                             (results.skippedOverflow && results.skippedOverflow.length > 0);
         if (hasWarnings) return;
         const timer = setTimeout(onDismiss, 10000);
         return () => clearTimeout(timer);
-    }, [results, error, onDismiss]);
+    }, [results, error, onDismiss, extractingDetails]);
 
     // Reset addedTemp when results change
     useEffect(() => { setAddedTemp(new Set()); }, [results]);
@@ -485,7 +485,12 @@ function ScreenshotResults({ results, error, onDismiss, onAddTempCard }) {
         <div className={`screenshot-banner ${hasWarnings ? 'screenshot-warning' : 'screenshot-success'}`}>
             <div>
                 <span>{parts.join('. ')}.</span>
-                {unmatchedToShow.length > 0 && onAddTempCard && (
+                {unmatchedToShow.length > 0 && extractingDetails && (
+                    <div className="screenshot-unmatched" style={{ fontStyle: 'italic', opacity: 0.8 }}>
+                        Identifying {unmatchedToShow.length} card{unmatchedToShow.length !== 1 ? 's' : ''}...
+                    </div>
+                )}
+                {unmatchedToShow.length > 0 && !extractingDetails && onAddTempCard && (
                     <div className="screenshot-unmatched">
                         {unmatchedToShow.map(name => (
                             <div key={name} className="unmatched-row">
@@ -496,7 +501,7 @@ function ScreenshotResults({ results, error, onDismiss, onAddTempCard }) {
                         ))}
                     </div>
                 )}
-                {unmatchedToShow.length > 0 && !onAddTempCard && (
+                {unmatchedToShow.length > 0 && !extractingDetails && !onAddTempCard && (
                     <div className="screenshot-unmatched">
                         Not recognized: {unmatchedToShow.join(', ')}
                     </div>
@@ -1321,6 +1326,7 @@ function DraftApp() {
     // Screenshot processing state
     const [ocrAvailable, setOcrAvailable] = useState(false);
     const [screenshotProcessing, setScreenshotProcessing] = useState(false);
+    const [extractingDetails, setExtractingDetails] = useState(false);
     const [screenshotError, setScreenshotError] = useState(null);
     const [screenshotResults, setScreenshotResults] = useState(null);
 
@@ -1766,6 +1772,7 @@ function DraftApp() {
 
             // Second pass: auto-extract details for unmatched cards and create temp cards
             if (result.unmatched.length > 0 && typeof screenshotOCR.extractCardDetails === 'function') {
+                setExtractingDetails(true);
                 screenshotOCR.extractCardDetails(imageBlob, result.unmatched).then(function (detailedCards) {
                     if (!detailedCards || detailedCards.length === 0) return;
                     const autoAddedNames = [];
@@ -1788,6 +1795,8 @@ function DraftApp() {
                             unmatched: prev.unmatched.filter(n => !autoAddedNames.some(a => a.toLowerCase() === n.toLowerCase())),
                         } : prev);
                     }
+                }).finally(function () {
+                    setExtractingDetails(false);
                 });
             }
         } catch (err) {
@@ -2065,6 +2074,7 @@ function DraftApp() {
                                         error={screenshotError}
                                         onDismiss={() => { setScreenshotResults(null); setScreenshotError(null); }}
                                         onAddTempCard={addTempCard}
+                                        extractingDetails={extractingDetails}
                                     />
                                 </CardSearch>
                             )}
@@ -2092,6 +2102,7 @@ function DraftApp() {
                                                 error={screenshotError}
                                                 onDismiss={() => { setScreenshotResults(null); setScreenshotError(null); }}
                                                 onAddTempCard={addTempCard}
+                                                extractingDetails={extractingDetails}
                                             />
                                         </div>
                                     )}

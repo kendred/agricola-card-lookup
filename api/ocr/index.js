@@ -41,7 +41,10 @@ You need to find specific cards in this screenshot and extract their full detail
 
 For each card, extract:
 - "name": The card name as printed on the card
-- "type": Either "Occupation" or "Minor Improvement". On BGA, Occupations have an orange/brown header and Minor Improvements have a yellow/gold header.
+- "type": Either "Occupation" or "Minor Improvement". To determine type:
+  (1) Look for an explicit "Occupation" or "Minor Improvement" label on the card.
+  (2) Check the illustration frame shape: Occupations have a ROUND/CIRCULAR frame showing a person (character portrait). Minor Improvements have a HEXAGONAL frame showing an object or building.
+  (3) As a secondary signal: Occupations typically have a beige/cream title background, while Minor Improvements have a yellow/golden title background.
 - "description": The full rules text on the card body
 - "cost": The resource cost shown (e.g. "1 food", "2 wood"). Empty string if none.
 - "prerequisites": Prerequisites shown (e.g. "3 occupations", "2 minor improvements"). Empty string if none.
