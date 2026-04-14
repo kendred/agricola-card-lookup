@@ -146,13 +146,14 @@ var draftStats = (function () {
     // --- Hand grade from percentile ---
     function handGrade(percentile) {
         if (percentile === null) return { grade: '—', color: '#888' };
-        if (percentile >= 95) return { grade: 'A+', color: '#1a7a1a' };
-        if (percentile >= 85) return { grade: 'A', color: '#28a745' };
-        if (percentile >= 70) return { grade: 'B+', color: '#5cb85c' };
-        if (percentile >= 55) return { grade: 'B', color: '#8B6914' };
-        if (percentile >= 40) return { grade: 'C+', color: '#d4a017' };
-        if (percentile >= 25) return { grade: 'C', color: '#e67e22' };
-        if (percentile >= 10) return { grade: 'D', color: '#c0392b' };
+        if (percentile >= 89) return { grade: 'A+', color: '#1a7a1a' };
+        if (percentile >= 78) return { grade: 'A', color: '#28a745' };
+        if (percentile >= 67) return { grade: 'B+', color: '#5cb85c' };
+        if (percentile >= 56) return { grade: 'B', color: '#8B6914' };
+        if (percentile >= 45) return { grade: 'C+', color: '#d4a017' };
+        if (percentile >= 34) return { grade: 'C', color: '#e67e22' };
+        if (percentile >= 23) return { grade: 'D+', color: '#d35400' };
+        if (percentile >= 12) return { grade: 'D', color: '#c0392b' };
         return { grade: 'F', color: '#8b0000' };
     }
 

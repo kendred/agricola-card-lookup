@@ -2368,34 +2368,36 @@ function DraftApp() {
                                 <div style={{ fontSize: '0.75em', color: '#999', marginBottom: '8px' }}>
                                     Odds of seeing N more cards with this tag across other hands
                                 </div>
-                                {Object.keys(handStats.tagStats).sort().map(tag => {
-                                    const stat = handStats.tagStats[tag];
-                                    const def = TAG_DEFINITIONS[tag];
-                                    if (!def) return null;
-                                    const probs = stat.distribution;
-                                    const maxShow = Math.min(probs.length, 5);
-                                    return (
-                                        <div key={tag} className="stats-tag-row">
-                                            <div className="stats-tag-header">
-                                                <span className="tag-pill" style={{ background: def.color }}>{def.abbrev}</span>
-                                                <span className="stats-tag-name">{tag}</span>
-                                                <span className="stats-tag-count">You have {stat.count}</span>
+                                <div className="stats-tag-grid">
+                                    {Object.keys(handStats.tagStats).sort().map(tag => {
+                                        const stat = handStats.tagStats[tag];
+                                        const def = TAG_DEFINITIONS[tag];
+                                        if (!def) return null;
+                                        const probs = stat.distribution;
+                                        const maxShow = Math.min(probs.length, 5);
+                                        return (
+                                            <div key={tag} className="stats-tag-row">
+                                                <div className="stats-tag-header">
+                                                    <span className="tag-pill" style={{ background: def.color }}>{def.abbrev}</span>
+                                                    <span className="stats-tag-name">{tag}</span>
+                                                    <span className="stats-tag-count">You have {stat.count}</span>
+                                                </div>
+                                                <div className="stats-tag-probs">
+                                                    {Array.from({ length: maxShow }, (_, i) => {
+                                                        const pct = Math.round((probs[i] || 0) * 100);
+                                                        return (
+                                                            <div key={i} className={`stats-prob-cell${i === 0 ? '' : pct >= 10 ? ' highlight' : ''}`}>
+                                                                <div className="stats-prob-bar" style={{ height: `${Math.max(2, pct * 0.6)}px` }} />
+                                                                <div className="stats-prob-label">+{i}</div>
+                                                                <div className="stats-prob-pct">{pct}%</div>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
                                             </div>
-                                            <div className="stats-tag-probs">
-                                                {Array.from({ length: maxShow }, (_, i) => {
-                                                    const pct = Math.round((probs[i] || 0) * 100);
-                                                    return (
-                                                        <div key={i} className={`stats-prob-cell${i === 0 ? '' : pct >= 10 ? ' highlight' : ''}`}>
-                                                            <div className="stats-prob-bar" style={{ height: `${Math.max(2, pct * 0.6)}px` }} />
-                                                            <div className="stats-prob-label">+{i}</div>
-                                                            <div className="stats-prob-pct">{pct}%</div>
-                                                        </div>
-                                                    );
-                                                })}
-                                            </div>
-                                        </div>
-                                    );
-                                })}
+                                        );
+                                    })}
+                                </div>
                             </div>
                         )}
                     </div>

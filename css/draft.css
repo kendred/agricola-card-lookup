@@ -1869,9 +1869,16 @@ body {
     white-space: nowrap;
 }
 
-/* Tag probability rows */
+/* Tag probability grid + cards */
+.stats-tag-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
 .stats-tag-row {
-    margin-bottom: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 10px 12px;
 }
 .stats-tag-header {
     display: flex;
@@ -1935,7 +1942,8 @@ body {
 
 /* Responsive */
 @media (max-width: 700px) {
-    .stats-rank-columns {
+    .stats-rank-columns,
+    .stats-tag-grid {
         grid-template-columns: 1fr;
     }
 }
