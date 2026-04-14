@@ -147,7 +147,7 @@ h1 {
     color: #333;
 }
 
-.suggestion-pwr {
+.suggestion-apr {
     font-weight: bold;
     color: #8B6914;
 }
@@ -1202,6 +1202,15 @@ h1 {
                     </div>
 
                     <div class="toggle-row">
+                        <span class="toggle-label" id="playerCountLabel4p" style="font-weight: bold">4P</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="playerCountToggle">
+                            <span class="toggle-track"></span>
+                        </label>
+                        <span class="toggle-label" id="playerCountLabel3p">3P</span>
+                    </div>
+
+                    <div class="toggle-row">
                         <label class="toggle-switch">
                             <input type="checkbox" id="gradientToggle" checked>
                             <span class="toggle-track"></span>
@@ -1228,12 +1237,6 @@ h1 {
                                 <th class="sortable" data-sort="type">
                                     <span class="col-header">Type</span>
                                 </th>
-                                <th class="sortable" data-sort="pwr">
-                                    <span class="col-header">
-                                        PWR
-                                        <span class="help-icon" data-tooltip="Calculated by multiplying PLAY percentage x WIN percentage, then dividing by 7">?</span>
-                                    </span>
-                                </th>
                                 <th class="sortable" data-sort="adp">
                                     <span class="col-header">
                                         ADP
@@ -1250,6 +1253,12 @@ h1 {
                                     <span class="col-header">
                                         Play Rate
                                         <span class="help-icon" data-tooltip="% of times drafted the card is played">?</span>
+                                    </span>
+                                </th>
+                                <th class="sortable" data-sort="apr">
+                                    <span class="col-header">
+                                        APR
+                                        <span class="help-icon" data-tooltip="Average Played Round - the average round when this card is played">?</span>
                                     </span>
                                 </th>
                                 <th class="sortable" data-sort="value">
@@ -1306,21 +1315,53 @@ let currentSort = { column: 'rank', direction: 'asc' };
 const ALL_STRATEGY_TAGS = Object.keys(TAG_DEFINITIONS);
 let currentFilters = { type: 'all', passing: 'all', decks: ['A', 'B', 'C', 'D', 'E'], prerequisites: 'all', strategy: [...ALL_STRATEGY_TAGS] };
 let gradientsEnabled = true;
+let playerCountMode = parseInt(localStorage.getItem('playerCountMode')) || 4;
+const playerCountToggle = document.getElementById('playerCountToggle');
+const playerCountLabel4p = document.getElementById('playerCountLabel4p');
+const playerCountLabel3p = document.getElementById('playerCountLabel3p');
 
-// Calculate min/max for gradients
-const playRates = cards.map(c => parseFloat(c.play_rate)).filter(v => !isNaN(v));
-const values = cards.map(c => parseFloat(c.value)).filter(v => !isNaN(v));
-const valuesPlayed = cards.map(c => parseFloat(c.value_when_played)).filter(v => !isNaN(v));
-const eloPerPlays = cards.map(c => parseFloat(c.elo_per_play)).filter(v => !isNaN(v));
+// Initialize toggle state
+playerCountToggle.checked = playerCountMode === 3;
+playerCountLabel4p.style.fontWeight = playerCountMode === 4 ? 'bold' : 'normal';
+playerCountLabel3p.style.fontWeight = playerCountMode === 3 ? 'bold' : 'normal';
 
-const minPlayRate = Math.min(...playRates);
-const maxPlayRate = Math.max(...playRates);
-const minValue = Math.min(...values);
-const maxValue = Math.max(...values);
-const minValuePlayed = Math.min(...valuesPlayed);
-const maxValuePlayed = Math.max(...valuesPlayed);
-const minEloPerPlay = Math.min(...eloPerPlays);
-const maxEloPerPlay = Math.max(...eloPerPlays);
+// Stats resolver — returns the correct stats for current player count mode
+function getCardStats(card) {
+    if (playerCountMode === 3 && card.stats_3p) {
+        return card.stats_3p;
+    }
+    return card;
+}
+
+// Check if a card has stats for the current player count
+function hasStats(card) {
+    if (playerCountMode === 3) {
+        return card.stats_3p != null;
+    }
+    return card.rank != null;
+}
+
+// Calculate min/max for gradients (recalculated when player count changes)
+let minPlayRate, maxPlayRate, minValue, maxValue, minValuePlayed, maxValuePlayed, minEloPerPlay, maxEloPerPlay;
+
+function recalculateGradientRanges() {
+    const activeCards = cards.filter(c => hasStats(c));
+    const playRates = activeCards.map(c => parseFloat(getCardStats(c).play_rate)).filter(v => !isNaN(v));
+    const values = activeCards.map(c => parseFloat(getCardStats(c).value)).filter(v => !isNaN(v));
+    const valuesPlayed = activeCards.map(c => parseFloat(getCardStats(c).value_when_played)).filter(v => !isNaN(v));
+    const eloPerPlays = activeCards.map(c => parseFloat(getCardStats(c).elo_per_play)).filter(v => !isNaN(v));
+
+    minPlayRate = Math.min(...playRates);
+    maxPlayRate = Math.max(...playRates);
+    minValue = Math.min(...values);
+    maxValue = Math.max(...values);
+    minValuePlayed = Math.min(...valuesPlayed);
+    maxValuePlayed = Math.max(...valuesPlayed);
+    minEloPerPlay = Math.min(...eloPerPlays);
+    maxEloPerPlay = Math.max(...eloPerPlays);
+}
+
+recalculateGradientRanges();
 
 // Gradient calculation functions
 function getPlayRateGradient(playRate) {
@@ -1399,11 +1440,14 @@ function updateClearSortButton() {
 // Filter and sort cards
 function getFilteredAndSortedCards() {
     let filtered = cards.filter(card => {
+        // In current player count mode, only show cards with stats
+        if (!hasStats(card)) return false;
+
         if (currentFilters.type !== 'all') {
             if (currentFilters.type === 'minor' && card.type !== 'Minor Improvement') return false;
             if (currentFilters.type === 'occupation' && card.type !== 'Occupation') return false;
         }
-        
+
         if (currentFilters.passing !== 'all') {
             if (currentFilters.passing === 'passing' && !card.passing) return false;
             if (currentFilters.passing === 'not-passing' && card.passing) return false;
@@ -1426,14 +1470,16 @@ function getFilteredAndSortedCards() {
 
         return true;
     });
-    
+
     filtered.sort((a, b) => {
         let aVal, bVal;
-        
+        const aStats = getCardStats(a);
+        const bStats = getCardStats(b);
+
         switch(currentSort.column) {
             case 'rank':
-                aVal = parseInt(a.rank);
-                bVal = parseInt(b.rank);
+                aVal = parseInt(aStats.rank) || 9999;
+                bVal = parseInt(bStats.rank) || 9999;
                 break;
             case 'name':
                 aVal = a.name.toLowerCase();
@@ -1443,39 +1489,39 @@ function getFilteredAndSortedCards() {
                 aVal = a.type || '';
                 bVal = b.type || '';
                 break;
-            case 'pwr':
-                aVal = parseFloat(a.pwr);
-                bVal = parseFloat(b.pwr);
+            case 'apr':
+                aVal = parseFloat(aStats.apr) || 0;
+                bVal = parseFloat(bStats.apr) || 0;
                 break;
             case 'eloplay':
-                aVal = parseFloat(a.elo_per_play) || 0;
-                bVal = parseFloat(b.elo_per_play) || 0;
+                aVal = parseFloat(aStats.elo_per_play) || 0;
+                bVal = parseFloat(bStats.elo_per_play) || 0;
                 break;
             case 'adp':
-                aVal = parseFloat(a.adp);
-                bVal = parseFloat(b.adp);
+                aVal = parseFloat(aStats.adp) || 99;
+                bVal = parseFloat(bStats.adp) || 99;
                 break;
             case 'playrate':
-                aVal = parseFloat(a.play_rate);
-                bVal = parseFloat(b.play_rate);
+                aVal = parseFloat(aStats.play_rate) || 0;
+                bVal = parseFloat(bStats.play_rate) || 0;
                 break;
             case 'value':
-                aVal = parseFloat(a.value) || 0;
-                bVal = parseFloat(b.value) || 0;
+                aVal = parseFloat(aStats.value) || 0;
+                bVal = parseFloat(bStats.value) || 0;
                 break;
             case 'valueplayed':
-                aVal = parseFloat(a.value_when_played) || 0;
-                bVal = parseFloat(b.value_when_played) || 0;
+                aVal = parseFloat(aStats.value_when_played) || 0;
+                bVal = parseFloat(bStats.value_when_played) || 0;
                 break;
             default:
                 return 0;
         }
-        
+
         if (aVal < bVal) return currentSort.direction === 'asc' ? -1 : 1;
         if (aVal > bVal) return currentSort.direction === 'asc' ? 1 : -1;
         return 0;
     });
-    
+
     return filtered;
 }
 
@@ -1484,17 +1530,20 @@ function renderTable() {
     const cardsToShow = getFilteredAndSortedCards();
     
     // Update header text
-    if (cardsToShow.length === cards.length) {
-        tableHeader.textContent = `All Cards (${cards.length})`;
+    const totalWithStats = cards.filter(c => hasStats(c)).length;
+    const playerLabel = playerCountMode === 3 ? '3P' : '4P';
+    if (cardsToShow.length === totalWithStats) {
+        tableHeader.textContent = `All ${playerLabel} Cards (${totalWithStats})`;
     } else {
-        tableHeader.textContent = `${cardsToShow.length} / ${cards.length} Cards`;
+        tableHeader.textContent = `${cardsToShow.length} / ${totalWithStats} ${playerLabel} Cards`;
     }
     
     tableBody.innerHTML = cardsToShow.map(card => {
-        const playRateColor = getPlayRateGradient(card.play_rate);
-        const valueColor = getValueGradient(card.value);
-        const valuePlayedColor = getValuePlayedGradient(card.value_when_played);
-        const eloPerPlayColor = getEloPerPlayGradient(card.elo_per_play);
+        const stats = getCardStats(card);
+        const playRateColor = getPlayRateGradient(stats.play_rate);
+        const valueColor = getValueGradient(stats.value);
+        const valuePlayedColor = getValuePlayedGradient(stats.value_when_played);
+        const eloPerPlayColor = getEloPerPlayGradient(stats.elo_per_play);
 
         const tagDots = (card.tags || []).map(tag => {
             const def = TAG_DEFINITIONS[tag];
@@ -1503,15 +1552,15 @@ function renderTable() {
 
         return `
         <tr data-name="${card.name}">
-            <td class="table-rank">#${card.rank}</td>
+            <td class="table-rank">#${stats.rank}</td>
             <td class="table-name">${card.name}${tagDots}</td>
             <td class="table-type">${card.type || 'N/A'}</td>
-            <td>${card.pwr}</td>
-            <td>${card.adp}</td>
-            <td class="cell-gradient" style="background-color: ${eloPerPlayColor}">${card.elo_per_play || 'N/A'}</td>
-            <td class="cell-gradient" style="background-color: ${playRateColor}">${card.play_rate}</td>
-            <td class="cell-gradient" style="background-color: ${valueColor}">${card.value ? parseFloat(card.value).toFixed(2) : 'N/A'}</td>
-            <td class="cell-gradient" style="background-color: ${valuePlayedColor}">${card.value_when_played ? parseFloat(card.value_when_played).toFixed(1) : 'N/A'}</td>
+            <td>${stats.adp || 'N/A'}</td>
+            <td class="cell-gradient" style="background-color: ${eloPerPlayColor}">${stats.elo_per_play || 'N/A'}</td>
+            <td class="cell-gradient" style="background-color: ${playRateColor}">${stats.play_rate || 'N/A'}</td>
+            <td>${stats.apr || 'N/A'}</td>
+            <td class="cell-gradient" style="background-color: ${valueColor}">${stats.value ? parseFloat(stats.value).toFixed(2) : 'N/A'}</td>
+            <td class="cell-gradient" style="background-color: ${valuePlayedColor}">${stats.value_when_played ? parseFloat(stats.value_when_played).toFixed(1) : 'N/A'}</td>
             <td class="table-passing">${card.passing ? '<span class="passing-badge">Passing</span>' : ''}</td>
         </tr>
         `;
@@ -1681,6 +1730,22 @@ gradientToggle.addEventListener('change', (e) => {
     renderTable();
 });
 
+playerCountToggle.addEventListener('change', (e) => {
+    playerCountMode = e.target.checked ? 3 : 4;
+    localStorage.setItem('playerCountMode', playerCountMode);
+    playerCountLabel4p.style.fontWeight = playerCountMode === 4 ? 'bold' : 'normal';
+    playerCountLabel3p.style.fontWeight = playerCountMode === 3 ? 'bold' : 'normal';
+    recalculateGradientRanges();
+    renderTable();
+    // Re-display current card if one is shown
+    const currentCard = resultsDiv.querySelector('.card-result');
+    if (currentCard) {
+        const cardName = searchInput.value.trim();
+        const card = cards.find(c => c.name === cardName);
+        if (card) displayCard(card);
+    }
+});
+
 renderTable();
 
 // Mobile filter sidebar toggle
@@ -1708,13 +1773,16 @@ searchInput.addEventListener('input', (e) => {
     }
     
     suggestionsDiv.innerHTML = matches
-        .map(card => `
+        .map(card => {
+            const stats = getCardStats(card);
+            return `
             <div class="suggestion-item" data-name="${card.name}">
-                <span class="suggestion-rank">#${card.rank}</span>
+                <span class="suggestion-rank">#${stats.rank || 'N/R'}</span>
                 <span class="suggestion-name">${card.name}</span>
-                <span class="suggestion-pwr">PWR: ${card.pwr}</span>
+                <span class="suggestion-apr">APR: ${stats.apr || 'N/A'}</span>
             </div>
-        `)
+            `;
+        })
         .join('');
     
     suggestionsDiv.classList.add('active');
@@ -1810,31 +1878,33 @@ function displayCard(card) {
     const prerequisites = card.prerequisites ?
         `<div class="card-prerequisites"><strong>Prerequisites:</strong> ${card.prerequisites}</div>` : '';
 
+    const stats = getCardStats(card);
+    const playerLabel = playerCountMode === 3 ? '3P' : '4P';
     const statsHtml = `
         <div class="card-stats">
             <div class="stat">
-                <div class="stat-label">Power (PWR)</div>
-                <div class="stat-value">${card.pwr}</div>
-            </div>
-            <div class="stat">
                 <div class="stat-label">Draft Position (ADP)</div>
-                <div class="stat-value">${card.adp}</div>
-            </div>
-            <div class="stat">
-                <div class="stat-label">Play Rate</div>
-                <div class="stat-value">${card.play_rate}</div>
+                <div class="stat-value">${stats.adp || 'N/A'}</div>
             </div>
             <div class="stat">
                 <div class="stat-label">Elo per Play</div>
-                <div class="stat-value">${card.elo_per_play || 'N/A'}</div>
+                <div class="stat-value">${stats.elo_per_play || 'N/A'}</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Play Rate</div>
+                <div class="stat-value">${stats.play_rate || 'N/A'}</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Avg Played Round (APR)</div>
+                <div class="stat-value">${stats.apr || 'N/A'}</div>
             </div>
             <div class="stat">
                 <div class="stat-label">Value Draft</div>
-                <div class="stat-value">${card.value ? parseFloat(card.value).toFixed(2) : 'N/A'}</div>
+                <div class="stat-value">${stats.value ? parseFloat(stats.value).toFixed(2) : 'N/A'}</div>
             </div>
             <div class="stat">
                 <div class="stat-label">Value When Played</div>
-                <div class="stat-value">${card.value_when_played ? parseFloat(card.value_when_played).toFixed(1) : 'N/A'}</div>
+                <div class="stat-value">${stats.value_when_played ? parseFloat(stats.value_when_played).toFixed(1) : 'N/A'}</div>
             </div>
         </div>`;
 
@@ -1849,7 +1919,7 @@ function displayCard(card) {
                         <div class="card-header">
                             <div class="card-title-row">
                                 <div class="card-name">${card.name}</div>
-                                <div class="card-rank">Rank #${card.rank}</div>
+                                <div class="card-rank">Rank #${stats.rank || 'N/R'} (${playerLabel})</div>
                             </div>
                             <div class="card-meta">
                                 ${typeLabel}
@@ -1876,7 +1946,7 @@ function displayCard(card) {
                         <div class="card-header">
                             <div class="card-title-row">
                                 <div class="card-name">${card.name}</div>
-                                <div class="card-rank">Rank #${card.rank}</div>
+                                <div class="card-rank">Rank #${stats.rank || 'N/R'} (${playerLabel})</div>
                             </div>
                             <div class="card-meta">
                                 ${typeLabel}

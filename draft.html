@@ -1125,7 +1125,7 @@ function CardDetailPopover({ card, anchorRect, onClose, wheelWatchNote, onWheelW
                 {card.description || 'No description available'}
             </div>
             <div className="popover-stats">
-                <div><span className="popover-stat-label">PWR</span> {card.pwr}</div>
+                <div><span className="popover-stat-label">APR</span> {card.apr || '—'}</div>
                 <div><span className="popover-stat-label">ADP</span> {card.adp}</div>
                 <div><span className="popover-stat-label">Play Rate</span> {card.play_rate}</div>
                 <div><span className="popover-stat-label">Elo/Play</span> {card.elo_per_play || '—'}</div>
@@ -1532,13 +1532,39 @@ function DraftApp() {
         return icons[Math.floor(Math.random() * icons.length)];
     });
 
-    // Card lookup map (includes temp cards)
+    // Resolve card stats based on player count (3p overlays stats_3p fields)
+    const resolvedCards = useMemo(() => {
+        return cards.map(card => {
+            if (playerCount === 3 && card.stats_3p) {
+                return {
+                    ...card,
+                    rank: card.stats_3p.rank,
+                    adp: card.stats_3p.adp,
+                    apr: card.stats_3p.apr,
+                    play_rate: card.stats_3p.play_rate,
+                    elo_per_play: card.stats_3p.elo_per_play,
+                    value: card.stats_3p.value,
+                    value_when_played: card.stats_3p.value_when_played,
+                };
+            }
+            return card;
+        });
+    }, [cards, playerCount]);
+
+    // Card lookup map (includes temp cards, uses resolved stats)
     const cardMap = useMemo(() => {
         const map = {};
-        cards.forEach(c => { map[c.name] = c; });
+        resolvedCards.forEach(c => { map[c.name] = c; });
         Object.values(tempCards).forEach(c => { map[c.name] = c; });
         return map;
-    }, [cards, tempCards]);
+    }, [resolvedCards, tempCards]);
+
+    // Re-init draftStats when resolved cards change (player count switch)
+    useEffect(() => {
+        if (resolvedCards.length > 0 && typeof draftStats !== 'undefined') {
+            draftStats.init(resolvedCards);
+        }
+    }, [resolvedCards]);
 
     // Is this a returning-hand round?
     const rotation = useMemo(() => getRotation(playerCount), [playerCount]);

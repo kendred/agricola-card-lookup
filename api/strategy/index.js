@@ -16,9 +16,22 @@ CARDS.forEach(card => { CARD_MAP[card.name] = card; });
 // Format: one line per card, pipe-delimited: name|rank|adp|type-initial (O=Occupation, M=Minor)
 // ~6k tokens total vs ~13.7k as JSON. Lets the LLM reason about the full pool
 // for "what might still be drafted" without blowing the TPM budget every request.
-const COMPACT_INDEX = CARDS
-    .map(c => `${c.name}|${c.rank}|${c.adp}|${c.type === 'Occupation' ? 'O' : 'M'}`)
-    .join('\n');
+// Build separate indexes for 3p and 4p since rankings differ significantly.
+function buildCompactIndex(playerCount) {
+    return CARDS
+        .map(c => {
+            if (playerCount === 3) {
+                if (!c.stats_3p) return null;
+                return `${c.name}|${c.stats_3p.rank}|${c.stats_3p.adp}|${c.type === 'Occupation' ? 'O' : 'M'}`;
+            }
+            if (c.rank == null) return null; // skip 3p-only banned cards
+            return `${c.name}|${c.rank}|${c.adp}|${c.type === 'Occupation' ? 'O' : 'M'}`;
+        })
+        .filter(Boolean)
+        .join('\n');
+}
+const COMPACT_INDEX_4P = buildCompactIndex(4);
+const COMPACT_INDEX_3P = buildCompactIndex(3);
 
 // --- Rate limiting (in-memory, resets on cold start) ---
 const rateLimitMap = new Map();
@@ -93,46 +106,62 @@ STRATEGIC FRAMEWORK:
 
 ${STRATEGY_GUIDE}
 
-COMPLETE CARD INDEX (773 cards — format "name|rank|adp|type" where type is O=Occupation, M=Minor Improvement). Use this to reason about what cards may still appear in future hands and what the opponents could potentially draft. Fully-enriched details (description, tags, play rate, elo, cost, VPs) for the player's current hand and drafted cards are provided in the user message — rely on that for detailed analysis.
+COMPLETE CARD INDEX (format "name|rank|adp|type" where type is O=Occupation, M=Minor Improvement). Use this to reason about what cards may still appear in future hands and what the opponents could potentially draft. Fully-enriched details (description, tags, play rate, elo, cost, VPs) for the player's current hand and drafted cards are provided in the user message — rely on that for detailed analysis.
+Rankings and stats differ between 3-player and 4-player games. The card index below matches the player count for this game.
 
-${COMPACT_INDEX}`;
+`;
+
+// Build two system prompts (one per player count) for Azure OpenAI prompt caching
+const SYSTEM_PROMPT_4P = SYSTEM_PROMPT + COMPACT_INDEX_4P;
+const SYSTEM_PROMPT_3P = SYSTEM_PROMPT + COMPACT_INDEX_3P;
+
+// --- Resolve stats based on player count ---
+function getStats(card, playerCount) {
+    if (playerCount === 3 && card.stats_3p) return card.stats_3p;
+    return card;
+}
 
 // --- Enrich card names with full details for user message ---
-function enrichCards(names) {
+function enrichCards(names, playerCount) {
     return names
         .map(name => CARD_MAP[name])
         .filter(Boolean)
-        .map(c => ({
-            name: c.name,
-            rank: c.rank,
-            pwr: c.pwr,
-            adp: c.adp,
-            play_rate: c.play_rate,
-            elo_per_play: c.elo_per_play,
-            type: c.type,
-            description: c.description,
-            cost: c.cost,
-            vps: c.vps,
-            tags: c.tags,
-        }));
+        .map(c => {
+            const s = getStats(c, playerCount);
+            return {
+                name: c.name,
+                rank: s.rank,
+                apr: s.apr,
+                adp: s.adp,
+                play_rate: s.play_rate,
+                elo_per_play: s.elo_per_play,
+                type: c.type,
+                description: c.description,
+                cost: c.cost,
+                vps: c.vps,
+                tags: c.tags,
+            };
+        });
 }
 
 // --- Light enrichment for opponent cards (type + tags for strategy inference) ---
-function enrichOpponentCards(names) {
+function enrichOpponentCards(names, playerCount) {
     return names
         .map(name => CARD_MAP[name])
         .filter(Boolean)
-        .map(c => ({ name: c.name, rank: c.rank, type: c.type, tags: c.tags }));
+        .map(c => {
+            const s = getStats(c, playerCount);
+            return { name: c.name, rank: s.rank, type: c.type, tags: c.tags };
+        });
 }
 
 // --- Build user message from draft state ---
 function buildUserMessage(body) {
     const round = body.round || 1;
-    const handCards = enrichCards(body.handNames || []);
-    const draftedCards = enrichCards(body.draftedNames || []);
-    const othersDrafted = body.othersDrafted || [];
-
     const playerCount = body.playerCount === 3 ? 3 : 4;
+    const handCards = enrichCards(body.handNames || [], playerCount);
+    const draftedCards = enrichCards(body.draftedNames || [], playerCount);
+    const othersDrafted = body.othersDrafted || [];
     const rotationNote = playerCount === 3
         ? '3-player draft: 3 distinct hands, each passes around 3 times. Rotation R1=H1, R2=H2, R3=H3, R4=H1, R5=H2, R6=H3, R7=H1. Returning rounds start at R4. H1 is seen 3 times, H2/H3 twice.'
         : '4-player draft: 4 distinct hands. Rotation R1=H1, R2=H2, R3=H3, R4=H4, R5=H1, R6=H2, R7=H3. Returning rounds start at R5. H4 is seen only once.';
@@ -145,7 +174,7 @@ function buildUserMessage(body) {
     }
 
     if (othersDrafted.length > 0) {
-        const enrichedOpponents = enrichOpponentCards(othersDrafted);
+        const enrichedOpponents = enrichOpponentCards(othersDrafted, playerCount);
         msg += `CARDS TAKEN BY OPPONENTS (with type, rank, and strategy tags):\n${JSON.stringify(enrichedOpponents, null, 1)}\n\n`;
     }
 
@@ -277,6 +306,7 @@ module.exports = async function (context, req) {
     }
 
     // Build messages
+    const playerCount = body.playerCount === 3 ? 3 : 4;
     const userMessage = buildUserMessage(body);
 
     // Call Azure OpenAI
@@ -285,7 +315,7 @@ module.exports = async function (context, req) {
 
     const requestBody = {
         messages: [
-            { role: 'system', content: SYSTEM_PROMPT },
+            { role: 'system', content: playerCount === 3 ? SYSTEM_PROMPT_3P : SYSTEM_PROMPT_4P },
             { role: 'user', content: userMessage },
         ],
         // o4-mini counts reasoning tokens against this cap. 3-8k reasoning is common
