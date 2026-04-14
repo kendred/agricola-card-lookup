@@ -226,35 +226,123 @@ var draftStats = (function () {
         return probs;
     }
 
-    // --- Tag distribution for a hand (convolution of Occ + Minor hypergeometrics) ---
-    // Returns { probs: [P(total=0), P(total=1), ...], occPMF: [...], minorPMF: [...] }
-    function tagDistribution(tag, nOcc, nMinor) {
+    // --- Additional tagged cards you might draft across the remaining hands ---
+    // Given you see `kSeen` tagged cards (occ + minor) in your current hand,
+    // what's P(you can draft 0, 1, 2, 3+ additional tagged cards across the other hands)?
+    //
+    // Model for each of the `numOtherHands` other hands:
+    //   1. Draw `handSize` from the remaining pool (conditional hypergeometric)
+    //   2. Opponents draft the best-ranked cards before it reaches you
+    //      (`passesBeforeYou` opponents each take 1 occ + 1 minor)
+    //   3. You see what's left; you can draft at most 1 occ + 1 minor per hand
+    //   4. What matters is P(≥1 tagged card survives to you) per hand,
+    //      for occ and minor independently — then combine across hands.
+    //
+    // Simplification: model each hand independently (slight overcounting of tagged
+    // cards across hands, but close enough for display purposes).
+    function additionalTagProbability(tag, kSeenOcc, kSeenMinor, handSize, numOtherHands, playerCount) {
         if (!initialized || !tagCounts[tag]) return null;
 
-        var kOcc = tagCounts[tag].occ;
-        var kMinor = tagCounts[tag].minor;
+        var kOccTotal = tagCounts[tag].occ;
+        var kMinorTotal = tagCounts[tag].minor;
         var NOcc = occRanks.length;
         var NMinor = minorRanks.length;
 
-        var occPMF = hypergeometricPMF(kOcc, NOcc, nOcc);
-        var minorPMF = hypergeometricPMF(kMinor, NMinor, nMinor);
+        // Remaining tagged cards after your hand is dealt
+        var kOccRemaining = kOccTotal - kSeenOcc;
+        var kMinorRemaining = kMinorTotal - kSeenMinor;
+        // Remaining pool after your hand
+        var NOccRemaining = NOcc - handSize;
+        var NMinorRemaining = NMinor - handSize;
 
-        // Convolve: P(total = t) = sum over i of P(occ=i) * P(minor=t-i)
-        var maxTotal = occPMF.length + minorPMF.length - 2;
-        var probs = new Array(maxTotal + 1);
-        for (var t = 0; t <= maxTotal; t++) {
-            var p = 0;
-            for (var i = Math.max(0, t - minorPMF.length + 1); i <= Math.min(t, occPMF.length - 1); i++) {
-                p += occPMF[i] * (minorPMF[t - i] || 0);
-            }
-            probs[t] = p;
+        // For each other hand, compute P(you get ≥1 tagged card from it).
+        // Each other hand has `handSize` cards drawn from the remaining pool.
+        // Before you see it, (passNumber) opponents have each taken 1 card of each type.
+        // Under "draft best" assumption, they take the lowest-ranked cards.
+        // Tagged cards survive if they weren't among the top-ranked picks.
+        //
+        // Conservative simplification: the probability a tagged card survives opponent
+        // drafting is roughly (handSize - passesBeforeYou) / handSize for each tagged
+        // card. But actually, what matters is: if the hand has j tagged occs,
+        // how many survive after `passes` best-ranked occs are removed?
+        // If the tagged cards are randomly positioned in rank order within the hand,
+        // the expected number surviving is j * (handSize - passes) / handSize.
+        //
+        // For a cleaner approach: P(≥1 tagged occ available to you in a hand) =
+        //   sum over j=1..max of [P(hand has j tagged occs) * P(≥1 of j survives passes)]
+        //
+        // P(≥1 of j tagged survives when `passes` best are removed from `handSize`):
+        //   = 1 - P(all j tagged are in the top `passes` slots)
+        //   = 1 - C(j, min(j,passes)) * C(handSize-j, passes-min(j,passes)) / C(handSize, passes)
+        //   Simpler: P(at least 1 tagged card is NOT in top `passes`) = 1 - C(passes,j)/C(handSize,j) when j<=passes
+        //   Actually: P(all j tagged land in top passes) = C(passes, j) / C(handSize, j)
+
+        // Per-hand P(≥1 tagged occ you can draft) across rounds 2,3,4 (passes = 1,2,3)
+        var perHandProbs = []; // P(≥1 additional tagged card from this hand)
+
+        for (var h = 0; h < numOtherHands; h++) {
+            var passes = h + 1; // round 2: 1 pass, round 3: 2 passes, round 4: 3 passes
+            var cardsYouSee = handSize - passes; // cards remaining after opponents draft
+            if (cardsYouSee <= 0) { perHandProbs.push(0); continue; }
+
+            // P(≥1 tagged occ available) for this hand
+            var pOcc = probAtLeastOneTaggedSurvives(kOccRemaining, NOccRemaining, handSize, passes);
+            var pMinor = probAtLeastOneTaggedSurvives(kMinorRemaining, NMinorRemaining, handSize, passes);
+
+            // P(≥1 tagged card of either type available to draft from this hand)
+            var pEither = 1 - (1 - pOcc) * (1 - pMinor);
+            perHandProbs.push(pEither);
         }
 
-        return { probs: probs, occPMF: occPMF, minorPMF: minorPMF };
+        // Now combine across hands: what's P(total additional = 0, 1, 2, 3, ...)?
+        // Each hand is (approximately) independent Bernoulli with its own probability.
+        // Convolve them iteratively.
+        var dist = [1.0]; // start with P(0 additional) = 1
+        for (var h2 = 0; h2 < perHandProbs.length; h2++) {
+            var p = perHandProbs[h2];
+            var newDist = new Array(dist.length + 1);
+            for (var k = 0; k < newDist.length; k++) newDist[k] = 0;
+            for (var k2 = 0; k2 < dist.length; k2++) {
+                newDist[k2] += dist[k2] * (1 - p);
+                newDist[k2 + 1] += dist[k2] * p;
+            }
+            dist = newDist;
+        }
+
+        return { probs: dist, perHandProbs: perHandProbs };
+    }
+
+    // Helper: P(≥1 tagged card survives opponent drafting in a single hand)
+    // kTagged = tagged cards remaining in pool, N = pool size, handSize = cards dealt, passes = opponents who draft before you
+    function probAtLeastOneTaggedSurvives(kTagged, N, handSize, passes) {
+        if (kTagged <= 0 || N <= 0 || handSize <= 0) return 0;
+
+        // P(hand contains j tagged) * P(≥1 of j survives `passes` removals)
+        var pmf = hypergeometricPMF(kTagged, N, handSize);
+        var pAtLeastOne = 0;
+
+        for (var j = 1; j < pmf.length; j++) {
+            // P(all j tagged are among the top `passes` ranked cards in the hand)
+            // = C(passes, j) / C(handSize, j) when j <= passes, else 0
+            var pAllTaken;
+            if (j > passes) {
+                pAllTaken = 0; // can't remove all j if only `passes` cards taken
+            } else {
+                // C(passes, j) / C(handSize, j)
+                var ratio = 1;
+                for (var i = 0; i < j; i++) {
+                    ratio *= (passes - i) / (handSize - i);
+                }
+                pAllTaken = ratio;
+            }
+            pAtLeastOne += pmf[j] * (1 - pAllTaken);
+        }
+
+        return pAtLeastOne;
     }
 
     // --- Get all stats for a hand ---
-    function analyzeHand(handCards, handSize) {
+    function analyzeHand(handCards, handSize, playerCount) {
         if (!initialized) return null;
 
         var occCards = handCards.filter(function (c) { return c.type === 'Occupation' && typeof c.rank === 'number' && isFinite(c.rank); });
@@ -284,23 +372,42 @@ var draftStats = (function () {
         }
 
         // Tag distributions for tags present in the hand
-        var handTags = {};
+        var handTagsOcc = {};
+        var handTagsMinor = {};
+        var handTagsTotal = {};
         handCards.forEach(function (card) {
             if (card.tags) {
                 card.tags.forEach(function (tag) {
-                    if (!handTags[tag]) handTags[tag] = 0;
-                    handTags[tag]++;
+                    if (!handTagsTotal[tag]) handTagsTotal[tag] = 0;
+                    handTagsTotal[tag]++;
+                    if (card.type === 'Occupation') {
+                        if (!handTagsOcc[tag]) handTagsOcc[tag] = 0;
+                        handTagsOcc[tag]++;
+                    } else if (card.type === 'Minor Improvement') {
+                        if (!handTagsMinor[tag]) handTagsMinor[tag] = 0;
+                        handTagsMinor[tag]++;
+                    }
                 });
             }
         });
 
+        // For 4-player: 3 other hands; for 3-player: 2 other hands
+        var numOtherHands = playerCount ? (playerCount - 1) : 3;
         var tagStats = {};
-        Object.keys(handTags).forEach(function (tag) {
-            var dist = tagDistribution(tag, handSize, handSize);
+        Object.keys(handTagsTotal).forEach(function (tag) {
+            var dist = additionalTagProbability(
+                tag,
+                handTagsOcc[tag] || 0,
+                handTagsMinor[tag] || 0,
+                handSize,
+                numOtherHands,
+                playerCount || 4
+            );
             if (dist) {
                 tagStats[tag] = {
-                    count: handTags[tag],
+                    count: handTagsTotal[tag],
                     distribution: dist.probs,
+                    perHandProbs: dist.perHandProbs,
                 };
             }
         });
@@ -321,7 +428,7 @@ var draftStats = (function () {
         handPercentile: handPercentile,
         handGrade: handGrade,
         cardPullQuality: cardPullQuality,
-        tagDistribution: tagDistribution,
+        additionalTagProbability: additionalTagProbability,
         hypergeometricPMF: hypergeometricPMF,
         expectedKthRank: expectedKthRank,
         isInitialized: function () { return initialized; },

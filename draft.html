@@ -1557,8 +1557,8 @@ function DraftApp() {
     // Hand statistics (computed reactively when hand changes)
     const handStats = useMemo(() => {
         if (typeof draftStats === 'undefined' || !draftStats.isInitialized() || currentHandCards.length === 0) return null;
-        return draftStats.analyzeHand(currentHandCards, HAND_SIZE_BY_ROUND[currentRound] || 10);
-    }, [currentHandCards, currentRound]);
+        return draftStats.analyzeHand(currentHandCards, HAND_SIZE_BY_ROUND[currentRound] || 10, playerCount);
+    }, [currentHandCards, currentRound, playerCount]);
 
     // Set of all card names used across all rounds (to prevent duplicates in search)
     const allUsedCardNames = useMemo(() => {
@@ -2323,48 +2323,50 @@ function DraftApp() {
                         {/* Section B: Rank Distribution */}
                         <div className="stats-section">
                             <div className="stats-section-label">RANK DISTRIBUTION</div>
-                            {[{ label: 'Occupations', cards: occupations, expected: handStats.occExpected },
-                              { label: 'Minor Improvements', cards: minors, expected: handStats.minorExpected }].map(group => {
-                                const sorted = [...group.cards]
-                                    .filter(c => typeof c.rank === 'number' && isFinite(c.rank))
-                                    .sort((a, b) => a.rank - b.rank);
-                                if (sorted.length === 0) return null;
-                                return (
-                                    <div key={group.label} style={{ marginBottom: '12px' }}>
-                                        <div style={{ fontSize: '0.8em', fontWeight: 600, color: '#666', marginBottom: '4px' }}>{group.label}</div>
-                                        <table className="stats-table">
-                                            <thead>
-                                                <tr><th>Card</th><th>Rank</th><th>Expected</th><th>Delta</th></tr>
-                                            </thead>
-                                            <tbody>
-                                                {sorted.map((card, idx) => {
-                                                    const exp = group.expected[idx] || 0;
-                                                    const delta = card.rank - exp;
-                                                    const color = delta < -20 ? '#28a745' : delta > 20 ? '#c0392b' : '#888';
-                                                    return (
-                                                        <tr key={card.name}>
-                                                            <td className="stats-card-name">{card.name}</td>
-                                                            <td>#{card.rank}</td>
-                                                            <td>#{exp}</td>
-                                                            <td style={{ color, fontWeight: Math.abs(delta) > 20 ? 600 : 400 }}>
-                                                                {delta > 0 ? '+' : ''}{Math.round(delta)}
-                                                            </td>
-                                                        </tr>
-                                                    );
-                                                })}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                );
-                            })}
+                            <div className="stats-rank-columns">
+                                {[{ label: 'Minor Improvements', cards: minors, expected: handStats.minorExpected },
+                                  { label: 'Occupations', cards: occupations, expected: handStats.occExpected }].map(group => {
+                                    const sorted = [...group.cards]
+                                        .filter(c => typeof c.rank === 'number' && isFinite(c.rank))
+                                        .sort((a, b) => a.rank - b.rank);
+                                    if (sorted.length === 0) return null;
+                                    return (
+                                        <div key={group.label}>
+                                            <div style={{ fontSize: '0.8em', fontWeight: 600, color: '#666', marginBottom: '4px' }}>{group.label}</div>
+                                            <table className="stats-table">
+                                                <thead>
+                                                    <tr><th>Card</th><th>Rank</th><th>Exp.</th><th>Delta</th></tr>
+                                                </thead>
+                                                <tbody>
+                                                    {sorted.map((card, idx) => {
+                                                        const exp = group.expected[idx] || 0;
+                                                        const delta = card.rank - exp;
+                                                        const color = delta < -20 ? '#28a745' : delta > 20 ? '#c0392b' : '#888';
+                                                        return (
+                                                            <tr key={card.name}>
+                                                                <td className="stats-card-name">{card.name}</td>
+                                                                <td>#{card.rank}</td>
+                                                                <td>#{exp}</td>
+                                                                <td style={{ color, fontWeight: Math.abs(delta) > 20 ? 600 : 400 }}>
+                                                                    {delta > 0 ? '+' : ''}{Math.round(delta)}
+                                                                </td>
+                                                            </tr>
+                                                        );
+                                                    })}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    );
+                                })}
+                            </div>
                         </div>
 
-                        {/* Section C: Tag Probabilities */}
+                        {/* Section C: Tag Pairing Odds */}
                         {Object.keys(handStats.tagStats).length > 0 && (
                             <div className="stats-section">
-                                <div className="stats-section-label">TAG PROBABILITIES</div>
+                                <div className="stats-section-label">ADDITIONAL TAGGED CARDS</div>
                                 <div style={{ fontSize: '0.75em', color: '#999', marginBottom: '8px' }}>
-                                    Chance of seeing N cards with this tag in a random hand of this size
+                                    Odds of seeing N more cards with this tag across other hands
                                 </div>
                                 {Object.keys(handStats.tagStats).sort().map(tag => {
                                     const stat = handStats.tagStats[tag];
@@ -2382,11 +2384,10 @@ function DraftApp() {
                                             <div className="stats-tag-probs">
                                                 {Array.from({ length: maxShow }, (_, i) => {
                                                     const pct = Math.round((probs[i] || 0) * 100);
-                                                    const isCurrent = i === stat.count;
                                                     return (
-                                                        <div key={i} className={`stats-prob-cell${isCurrent ? ' current' : ''}`}>
+                                                        <div key={i} className={`stats-prob-cell${i === 0 ? '' : pct >= 10 ? ' highlight' : ''}`}>
                                                             <div className="stats-prob-bar" style={{ height: `${Math.max(2, pct * 0.6)}px` }} />
-                                                            <div className="stats-prob-label">{i}</div>
+                                                            <div className="stats-prob-label">+{i}</div>
                                                             <div className="stats-prob-pct">{pct}%</div>
                                                         </div>
                                                     );

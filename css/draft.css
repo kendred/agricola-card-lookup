@@ -1795,13 +1795,18 @@ body {
     background: white;
     border-radius: 12px;
     padding: 24px;
-    width: 460px;
+    width: 800px;
     max-width: 94vw;
     max-height: 85vh;
     overflow-y: auto;
     box-shadow: 0 12px 40px rgba(0,0,0,0.3);
     position: relative;
     animation: popoverSlideIn 0.15s ease-out;
+}
+.stats-rank-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
 }
 
 .stats-grade-section {
@@ -1906,6 +1911,9 @@ body {
     background: #fff8e1;
     outline: 2px solid #8B6914;
 }
+.stats-prob-cell.highlight {
+    background: #f0f8f0;
+}
 .stats-prob-bar {
     width: 20px;
     background: #ddd;
@@ -1926,6 +1934,11 @@ body {
 }
 
 /* Responsive */
+@media (max-width: 700px) {
+    .stats-rank-columns {
+        grid-template-columns: 1fr;
+    }
+}
 @media (max-width: 520px) {
     .stats-modal {
         width: 100%;
