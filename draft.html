@@ -11,6 +11,7 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="js/card-image-list.js"></script>
     <script src="js/tag-definitions.js"></script>
+    <script src="js/draft-stats.js"></script>
     <script src="js/screenshot-ocr.js"></script>
     <script src="js/strategy-advisor.js"></script>
 </head>
@@ -63,6 +64,12 @@ const STORAGE_KEY = 'agricola-draft-state';
 
 // ─── Image resolution (shared with index.html) ─────────────────────
 const cardImageMap = {};
+
+function ordinal(n) {
+    if (n >= 11 && n <= 13) return n + 'th';
+    var s = ['th', 'st', 'nd', 'rd'];
+    return n + (s[n % 10] || s[0]);
+}
 
 function normalizeForMatch(str) {
     return str.toLowerCase()
@@ -545,7 +552,7 @@ function TagPills({ tags, abbreviated = true }) {
 }
 
 // ─── HandColumn Component ───────────────────────────────────────────
-function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSelectCard, selectedCardName, showRemove, fadedCardNames, onToggleFaded, highlightedCardNames, suggestions, expandedSuggestion, onToggleSuggestion, onEditTempCard }) {
+function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSelectCard, selectedCardName, showRemove, fadedCardNames, onToggleFaded, highlightedCardNames, suggestions, expandedSuggestion, onToggleSuggestion, onEditTempCard, cardQualities }) {
     const count = cards.length;
     const fadedSet = useMemo(() => new Set(fadedCardNames || []), [fadedCardNames]);
     const highlightedSet = useMemo(() => new Set(highlightedCardNames || []), [highlightedCardNames]);
@@ -618,6 +625,16 @@ function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSele
                                     </span>
                                 )}
                                 {isTemp && <span className="temp-badge">NEW</span>}
+                                {!isTemp && cardQualities && cardQualities[card.name] && cardQualities[card.name].quality !== 'none' && (
+                                    <span
+                                        className={`rank-quality-dot quality-${cardQualities[card.name].quality}`}
+                                        title={cardQualities[card.name].quality === 'strong'
+                                            ? `Better than expected (${Math.round(-cardQualities[card.name].delta)} ranks above)`
+                                            : cardQualities[card.name].quality === 'weak'
+                                            ? `Below expected (${Math.round(cardQualities[card.name].delta)} ranks below)`
+                                            : 'About expected'}
+                                    />
+                                )}
                                 <span className="card-name">{card.name}</span>
                                 {!isTemp && <TagPills tags={card.tags} />}
                                 <div className="card-stat">
@@ -1396,6 +1413,11 @@ function DraftApp() {
                 });
                 setCards(data);
 
+                // Initialize draft stats module
+                if (typeof draftStats !== 'undefined') {
+                    draftStats.init(data);
+                }
+
                 // Restore saved state after cards are loaded
                 const saved = loadSavedState();
                 if (saved && saved.draftStarted) {
@@ -1531,6 +1553,12 @@ function DraftApp() {
         currentHandCards.filter(c => c.type === 'Occupation'), [currentHandCards]);
     const minors = useMemo(() =>
         currentHandCards.filter(c => c.type === 'Minor Improvement'), [currentHandCards]);
+
+    // Hand statistics (computed reactively when hand changes)
+    const handStats = useMemo(() => {
+        if (typeof draftStats === 'undefined' || !draftStats.isInitialized() || currentHandCards.length === 0) return null;
+        return draftStats.analyzeHand(currentHandCards, HAND_SIZE_BY_ROUND[currentRound] || 10);
+    }, [currentHandCards, currentRound]);
 
     // Set of all card names used across all rounds (to prevent duplicates in search)
     const allUsedCardNames = useMemo(() => {
@@ -1856,6 +1884,7 @@ function DraftApp() {
 
     // Temp card editing state
     const [editingTempCard, setEditingTempCard] = useState(null);
+    const [showHandStats, setShowHandStats] = useState(false);
 
     const handleEditTempCard = useCallback((card) => {
         setEditingTempCard({ originalName: card.name, name: card.name, description: card.description || '', cost: card.cost || '', prerequisites: card.prerequisites || '', vps: card.vps || '' });
@@ -2134,6 +2163,15 @@ function DraftApp() {
                                             {opt.label}
                                         </button>
                                     ))}
+                                    {handStats && (
+                                        <button
+                                            className="sort-btn stats-btn"
+                                            onClick={() => setShowHandStats(true)}
+                                            title="View hand statistics"
+                                        >
+                                            Stats {handStats.grade.grade !== '—' ? `(${handStats.grade.grade})` : ''}
+                                        </button>
+                                    )}
                                 </div>
 
                                 <div className="hand-columns">
@@ -2170,6 +2208,7 @@ function DraftApp() {
                                                     expandedSuggestion={expandedSuggestion}
                                                     onToggleSuggestion={handleToggleSuggestion}
                                                     onEditTempCard={handleEditTempCard}
+                                                    cardQualities={handStats ? handStats.cardQualities : null}
                                                 />
                                                 <HandColumn
                                                     title="Occupations"
@@ -2187,6 +2226,7 @@ function DraftApp() {
                                                     expandedSuggestion={expandedSuggestion}
                                                     onToggleSuggestion={handleToggleSuggestion}
                                                     onEditTempCard={handleEditTempCard}
+                                                    cardQualities={handStats ? handStats.cardQualities : null}
                                                 />
                                             </>
                                         );
@@ -2260,6 +2300,105 @@ function DraftApp() {
                     wheelWatchNote={wheelWatch[popoverCard.name] !== undefined ? wheelWatch[popoverCard.name].note : null}
                     onWheelWatchNoteChange={(note) => handleWheelWatchNote(popoverCard.name, note)}
                 />
+            )}
+
+            {/* Hand Stats Modal */}
+            {showHandStats && handStats && (
+                <div className="temp-edit-overlay" onClick={() => setShowHandStats(false)}>
+                    <div className="stats-modal" onClick={(e) => e.stopPropagation()}>
+                        <button className="popover-close" onClick={() => setShowHandStats(false)}>&times;</button>
+
+                        {/* Section A: Hand Grade */}
+                        <div className="stats-grade-section">
+                            <div className="stats-grade-letter" style={{ color: handStats.grade.color }}>
+                                {handStats.grade.grade}
+                            </div>
+                            <div className="stats-grade-subtitle">
+                                {handStats.percentile !== null
+                                    ? `Your hand ranks in the ${ordinal(handStats.percentile)} percentile`
+                                    : 'Add cards to see hand grade'}
+                            </div>
+                        </div>
+
+                        {/* Section B: Rank Distribution */}
+                        <div className="stats-section">
+                            <div className="stats-section-label">RANK DISTRIBUTION</div>
+                            {[{ label: 'Occupations', cards: occupations, expected: handStats.occExpected },
+                              { label: 'Minor Improvements', cards: minors, expected: handStats.minorExpected }].map(group => {
+                                const sorted = [...group.cards]
+                                    .filter(c => typeof c.rank === 'number' && isFinite(c.rank))
+                                    .sort((a, b) => a.rank - b.rank);
+                                if (sorted.length === 0) return null;
+                                return (
+                                    <div key={group.label} style={{ marginBottom: '12px' }}>
+                                        <div style={{ fontSize: '0.8em', fontWeight: 600, color: '#666', marginBottom: '4px' }}>{group.label}</div>
+                                        <table className="stats-table">
+                                            <thead>
+                                                <tr><th>Card</th><th>Rank</th><th>Expected</th><th>Delta</th></tr>
+                                            </thead>
+                                            <tbody>
+                                                {sorted.map((card, idx) => {
+                                                    const exp = group.expected[idx] || 0;
+                                                    const delta = card.rank - exp;
+                                                    const color = delta < -20 ? '#28a745' : delta > 20 ? '#c0392b' : '#888';
+                                                    return (
+                                                        <tr key={card.name}>
+                                                            <td className="stats-card-name">{card.name}</td>
+                                                            <td>#{card.rank}</td>
+                                                            <td>#{exp}</td>
+                                                            <td style={{ color, fontWeight: Math.abs(delta) > 20 ? 600 : 400 }}>
+                                                                {delta > 0 ? '+' : ''}{Math.round(delta)}
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                })}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        {/* Section C: Tag Probabilities */}
+                        {Object.keys(handStats.tagStats).length > 0 && (
+                            <div className="stats-section">
+                                <div className="stats-section-label">TAG PROBABILITIES</div>
+                                <div style={{ fontSize: '0.75em', color: '#999', marginBottom: '8px' }}>
+                                    Chance of seeing N cards with this tag in a random hand of this size
+                                </div>
+                                {Object.keys(handStats.tagStats).sort().map(tag => {
+                                    const stat = handStats.tagStats[tag];
+                                    const def = TAG_DEFINITIONS[tag];
+                                    if (!def) return null;
+                                    const probs = stat.distribution;
+                                    const maxShow = Math.min(probs.length, 5);
+                                    return (
+                                        <div key={tag} className="stats-tag-row">
+                                            <div className="stats-tag-header">
+                                                <span className="tag-pill" style={{ background: def.color }}>{def.abbrev}</span>
+                                                <span className="stats-tag-name">{tag}</span>
+                                                <span className="stats-tag-count">You have {stat.count}</span>
+                                            </div>
+                                            <div className="stats-tag-probs">
+                                                {Array.from({ length: maxShow }, (_, i) => {
+                                                    const pct = Math.round((probs[i] || 0) * 100);
+                                                    const isCurrent = i === stat.count;
+                                                    return (
+                                                        <div key={i} className={`stats-prob-cell${isCurrent ? ' current' : ''}`}>
+                                                            <div className="stats-prob-bar" style={{ height: `${Math.max(2, pct * 0.6)}px` }} />
+                                                            <div className="stats-prob-label">{i}</div>
+                                                            <div className="stats-prob-pct">{pct}%</div>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </div>
+                </div>
             )}
 
             {/* Edit Temp Card Modal */}
