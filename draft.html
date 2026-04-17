@@ -1830,8 +1830,23 @@ function DraftApp() {
                 screenshotOCR.extractCardDetails(imageBlob, result.unmatched).then(function (detailedCards) {
                     if (!detailedCards || detailedCards.length === 0) return;
                     const autoAddedNames = [];
+                    const skippedSlotsFull = [];
+                    const limit = HAND_SIZE_BY_ROUND[currentRound] || 10;
+                    // Track type counts as we add cards (handle multi-card extraction correctly)
+                    const typeCounters = {};
+                    currentHandNames.forEach(n => {
+                        const c = cardMap[n];
+                        if (c && c.type) typeCounters[c.type] = (typeCounters[c.type] || 0) + 1;
+                    });
                     detailedCards.forEach(function (card) {
                         if (!card.name || !card.type) return;
+                        const currentCount = typeCounters[card.type] || 0;
+                        if (currentCount >= limit) {
+                            console.warn('[ocr] Skipped auto-add (slots full):', card.name, 'as', card.type);
+                            skippedSlotsFull.push(card.name);
+                            return;
+                        }
+                        typeCounters[card.type] = currentCount + 1;
                         addTempCard(card.name, card.type, {
                             description: card.description || '',
                             cost: card.cost || '',
@@ -1840,13 +1855,17 @@ function DraftApp() {
                         });
                         autoAddedNames.push(card.name);
                     });
-                    if (autoAddedNames.length > 0) {
-                        console.log('[ocr] Auto-added unmatched cards with details:', autoAddedNames);
-                        // Update screenshot results to reflect auto-added cards
+                    if (autoAddedNames.length > 0 || skippedSlotsFull.length > 0) {
+                        console.log('[ocr] Auto-added:', autoAddedNames, '| Skipped (full):', skippedSlotsFull);
                         setScreenshotResults(prev => prev ? {
                             ...prev,
                             autoAdded: autoAddedNames,
-                            unmatched: prev.unmatched.filter(n => !autoAddedNames.some(a => a.toLowerCase() === n.toLowerCase())),
+                            skippedOverflow: [...(prev.skippedOverflow || []), ...skippedSlotsFull],
+                            unmatched: prev.unmatched.filter(n => {
+                                const nl = n.toLowerCase();
+                                return !autoAddedNames.some(a => a.toLowerCase() === nl)
+                                    && !skippedSlotsFull.some(a => a.toLowerCase() === nl);
+                            }),
                         } : prev);
                     }
                 }).finally(function () {

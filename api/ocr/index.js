@@ -42,9 +42,10 @@ You need to find specific cards in this screenshot and extract their full detail
 For each card, extract:
 - "name": The card name as printed on the card
 - "type": Either "Occupation" or "Minor Improvement". To determine type:
-  (1) Look for an explicit "Occupation" or "Minor Improvement" label on the card.
-  (2) Check the illustration frame shape: Occupations have a ROUND/CIRCULAR frame showing a person (character portrait). Minor Improvements have a HEXAGONAL frame showing an object or building.
+  (1) Check the illustration frame shape — this is the MOST RELIABLE signal: Occupations have a ROUND/CIRCULAR frame showing a person (character portrait). Minor Improvements have a HEXAGONAL (six-sided) frame showing an object or building.
+  (2) Look for an explicit "Occupation" or "Minor Improvement" label printed on the card.
   (3) As a secondary signal: Occupations typically have a beige/cream title background, while Minor Improvements have a yellow/golden title background.
+  CRITICAL WARNING: Small numbers or text like "2 Occupations" or "3 Minor Improvements" appearing in the TOP-LEFT CORNER of a card are PREREQUISITE REQUIREMENTS (the player must have already played that many of that type to use the card). This prerequisite text does NOT indicate the card's own type. For example, a Minor Improvement card can show "2 Occupations" in the corner — that means you need 2 occupations already played to use it, but the card itself is still a Minor Improvement. Always use the illustration frame shape to determine the actual card type, not prerequisite text.
 - "description": The full rules text on the card body
 - "cost": The resource cost shown (e.g. "1 food", "2 wood"). Empty string if none.
 - "prerequisites": Prerequisites shown (e.g. "3 occupations", "2 minor improvements"). Empty string if none.
