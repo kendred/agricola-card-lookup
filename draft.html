@@ -1583,8 +1583,8 @@ function DraftApp() {
     // Hand statistics (computed reactively when hand changes)
     const handStats = useMemo(() => {
         if (typeof draftStats === 'undefined' || !draftStats.isInitialized() || currentHandCards.length === 0) return null;
-        return draftStats.analyzeHand(currentHandCards, HAND_SIZE_BY_ROUND[currentRound] || 10, playerCount);
-    }, [currentHandCards, currentRound, playerCount]);
+        return draftStats.analyzeHand(currentHandCards, HAND_SIZE_BY_ROUND[currentRound] || 10, playerCount, currentRound, hands, draftedCards);
+    }, [currentHandCards, currentRound, playerCount, hands, draftedCards]);
 
     // Set of all card names used across all rounds (to prevent duplicates in search)
     const allUsedCardNames = useMemo(() => {

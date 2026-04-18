@@ -13,7 +13,17 @@ var draftStats = (function () {
     var minorMean = 0;
     var minorVar = 0;
     var tagCounts = {};     // { tagName: { occ: N, minor: N } }
+    var cardsByName = {};   // { cardName: cardObject }
     var initialized = false;
+
+    // Hand sizes by round (matches HAND_SIZE_BY_ROUND in draft.html)
+    var HAND_SIZE_BY_ROUND_STATS = { 1: 10, 2: 9, 3: 8, 4: 7, 5: 6, 6: 5, 7: 4 };
+
+    // Hand rotation: which physical hand number appears in each round, by player count
+    var ROTATION_BY_PLAYER_COUNT = {
+        3: { 1: 1, 2: 2, 3: 3, 4: 1, 5: 2, 6: 3, 7: 1 },
+        4: { 1: 1, 2: 2, 3: 3, 4: 4, 5: 1, 6: 2, 7: 3 }
+    };
 
     // --- Initialization (call once after card data loads) ---
     function init(cards) {
@@ -23,7 +33,9 @@ var draftStats = (function () {
         var minors = [];
         tagCounts = {};
 
+        cardsByName = {};
         cards.forEach(function (card) {
+            if (card.name) cardsByName[card.name] = card;
             if (typeof card.rank !== 'number' || !isFinite(card.rank)) return;
             if (card.type === 'Occupation') {
                 occs.push(card.rank);
@@ -227,21 +239,42 @@ var draftStats = (function () {
         return probs;
     }
 
+    // --- P(≥1 tagged card survives) for a known returning hand ---
+    // Uses actual card composition and ranks. Under the "opponents take best cards"
+    // model, we sort cards by rank and remove the top `passes` of each type.
+    // Tagged cards that survive are those not in the top `passes` picks.
+    function probAtLeastOneTaggedSurvivesKnown(tag, knownCards, passes) {
+        var occs = knownCards
+            .filter(function (c) { return c && c.type === 'Occupation' && typeof c.rank === 'number' && isFinite(c.rank); })
+            .sort(function (a, b) { return a.rank - b.rank; });
+        var minors = knownCards
+            .filter(function (c) { return c && c.type === 'Minor Improvement' && typeof c.rank === 'number' && isFinite(c.rank); })
+            .sort(function (a, b) { return a.rank - b.rank; });
+
+        // Cards after the top `passes` opponent picks survive
+        var survivingOccs = occs.slice(passes);
+        var survivingMinors = minors.slice(passes);
+
+        var taggedOccSurvives = survivingOccs.some(function (c) {
+            return c.tags && c.tags.indexOf(tag) !== -1;
+        });
+        var taggedMinorSurvives = survivingMinors.some(function (c) {
+            return c.tags && c.tags.indexOf(tag) !== -1;
+        });
+
+        return (taggedOccSurvives || taggedMinorSurvives) ? 1.0 : 0.0;
+    }
+
     // --- Additional tagged cards you might draft across the remaining hands ---
     // Given you see `kSeen` tagged cards (occ + minor) in your current hand,
     // what's P(you can draft 0, 1, 2, 3+ additional tagged cards across the other hands)?
     //
-    // Model for each of the `numOtherHands` other hands:
-    //   1. Draw `handSize` from the remaining pool (conditional hypergeometric)
-    //   2. Opponents draft the best-ranked cards before it reaches you
-    //      (`passesBeforeYou` opponents each take 1 occ + 1 minor)
-    //   3. You see what's left; you can draft at most 1 occ + 1 minor per hand
-    //   4. What matters is P(≥1 tagged card survives to you) per hand,
-    //      for occ and minor independently — then combine across hands.
+    // futureHandsInfo: array of { type: 'known'|'unknown', passes, cards? (known), handSize? (unknown) }
+    //   - 'known': a returning hand whose exact cards we saw before — uses rank-based deterministic model
+    //   - 'unknown': an unseen hand — uses hypergeometric pool model with correct passes
     //
-    // Simplification: model each hand independently (slight overcounting of tagged
-    // cards across hands, but close enough for display purposes).
-    function additionalTagProbability(tag, kSeenOcc, kSeenMinor, handSize, numOtherHands, playerCount) {
+    // passes = min(round - 1, playerCount - 1): how many opponents draft before you in that round.
+    function additionalTagProbability(tag, kSeenOcc, kSeenMinor, handSize, futureHandsInfo) {
         if (!initialized || !tagCounts[tag]) return null;
 
         var kOccTotal = tagCounts[tag].occ;
@@ -249,56 +282,39 @@ var draftStats = (function () {
         var NOcc = occRanks.length;
         var NMinor = minorRanks.length;
 
-        // Remaining tagged cards after your hand is dealt
+        // Remaining tagged cards in the pool after your current hand
         var kOccRemaining = kOccTotal - kSeenOcc;
         var kMinorRemaining = kMinorTotal - kSeenMinor;
-        // Remaining pool after your hand
+        // Remaining pool size (approximate — does not account for prior rounds' drafts)
         var NOccRemaining = NOcc - handSize;
         var NMinorRemaining = NMinor - handSize;
 
-        // For each other hand, compute P(you get ≥1 tagged card from it).
-        // Each other hand has `handSize` cards drawn from the remaining pool.
-        // Before you see it, (passNumber) opponents have each taken 1 card of each type.
-        // Under "draft best" assumption, they take the lowest-ranked cards.
-        // Tagged cards survive if they weren't among the top-ranked picks.
-        //
-        // Conservative simplification: the probability a tagged card survives opponent
-        // drafting is roughly (handSize - passesBeforeYou) / handSize for each tagged
-        // card. But actually, what matters is: if the hand has j tagged occs,
-        // how many survive after `passes` best-ranked occs are removed?
-        // If the tagged cards are randomly positioned in rank order within the hand,
-        // the expected number surviving is j * (handSize - passes) / handSize.
-        //
-        // For a cleaner approach: P(≥1 tagged occ available to you in a hand) =
-        //   sum over j=1..max of [P(hand has j tagged occs) * P(≥1 of j survives passes)]
-        //
-        // P(≥1 of j tagged survives when `passes` best are removed from `handSize`):
-        //   = 1 - P(all j tagged are in the top `passes` slots)
-        //   = 1 - C(j, min(j,passes)) * C(handSize-j, passes-min(j,passes)) / C(handSize, passes)
-        //   Simpler: P(at least 1 tagged card is NOT in top `passes`) = 1 - C(passes,j)/C(handSize,j) when j<=passes
-        //   Actually: P(all j tagged land in top passes) = C(passes, j) / C(handSize, j)
+        var perHandProbs = [];
 
-        // Per-hand P(≥1 tagged occ you can draft) across rounds 2,3,4 (passes = 1,2,3)
-        var perHandProbs = []; // P(≥1 additional tagged card from this hand)
+        for (var h = 0; h < futureHandsInfo.length; h++) {
+            var handInfo = futureHandsInfo[h];
+            var pEither;
 
-        for (var h = 0; h < numOtherHands; h++) {
-            var passes = h + 1; // round 2: 1 pass, round 3: 2 passes, round 4: 3 passes
-            var cardsYouSee = handSize - passes; // cards remaining after opponents draft
-            if (cardsYouSee <= 0) { perHandProbs.push(0); continue; }
+            if (handInfo.type === 'known') {
+                // We know the exact cards — use rank-based deterministic survival model
+                pEither = probAtLeastOneTaggedSurvivesKnown(tag, handInfo.cards, handInfo.passes);
+            } else {
+                // Unknown future hand — use hypergeometric with correct passes
+                var futureHandSize = handInfo.handSize;
+                var passes = handInfo.passes;
+                var cardsYouSee = futureHandSize - passes;
+                if (cardsYouSee <= 0) { perHandProbs.push(0); continue; }
 
-            // P(≥1 tagged occ available) for this hand
-            var pOcc = probAtLeastOneTaggedSurvives(kOccRemaining, NOccRemaining, handSize, passes);
-            var pMinor = probAtLeastOneTaggedSurvives(kMinorRemaining, NMinorRemaining, handSize, passes);
+                var pOcc = probAtLeastOneTaggedSurvives(kOccRemaining, NOccRemaining, futureHandSize, passes);
+                var pMinor = probAtLeastOneTaggedSurvives(kMinorRemaining, NMinorRemaining, futureHandSize, passes);
+                pEither = 1 - (1 - pOcc) * (1 - pMinor);
+            }
 
-            // P(≥1 tagged card of either type available to draft from this hand)
-            var pEither = 1 - (1 - pOcc) * (1 - pMinor);
             perHandProbs.push(pEither);
         }
 
-        // Now combine across hands: what's P(total additional = 0, 1, 2, 3, ...)?
-        // Each hand is (approximately) independent Bernoulli with its own probability.
-        // Convolve them iteratively.
-        var dist = [1.0]; // start with P(0 additional) = 1
+        // Convolve per-hand Bernoulli distributions to get P(total additional = 0, 1, 2, ...)
+        var dist = [1.0];
         for (var h2 = 0; h2 < perHandProbs.length; h2++) {
             var p = perHandProbs[h2];
             var newDist = new Array(dist.length + 1);
@@ -343,7 +359,9 @@ var draftStats = (function () {
     }
 
     // --- Get all stats for a hand ---
-    function analyzeHand(handCards, handSize, playerCount) {
+    // seenHands: { roundNum: [cardName, ...] } — cards seen in each prior round
+    // userDrafted: { roundNum: { occupation: name, minor: name } } — user's picks per round
+    function analyzeHand(handCards, handSize, playerCount, currentRound, seenHands, userDrafted) {
         if (!initialized) return null;
 
         var occCards = handCards.filter(function (c) { return c.type === 'Occupation' && typeof c.rank === 'number' && isFinite(c.rank); });
@@ -392,8 +410,54 @@ var draftStats = (function () {
             }
         });
 
-        // For 4-player: 3 other hands; for 3-player: 2 other hands
-        var numOtherHands = playerCount ? (playerCount - 1) : 3;
+        // Build futureHandsInfo: one entry per remaining round after currentRound.
+        // For each future round, determine if the hand is already known (returning)
+        // or unseen, and compute the correct `passes` (opponents who draft before you).
+        var futureHandsInfo = [];
+        var round = currentRound || 1;
+        var pc = playerCount || 4;
+        var rotation = ROTATION_BY_PLAYER_COUNT[pc] || ROTATION_BY_PLAYER_COUNT[4];
+        var currentHandNum = rotation[round];
+
+        // Map handNum → first round we saw it (prior rounds + current round)
+        var handNumToFirstRound = {};
+        for (var r = 1; r < round; r++) {
+            var h = rotation[r];
+            if (h !== undefined && !handNumToFirstRound[h]) handNumToFirstRound[h] = r;
+        }
+        // Current round's hand — it may return later, and we know its cards
+        if (currentHandNum !== undefined) handNumToFirstRound[currentHandNum] = round;
+
+        for (var fr = round + 1; fr <= 7; fr++) {
+            var futureHandNum = rotation[fr];
+            if (futureHandNum === undefined) continue;
+            var passes = Math.min(fr - 1, pc - 1);
+            var futureHandSize = HAND_SIZE_BY_ROUND_STATS[fr] || 4;
+
+            if (handNumToFirstRound[futureHandNum] !== undefined) {
+                // Returning hand — resolve to actual card objects
+                var priorRound = handNumToFirstRound[futureHandNum];
+                var knownCards;
+                if (priorRound === round) {
+                    // Current hand returning — all cards still known (user hasn't confirmed picks yet)
+                    knownCards = handCards;
+                } else {
+                    var seenCardNames = (seenHands && seenHands[priorRound]) || [];
+                    var drafted = (userDrafted && userDrafted[priorRound]) || {};
+                    var draftedOcc = drafted.occupation;
+                    var draftedMinor = drafted.minor;
+                    var remainingNames = seenCardNames.filter(function (n) {
+                        return n !== draftedOcc && n !== draftedMinor;
+                    });
+                    knownCards = remainingNames.map(function (n) { return cardsByName[n]; }).filter(Boolean);
+                }
+                futureHandsInfo.push({ type: 'known', cards: knownCards, passes: passes });
+            } else {
+                // Unseen future hand — use corrected passes and hand size
+                futureHandsInfo.push({ type: 'unknown', passes: passes, handSize: futureHandSize });
+            }
+        }
+
         var tagStats = {};
         Object.keys(handTagsTotal).forEach(function (tag) {
             var dist = additionalTagProbability(
@@ -401,8 +465,7 @@ var draftStats = (function () {
                 handTagsOcc[tag] || 0,
                 handTagsMinor[tag] || 0,
                 handSize,
-                numOtherHands,
-                playerCount || 4
+                futureHandsInfo
             );
             if (dist) {
                 tagStats[tag] = {
