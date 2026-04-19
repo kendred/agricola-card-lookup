@@ -1673,6 +1673,16 @@ body {
     background: #fdf6e3;
 }
 
+/* Temp card marked as remaining in marking phase — override temp styling so green shows */
+.card-row.temp.marked-remaining {
+    border-left: 3px solid #28a745;
+    background: rgba(40, 167, 69, 0.08);
+}
+
+.card-row.temp.marked-remaining:hover {
+    background: rgba(40, 167, 69, 0.13);
+}
+
 /* "NEW" badge replacing rank for temp cards */
 .temp-badge {
     display: inline-flex;

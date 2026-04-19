@@ -2252,7 +2252,7 @@ function DraftApp() {
                                                     suggestions={minSuggestions}
                                                     expandedSuggestion={expandedSuggestion}
                                                     onToggleSuggestion={handleToggleSuggestion}
-                                                    onEditTempCard={handleEditTempCard}
+                                                    onEditTempCard={!markingPhase ? handleEditTempCard : null}
                                                     cardQualities={handStats ? handStats.cardQualities : null}
                                                 />
                                                 <HandColumn
@@ -2270,7 +2270,7 @@ function DraftApp() {
                                                     suggestions={occSuggestions}
                                                     expandedSuggestion={expandedSuggestion}
                                                     onToggleSuggestion={handleToggleSuggestion}
-                                                    onEditTempCard={handleEditTempCard}
+                                                    onEditTempCard={!markingPhase ? handleEditTempCard : null}
                                                     cardQualities={handStats ? handStats.cardQualities : null}
                                                 />
                                             </>
