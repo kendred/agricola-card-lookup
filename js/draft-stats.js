@@ -380,14 +380,18 @@ var draftStats = (function () {
             }
         });
 
-        // Expected ranks for the rank distribution table
+        // Expected ranks for the rank distribution table — use actual card count so the
+        // array always covers every row, even when a returning hand has more cards than
+        // the nominal round hand size.
+        var nOcc = occCards.length;
+        var nMinor = minorCards.length;
         var occExpected = [];
-        for (var i = 1; i <= handSize; i++) {
-            occExpected.push(Math.round(expectedKthRank(i, handSize, occRanks)));
+        for (var i = 1; i <= nOcc; i++) {
+            occExpected.push(Math.round(expectedKthRank(i, nOcc, occRanks)));
         }
         var minorExpected = [];
-        for (var j = 1; j <= handSize; j++) {
-            minorExpected.push(Math.round(expectedKthRank(j, handSize, minorRanks)));
+        for (var j = 1; j <= nMinor; j++) {
+            minorExpected.push(Math.round(expectedKthRank(j, nMinor, minorRanks)));
         }
 
         // Tag distributions for tags present in the hand

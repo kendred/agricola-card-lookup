@@ -1041,6 +1041,7 @@ function YourHand({ draftedCards, cardMap, onCardClick }) {
 // ─── CardDetailPopover Component ─────────────────────────────────────
 function CardDetailPopover({ card, anchorRect, onClose, wheelWatchNote, onWheelWatchNoteChange }) {
     const popoverRef = useRef(null);
+    const noteInputRef = useRef(null);
     const [position, setPosition] = useState({ top: 0, left: 0 });
 
     useEffect(() => {
@@ -1066,6 +1067,12 @@ function CardDetailPopover({ card, anchorRect, onClose, wheelWatchNote, onWheelW
 
         setPosition({ top, left });
     }, [anchorRect]);
+
+    useEffect(() => {
+        if (wheelWatchNote != null && noteInputRef.current) {
+            noteInputRef.current.focus();
+        }
+    }, [wheelWatchNote]);
 
     useEffect(() => {
         const handleMouseDown = (e) => {
@@ -1136,6 +1143,7 @@ function CardDetailPopover({ card, anchorRect, onClose, wheelWatchNote, onWheelW
                 <div className="popover-wheel-note">
                     <label className="popover-wheel-note-label">👁 Wheel Watch Note</label>
                     <input
+                        ref={noteInputRef}
                         type="text"
                         className="popover-wheel-note-input"
                         placeholder="e.g., pairs with Seed Almanac"
@@ -1581,10 +1589,13 @@ function DraftApp() {
         currentHandCards.filter(c => c.type === 'Minor Improvement'), [currentHandCards]);
 
     // Hand statistics (computed reactively when hand changes)
+    // For returning rounds, exclude cards already taken by others — only available cards count.
     const handStats = useMemo(() => {
         if (typeof draftStats === 'undefined' || !draftStats.isInitialized() || currentHandCards.length === 0) return null;
-        return draftStats.analyzeHand(currentHandCards, HAND_SIZE_BY_ROUND[currentRound] || 10, playerCount, currentRound, hands, draftedCards);
-    }, [currentHandCards, currentRound, playerCount, hands, draftedCards]);
+        const statsCards = isReturningRound ? [...availableOccs, ...availableMins] : currentHandCards;
+        if (statsCards.length === 0) return null;
+        return draftStats.analyzeHand(statsCards, HAND_SIZE_BY_ROUND[currentRound] || 10, playerCount, currentRound, hands, draftedCards);
+    }, [currentHandCards, availableOccs, availableMins, isReturningRound, currentRound, playerCount, hands, draftedCards]);
 
     // Set of all card names used across all rounds (to prevent duplicates in search)
     const allUsedCardNames = useMemo(() => {
@@ -2384,16 +2395,16 @@ function DraftApp() {
                                                 </thead>
                                                 <tbody>
                                                     {sorted.map((card, idx) => {
-                                                        const exp = group.expected[idx] || 0;
-                                                        const delta = card.rank - exp;
-                                                        const color = delta < -20 ? '#28a745' : delta > 20 ? '#c0392b' : '#888';
+                                                        const exp = group.expected[idx];
+                                                        const delta = exp != null ? card.rank - exp : null;
+                                                        const color = delta == null ? '#888' : delta < -20 ? '#28a745' : delta > 20 ? '#c0392b' : '#888';
                                                         return (
                                                             <tr key={card.name}>
                                                                 <td className="stats-card-name">{card.name}</td>
                                                                 <td>#{card.rank}</td>
-                                                                <td>#{exp}</td>
-                                                                <td style={{ color, fontWeight: Math.abs(delta) > 20 ? 600 : 400 }}>
-                                                                    {delta > 0 ? '+' : ''}{Math.round(delta)}
+                                                                <td>{exp != null ? `#${exp}` : '—'}</td>
+                                                                <td style={{ color, fontWeight: delta != null && Math.abs(delta) > 20 ? 600 : 400 }}>
+                                                                    {delta == null ? '—' : `${delta > 0 ? '+' : ''}${Math.round(delta)}`}
                                                                 </td>
                                                             </tr>
                                                         );
