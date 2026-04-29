@@ -49,6 +49,7 @@ For each card, extract:
 - "description": The full rules text on the card body
 - "cost": The resource cost shown (e.g. "1 food", "2 wood"). Empty string if none.
 - "prerequisites": Prerequisites shown (e.g. "3 occupations", "2 minor improvements"). Empty string if none.
+  IMPORTANT: Occupations NEVER have prerequisites — always return "" for prerequisites when type is "Occupation". The "3+", "1+", "2+", or "A" symbols visible on Occupation cards (typically in the upper-right) are PLAYER-COUNT indicators ("3+" = used in 3 or more player games, "A" = all player counts), NOT prerequisites. Only Minor Improvements have prerequisites, shown in the upper-LEFT corner as text like "3 occupations" or "2 minor improvements".
 - "vps": Victory points if shown on the card. Empty string if none.
 
 Return ONLY a JSON array of objects. Do not include any explanation, markdown formatting, or text outside the JSON array.
@@ -343,14 +344,19 @@ async function processDetailExtraction(context, headers, endpoint, apiKey, deplo
         const VALID_TYPES = ['Occupation', 'Minor Improvement'];
         cards = (Array.isArray(cards) ? cards : [])
             .filter(c => c && typeof c === 'object' && typeof c.name === 'string' && c.name.trim())
-            .map(c => ({
-                name: c.name.trim(),
-                type: VALID_TYPES.includes(c.type) ? c.type : 'Occupation',
-                description: (typeof c.description === 'string' ? c.description : '').trim(),
-                cost: (typeof c.cost === 'string' ? c.cost : '').trim(),
-                prerequisites: (typeof c.prerequisites === 'string' ? c.prerequisites : '').trim(),
-                vps: (typeof c.vps === 'string' ? c.vps : '').trim(),
-            }));
+            .map(c => {
+                const type = VALID_TYPES.includes(c.type) ? c.type : 'Occupation';
+                const rawPrereqs = (typeof c.prerequisites === 'string' ? c.prerequisites : '').trim();
+                return {
+                    name: c.name.trim(),
+                    type,
+                    description: (typeof c.description === 'string' ? c.description : '').trim(),
+                    cost: (typeof c.cost === 'string' ? c.cost : '').trim(),
+                    // Occupations never have prerequisites; "3+"/"1+"/"A" badges are player-count indicators
+                    prerequisites: type === 'Occupation' ? '' : rawPrereqs,
+                    vps: (typeof c.vps === 'string' ? c.vps : '').trim(),
+                };
+            });
 
         context.res = {
             status: 200,
