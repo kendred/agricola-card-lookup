@@ -1,6 +1,25 @@
 {
+  "auth": {
+    "identityProviders": {
+      "gitHub": {
+        "registration": {
+          "clientIdSettingName": "GITHUB_CLIENT_ID",
+          "clientSecretSettingName": "GITHUB_CLIENT_SECRET"
+        }
+      }
+    }
+  },
+  "routes": [
+    { "route": "/api/draft/*", "allowedRoles": ["authenticated"] },
+    { "route": "/.auth/login/aad", "statusCode": 404 },
+    { "route": "/.auth/login/twitter", "statusCode": 404 },
+    { "route": "/.auth/login/google", "statusCode": 404 }
+  ],
   "navigationFallback": {
     "rewrite": "/index.html",
-    "exclude": ["/css/*", "/js/*", "/data/*", "/card-images/*", "/Icons/*", "/api/*"]
+    "exclude": ["/css/*", "/js/*", "/data/*", "/card-images/*", "/Icons/*", "/api/*", "/.auth/*"]
+  },
+  "responseOverrides": {
+    "401": { "statusCode": 401 }
   }
 }

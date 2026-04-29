@@ -5,5 +5,7 @@
   "scripts": {
     "start": "func start"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@azure/data-tables": "^13.3.1"
+  }
 }
