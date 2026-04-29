@@ -14,6 +14,7 @@
     <script src="js/draft-stats.js"></script>
     <script src="js/screenshot-ocr.js"></script>
     <script src="js/strategy-advisor.js"></script>
+    <script src="js/draft-sync.js"></script>
 </head>
 <body>
     <div id="root">
@@ -117,7 +118,8 @@ function loadSavedState() {
 
 function saveState(state) {
     try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        const stamped = { ...state, _lastModifiedAt: Date.now() };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(stamped));
     } catch { /* ignore quota errors */ }
 }
 
@@ -1160,7 +1162,7 @@ function CardDetailPopover({ card, anchorRect, onClose, wheelWatchNote, onWheelW
 }
 
 // ─── SummaryView Component ──────────────────────────────────────────
-function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, onCardClick, playedCards, onTogglePlayed }) {
+function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, onCardClick, playedCards, onTogglePlayed, readOnly }) {
     const [viewMode, setViewMode] = useState('combined'); // 'combined' or 'myhand'
 
     const allDrafted = [];
@@ -1225,13 +1227,15 @@ function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, 
 
     const renderOpponentCard = (card) => (
         <div key={card.name} className={`summary-card-compact clickable others-pick${playedCards.has(card.name) ? ' played' : ''}`} onClick={(e) => onCardClick && onCardClick(card.name, e)}>
-            <input
-                type="checkbox"
-                className="played-checkbox"
-                checked={playedCards.has(card.name)}
-                onChange={() => onTogglePlayed(card.name)}
-                onClick={(e) => e.stopPropagation()}
-            />
+            {!readOnly && (
+                <input
+                    type="checkbox"
+                    className="played-checkbox"
+                    checked={playedCards.has(card.name)}
+                    onChange={() => onTogglePlayed(card.name)}
+                    onClick={(e) => e.stopPropagation()}
+                />
+            )}
             <span className="card-name-inline">
                 {card.isTemporary && <span className="temp-badge" style={{ marginRight: 4 }}>NEW</span>}
                 {card.name}
@@ -1314,10 +1318,94 @@ function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, 
                 </div>
             )}
 
-            <div style={{ textAlign: 'center', marginTop: '24px' }}>
-                <button className="btn btn-primary" onClick={onNewDraft} style={{ background: 'rgba(255,255,255,0.2)', fontSize: '1.1em' }}>
-                    Start New Draft
-                </button>
+            {!readOnly && (
+                <div style={{ textAlign: 'center', marginTop: '24px' }}>
+                    <button className="btn btn-primary" onClick={onNewDraft} style={{ background: 'rgba(255,255,255,0.2)', fontSize: '1.1em' }}>
+                        Start New Draft
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+}
+
+// ─── DraftHistoryModal ──────────────────────────────────────────────
+function DraftHistoryModal({ onClose, onSelect }) {
+    const [entries, setEntries] = useState(null);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        draftSync.listHistory()
+            .then(r => setEntries((r && r.entries) || []))
+            .catch(e => setError(e.message));
+    }, []);
+
+    return (
+        <div className="temp-edit-overlay" onClick={onClose}>
+            <div className="temp-edit-modal history-modal" onClick={(e) => e.stopPropagation()}>
+                <button className="popover-close" onClick={onClose}>&times;</button>
+                <div className="temp-edit-title">Past Drafts</div>
+                {error && <div style={{ color: '#c0392b', fontSize: '0.9em' }}>{error}</div>}
+                {!entries && !error && <div style={{ color: '#888' }}>Loading…</div>}
+                {entries && entries.length === 0 && (
+                    <div style={{ color: '#888', fontStyle: 'italic' }}>No completed drafts yet.</div>
+                )}
+                {entries && entries.map(entry => {
+                    const meta = entry.summaryMeta || {};
+                    const occs = (meta.occupationNames || []).join(', ');
+                    const mins = (meta.minorNames || []).join(', ');
+                    return (
+                        <div key={entry.id} className="history-entry" onClick={() => onSelect(entry.id)}>
+                            <div className="history-entry-date">
+                                {new Date(entry.archivedAt).toLocaleString()}
+                            </div>
+                            <div className="history-entry-meta">
+                                {meta.playerCount ? `${meta.playerCount}p` : ''}
+                                {meta.archetypes && meta.archetypes.length > 0 && (
+                                    <span> · {meta.archetypes.join(' / ')}</span>
+                                )}
+                            </div>
+                            {occs && <div className="history-entry-cards"><strong>Occ:</strong> {occs}</div>}
+                            {mins && <div className="history-entry-cards"><strong>Min:</strong> {mins}</div>}
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
+    );
+}
+
+// ─── HistoryEntryViewer ─────────────────────────────────────────────
+// Fetches a single archived draft and renders SummaryView in read-only mode.
+function HistoryEntryViewer({ id, cardMap, onClose, onCardClick }) {
+    const [entry, setEntry] = useState(null);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        draftSync.getHistoryEntry(id)
+            .then(r => setEntry(r))
+            .catch(e => setError(e.message));
+    }, [id]);
+
+    return (
+        <div className="temp-edit-overlay" onClick={onClose}>
+            <div className="history-viewer-modal" onClick={(e) => e.stopPropagation()}>
+                <button className="popover-close" onClick={onClose}>&times;</button>
+                {error && <div style={{ color: '#c0392b' }}>{error}</div>}
+                {!entry && !error && <div style={{ color: '#888' }}>Loading…</div>}
+                {entry && entry.state && (
+                    <SummaryView
+                        draftedCards={entry.state.draftedCards || {}}
+                        cardMap={cardMap}
+                        onNewDraft={() => {}}
+                        hands={entry.state.hands || {}}
+                        othersDrafted={entry.state.othersDrafted || []}
+                        onCardClick={onCardClick}
+                        playedCards={new Set(entry.state.playedCards || [])}
+                        onTogglePlayed={() => {}}
+                        readOnly={true}
+                    />
+                )}
             </div>
         </div>
     );
@@ -1387,6 +1475,14 @@ function DraftApp() {
     const [playedCards, setPlayedCards] = useState(new Set());
     const autoAdviceTriggeredRef = useRef(false);
 
+    // Cloud sync state
+    const [currentUser, setCurrentUser] = useState(null);
+    const [showHistoryModal, setShowHistoryModal] = useState(false);
+    const [historyViewId, setHistoryViewId] = useState(null);
+    const archivedRef = useRef(false);
+    const cloudSaveTimerRef = useRef(null);
+    const migrationPushedRef = useRef(false);
+
     const handleFarmCellClick = useCallback((index) => {
         setFarmGrid(prev => {
             const next = [...prev];
@@ -1406,12 +1502,14 @@ function DraftApp() {
 
     // Load card data
     useEffect(() => {
-        fetch('data/agricola-cards.json')
-            .then(res => {
+        let cancelled = false;
+        (async () => {
+            try {
+                const res = await fetch('data/agricola-cards.json');
                 if (!res.ok) throw new Error('Failed to load card data');
-                return res.json();
-            })
-            .then(rawData => {
+                const rawData = await res.json();
+                if (cancelled) return;
+
                 // Deduplicate cards by name (keep first/higher-ranked entry)
                 const seen = new Set();
                 const data = rawData.filter(c => {
@@ -1426,8 +1524,37 @@ function DraftApp() {
                     draftStats.init(data);
                 }
 
-                // Restore saved state after cards are loaded
-                const saved = loadSavedState();
+                // Resolve auth state, then reconcile cloud vs localStorage.
+                const localSaved = loadSavedState();
+                const localTs = (localSaved && localSaved.draftStarted) ? (Number(localSaved._lastModifiedAt) || 0) : 0;
+
+                let user = null;
+                try { user = await draftSync.getCurrentUser(); } catch (e) { user = null; }
+                if (cancelled) return;
+                setCurrentUser(user);
+
+                let chosen = localSaved;
+                let needsMigrationPush = false;
+
+                if (user) {
+                    try {
+                        const cloud = await draftSync.loadActiveDraft();
+                        if (cancelled) return;
+                        if (cloud && cloud.state) {
+                            const cloudTs = Number(cloud.lastModifiedAt) || 0;
+                            if (cloudTs > localTs) {
+                                chosen = cloud.state;
+                            }
+                        } else if (localSaved && localSaved.draftStarted) {
+                            // Cloud empty, local has an active draft → one-time push.
+                            needsMigrationPush = true;
+                        }
+                    } catch (e) {
+                        console.warn('[draft-sync] cloud load failed, using localStorage:', e.message);
+                    }
+                }
+
+                const saved = chosen;
                 if (saved && saved.draftStarted) {
                     // Validate card names still exist in the database
                     const validNames = new Set(data.map(c => c.name));
@@ -1487,11 +1614,23 @@ function DraftApp() {
                 }
                 setRestoredFromStorage(true);
                 setLoading(false);
-            })
-            .catch(err => {
+
+                // One-time migration push: local has an active draft, cloud was empty.
+                if (user && needsMigrationPush && saved && saved.draftStarted && !migrationPushedRef.current) {
+                    migrationPushedRef.current = true;
+                    const stripped = { ...saved };
+                    delete stripped._lastModifiedAt;
+                    draftSync.saveActiveDraft(stripped).catch(err => {
+                        console.warn('[draft-sync] migration push failed:', err.message);
+                    });
+                }
+            } catch (err) {
+                if (cancelled) return;
                 setError(err.message);
                 setLoading(false);
-            });
+            }
+        })();
+        return () => { cancelled = true; };
     }, []);
 
     // Save state to localStorage on changes (after initial restore)
@@ -1528,6 +1667,100 @@ function DraftApp() {
             handleGetAdvice();
         }
     }, [draftComplete, strategyAvailable, strategyResult, strategyLoading, strategyError, handleGetAdvice]);
+
+    // Debounced cloud save (alongside the synchronous localStorage save above).
+    // Skips while draft is complete — the archive effect handles completion.
+    useEffect(() => {
+        if (!restoredFromStorage) return;
+        if (!currentUser) return;
+        if (!draftStarted) return;
+        if (draftComplete) return;
+
+        if (cloudSaveTimerRef.current) clearTimeout(cloudSaveTimerRef.current);
+        cloudSaveTimerRef.current = setTimeout(() => {
+            const stateObj = {
+                currentRound,
+                playerCount,
+                draftStarted,
+                currentHandNames,
+                hands,
+                draftedCards,
+                sortKey,
+                markingPhase,
+                markedRemaining: [...markedRemaining],
+                othersDrafted,
+                farmGrid,
+                strategyNotes,
+                wheelWatch,
+                tempCards,
+                playedCards: [...playedCards],
+            };
+            draftSync.saveActiveDraft(stateObj).catch(err => {
+                console.warn('[draft-sync] cloud save failed:', err.message);
+            });
+        }, 1500);
+
+        return () => {
+            if (cloudSaveTimerRef.current) {
+                clearTimeout(cloudSaveTimerRef.current);
+                cloudSaveTimerRef.current = null;
+            }
+        };
+    }, [restoredFromStorage, currentUser, draftStarted, draftComplete, currentRound, playerCount, currentHandNames, hands, draftedCards, sortKey, markingPhase, markedRemaining, othersDrafted, farmGrid, strategyNotes, wheelWatch, tempCards, playedCards]);
+
+    // Archive completed drafts to cloud history, then clear active slot.
+    useEffect(() => {
+        if (!draftComplete) {
+            archivedRef.current = false;
+            return;
+        }
+        if (!currentUser) return;
+        if (archivedRef.current) return;
+        archivedRef.current = true;
+
+        const stateObj = {
+            currentRound,
+            playerCount,
+            draftStarted,
+            currentHandNames,
+            hands,
+            draftedCards,
+            sortKey,
+            markingPhase,
+            markedRemaining: [...markedRemaining],
+            othersDrafted,
+            farmGrid,
+            strategyNotes,
+            wheelWatch,
+            tempCards,
+            playedCards: [...playedCards],
+        };
+
+        const occupationNames = [];
+        const minorNames = [];
+        Object.values(draftedCards || {}).forEach(picks => {
+            if (picks && picks.occupation) occupationNames.push(picks.occupation);
+            if (picks && picks.minor) minorNames.push(picks.minor);
+        });
+        const archetypes = (strategyResult && Array.isArray(strategyResult.archetypes))
+            ? strategyResult.archetypes
+            : [];
+
+        const summaryMeta = {
+            playerCount,
+            archetypes,
+            occupationNames,
+            minorNames,
+            finalRound: 7,
+        };
+
+        draftSync.archiveDraft(stateObj, summaryMeta)
+            .then(() => draftSync.deleteActiveDraft().catch(() => {}))
+            .catch(err => {
+                console.warn('[draft-sync] archive failed:', err.message);
+                archivedRef.current = false;
+            });
+    }, [draftComplete, currentUser]);
 
     // Random icon for title
     const [titleIcon] = useState(() => {
@@ -1693,8 +1926,12 @@ function DraftApp() {
         setWheelWatch({});
         setPlayedCards(new Set());
         autoAdviceTriggeredRef.current = false;
+        archivedRef.current = false;
         setDraftStarted(false);
         clearSavedState();
+        if (currentUser) {
+            draftSync.deleteActiveDraft().catch(() => {});
+        }
     };
 
     // --- Background card submission (fire-and-forget) ---
@@ -2105,9 +2342,22 @@ function DraftApp() {
                         {draftStarted && (
                             <span style={{ fontSize: '0.85em', color: '#888', marginRight: '8px' }}>{playerCount}-Player</span>
                         )}
+                        {currentUser && (
+                            <button className="btn btn-secondary" onClick={() => setShowHistoryModal(true)}>Past Drafts</button>
+                        )}
                         {draftStarted && (
                             <button className="btn btn-danger" onClick={handleResetDraft}>Reset Draft</button>
                         )}
+                        <div className="auth-indicator">
+                            {currentUser ? (
+                                <>
+                                    <span className="auth-username" title={currentUser.userDetails}>{currentUser.userDetails}</span>
+                                    <a href={draftSync.LOGOUT_URL} className="auth-link">Sign out</a>
+                                </>
+                            ) : (
+                                <a href={draftSync.LOGIN_URL} className="auth-link">Sign in</a>
+                            )}
+                        </div>
                     </div>
                 </div>
 
@@ -2458,6 +2708,24 @@ function DraftApp() {
                         )}
                     </div>
                 </div>
+            )}
+
+            {/* Draft History Modal */}
+            {showHistoryModal && (
+                <DraftHistoryModal
+                    onClose={() => setShowHistoryModal(false)}
+                    onSelect={(id) => setHistoryViewId(id)}
+                />
+            )}
+
+            {/* History Entry Viewer */}
+            {historyViewId && (
+                <HistoryEntryViewer
+                    id={historyViewId}
+                    cardMap={cardMap}
+                    onClose={() => setHistoryViewId(null)}
+                    onCardClick={handleMiniCardClick}
+                />
             )}
 
             {/* Edit Temp Card Modal */}
