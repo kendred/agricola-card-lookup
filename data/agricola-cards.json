@@ -20531,5 +20531,23 @@
       "value": "-4.92",
       "value_when_played": "-3.7"
     }
+  },
+  {
+    "name": "Delayed Wayfarer",
+    "rank": null,
+    "adp": null,
+    "apr": null,
+    "play_rate": null,
+    "elo_per_play": null,
+    "value": null,
+    "value_when_played": null,
+    "description": "When you play this card, you immediately get 1 building resource of your choice, and all people who can be placed this round. You can place them from your supply.",
+    "card_id": "",
+    "type": "Occupation",
+    "cost": "",
+    "vps": "",
+    "prerequisites": "",
+    "passing": false,
+    "tags": []
   }
 ]
