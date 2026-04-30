@@ -20581,7 +20581,7 @@
     "card_id": "",
     "type": "Occupation",
     "cost": "",
-    "vps": "1",
+    "vps": "",
     "prerequisites": "",
     "passing": false,
     "tags": ["Animal"]
@@ -20599,7 +20599,7 @@
     "card_id": "",
     "type": "Occupation",
     "cost": "",
-    "vps": "1",
+    "vps": "",
     "prerequisites": "",
     "passing": false,
     "tags": []

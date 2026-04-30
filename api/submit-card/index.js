@@ -77,9 +77,9 @@ module.exports = async function (context, req) {
     const type = body.type;
     const description = (body.description || '').trim();
     const cost = (body.cost || '').trim();
-    // Occupations never have prerequisites; player-count badges on the card ("3+", "A", etc.) are not prereqs.
+    // Occupations never have prerequisites or printed VPs; player-count badges ("3+", "A", etc.) are not prereqs/VPs.
     const prerequisites = type === 'Occupation' ? '' : (body.prerequisites || '').trim();
-    const vps = (body.vps || '').trim();
+    const vps = type === 'Occupation' ? '' : (body.vps || '').trim();
 
     // --- Validation ---
     if (!name) {
