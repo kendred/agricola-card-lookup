@@ -2,7 +2,7 @@
 // Handles Azure Function call for LLM-powered draft strategy analysis.
 // Uses `var` for Babel standalone compatibility.
 
-var STRATEGY_FUNCTION_URL = '/api/strategy';
+var STRATEGY_FUNCTION_URL = 'https://agricola-api-cbh5dvedg0d5h0cu.eastus2-01.azurewebsites.net/api/strategy';
 
 var strategyAdvisor = (function () {
 
