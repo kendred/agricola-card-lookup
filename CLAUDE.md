@@ -82,8 +82,16 @@ Configured in `.claude/launch.json`. Alternative: `python3 .claude/serve.py`.
 ## AI Strategy System
 - System prompt includes: role definition, JSON response schema, strategy guide (~260 lines), and a compact index of all 773 cards
 - Response includes: `reasoning` (chain-of-thought), `archetypes`, `overall_analysis`, `dimensions` (with justifications), `risks`, `suggestions` (2 occs + 2 minors)
-- Temperature: 0.3, max_tokens: 1500
 - Draft stage awareness: rounds 1-2 brief, 3-4 moderate, 5-7 full analysis
+
+### Streaming architecture
+The strategy call goes through SWA's `/api/strategy` proxy (not a hardcoded hostname). The Function App uses the v4 programming model and returns a `ReadableStream` body with `Content-Type: text/event-stream`, defeating the SWA 45s edge timeout regardless of model reasoning time.
+
+Wire format: the Function App forwards Azure OpenAI's SSE delta stream as `event: token` events. When the model finishes, the server parses, normalizes suggestions, and emits `event: normalized` (canonical final state) then `event: done`. During the model's reasoning phase, `: keepalive` SSE comments fire every 3s to hold the connection open.
+
+Client-side (`js/strategy-advisor.js`): `getAdvice` reads the SSE stream, calls `tryParsePartial()` on the accumulated text to emit progressive `onProgress(partial)` updates for the dashboard, then resolves with the `normalized` payload as the final state.
+
+The `/api/probe-stream` endpoint (GET, anonymous) is a permanent smoke test: `curl --no-buffer https://draft.grics.site/api/probe-stream` should show 1s-spaced `: keepalive` lines confirming SWA still forwards SSE unbuffered. If this endpoint returns the entire body at once, the proxy layer has changed and the streaming architecture needs revisiting.
 
 ## Deployment
 Push to `main` → GitHub Actions → Azure Static Web Apps. See `docs/azure-deployment-guide.md` for full setup.
