@@ -911,16 +911,21 @@ function LoadingIndicator({ streamingPhase }) {
             if (deckRef.current.length === 0) deckRef.current = shuffle(LOADING_MESSAGES);
             setMessage(deckRef.current.pop());
             setDots(1);
-        }, 2500);
+        }, 3000);
         var dotTimer = setInterval(() => {
             setDots(function(prev) { return prev === 3 ? 1 : prev + 1; });
-        }, 333);
+        }, 1000);
         return function() { clearInterval(msgTimer); clearInterval(dotTimer); };
     }, []);
 
+    // Each dot occupies a fixed slot (opacity 0 when not yet shown) so the
+    // message text stays anchored at the same center position as dots appear.
     return (
-        <span style={{ fontStyle: 'italic', opacity: streamingPhase === 'streaming' ? 0.5 : 1 }}>
-            {message}{'.'.repeat(dots)}
+        <span style={{ fontStyle: 'italic', fontWeight: 'normal', opacity: streamingPhase === 'streaming' ? 0.5 : 1 }}>
+            {message}
+            <span aria-hidden="true" style={{ opacity: dots >= 1 ? 1 : 0 }}>.</span>
+            <span aria-hidden="true" style={{ opacity: dots >= 2 ? 1 : 0 }}>.</span>
+            <span aria-hidden="true" style={{ opacity: dots >= 3 ? 1 : 0 }}>.</span>
         </span>
     );
 }
