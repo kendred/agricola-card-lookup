@@ -879,8 +879,54 @@ function FarmGrid({ grid, onCellClick }) {
     );
 }
 
+// ─── LoadingIndicator Component ─────────────────────────────────────
+const LOADING_MESSAGES = [
+    'Plowing fields', 'Baking bread', 'Sowing grain', 'Planting veg',
+    'Building fences', 'Waiting in growth queue', 'Accumulating beggars',
+    'Cutting wood', 'Renovating', 'Building rooms', 'Day laboring',
+    'Fishing', 'Wishing for children', 'Urgently wishing for children',
+    'Cultivating', 'Quarrying stone', 'Breeding animals',
+];
+
+function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+}
+
+function LoadingIndicator({ streamingPhase }) {
+    const deckRef = React.useRef(shuffle(LOADING_MESSAGES));
+    const [message, setMessage] = React.useState(() => {
+        var d = shuffle(LOADING_MESSAGES);
+        deckRef.current = d.slice(1);
+        return d[0];
+    });
+    const [dots, setDots] = React.useState(1);
+
+    React.useEffect(() => {
+        var msgTimer = setInterval(() => {
+            if (deckRef.current.length === 0) deckRef.current = shuffle(LOADING_MESSAGES);
+            setMessage(deckRef.current.pop());
+            setDots(1);
+        }, 2500);
+        var dotTimer = setInterval(() => {
+            setDots(function(prev) { return prev === 3 ? 1 : prev + 1; });
+        }, 333);
+        return function() { clearInterval(msgTimer); clearInterval(dotTimer); };
+    }, []);
+
+    return (
+        <span style={{ fontStyle: 'italic', opacity: streamingPhase === 'streaming' ? 0.5 : 1 }}>
+            {message}{'.'.repeat(dots)}
+        </span>
+    );
+}
+
 // ─── StrategyDashboard Component ────────────────────────────────────
-function StrategyDashboard({ strategyResult, strategyLoading, strategyError, strategyAvailable, hasCards, farmGrid, onFarmCellClick, strategyNotes, onNotesChange, onGetAdvice, onDismissError }) {
+function StrategyDashboard({ strategyResult, strategyLoading, strategyError, strategyAvailable, hasCards, farmGrid, onFarmCellClick, strategyNotes, onNotesChange, onGetAdvice, onDismissError, streamingPhase }) {
     const dims = strategyResult?.dimensions;
     const [showReasoning, setShowReasoning] = React.useState(false);
 
@@ -909,7 +955,10 @@ function StrategyDashboard({ strategyResult, strategyLoading, strategyError, str
             {/* Overall Analysis */}
             <div className="strategy-section-label">Analysis</div>
             <div className={`strategy-analysis${strategyResult?.overall_analysis ? ' has-content' : ''}`}>
-                {strategyLoading ? 'Analyzing your draft...' : (strategyResult?.overall_analysis || 'Click "Get AI Advice" to analyze your draft.')}
+                {strategyLoading && !strategyResult?.overall_analysis && <LoadingIndicator streamingPhase={streamingPhase} />}
+                {strategyResult?.overall_analysis}
+                {!strategyLoading && !strategyResult?.overall_analysis && 'Click "Get AI Advice" to analyze your draft.'}
+                {strategyLoading && strategyResult?.overall_analysis && <LoadingIndicator streamingPhase={streamingPhase} />}
             </div>
 
             {/* Strategy Archetypes */}
@@ -1469,6 +1518,7 @@ function DraftApp() {
     const [strategyAvailable, setStrategyAvailable] = useState(false);
     const [strategyResult, setStrategyResult] = useState(null);
     const [strategyLoading, setStrategyLoading] = useState(false);
+    const [streamingPhase, setStreamingPhase] = useState('idle'); // 'idle'|'thinking'|'streaming'|'done'
     const [strategyError, setStrategyError] = useState(null);
     const [expandedSuggestion, setExpandedSuggestion] = useState(null);
     const [wheelWatch, setWheelWatch] = useState({});
@@ -2149,6 +2199,16 @@ function DraftApp() {
 
         setStrategyLoading(true);
         setStrategyError(null);
+        setStreamingPhase('thinking');
+
+        let streamingStarted = false;
+        const onProgress = (partial) => {
+            if (!streamingStarted) {
+                streamingStarted = true;
+                setStreamingPhase('streaming');
+            }
+            setStrategyResult(prev => ({ ...(prev || {}), ...partial }));
+        };
 
         try {
             const result = await strategyAdvisor.getAdvice(
@@ -2156,9 +2216,11 @@ function DraftApp() {
                 draftedNames,
                 othersDrafted,
                 currentRound,
-                playerCount
+                playerCount,
+                onProgress
             );
             setStrategyResult(result);
+            setStreamingPhase('done');
         } catch (err) {
             console.error('Strategy advice error:', err);
             if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
@@ -2166,6 +2228,7 @@ function DraftApp() {
             } else {
                 setStrategyError(err.message || 'Could not get strategy advice. Please try again.');
             }
+            setStreamingPhase('idle');
         } finally {
             setStrategyLoading(false);
         }
@@ -2582,6 +2645,7 @@ function DraftApp() {
                             <StrategyDashboard
                                 strategyResult={strategyResult}
                                 strategyLoading={strategyLoading}
+                                streamingPhase={streamingPhase}
                                 strategyError={strategyError}
                                 strategyAvailable={strategyAvailable}
                                 hasCards={hasCardsForAdvice}
