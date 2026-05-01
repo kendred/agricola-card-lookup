@@ -1,7 +1,8 @@
-// Azure Function: Strategy advisor proxy for Agricola draft tool
-// Receives draft state, calls Azure OpenAI GPT-4o, returns strategic analysis.
-// API key stays server-side; rate limiting protects against abuse.
+// Azure Function v4: Strategy advisor with streaming pass-through.
+// Bytes flow: Azure OpenAI SSE → this function → browser as text/event-stream.
+// See STREAMING_PLAN.md for full architecture rationale.
 
+const { app } = require('@azure/functions');
 const path = require('path');
 const fs = require('fs');
 
@@ -13,10 +14,6 @@ const CARD_MAP = {};
 CARDS.forEach(card => { CARD_MAP[card.name] = card; });
 
 // --- Compact card index for system prompt ---
-// Format: one line per card, pipe-delimited: name|rank|adp|type-initial (O=Occupation, M=Minor)
-// ~6k tokens total vs ~13.7k as JSON. Lets the LLM reason about the full pool
-// for "what might still be drafted" without blowing the TPM budget every request.
-// Build separate indexes for 3p and 4p since rankings differ significantly.
 function buildCompactIndex(playerCount) {
     return CARDS
         .map(c => {
@@ -24,7 +21,7 @@ function buildCompactIndex(playerCount) {
                 if (!c.stats_3p) return null;
                 return `${c.name}|${c.stats_3p.rank}|${c.stats_3p.adp}|${c.type === 'Occupation' ? 'O' : 'M'}`;
             }
-            if (c.rank == null) return null; // skip 3p-only banned cards
+            if (c.rank == null) return null;
             return `${c.name}|${c.rank}|${c.adp}|${c.type === 'Occupation' ? 'O' : 'M'}`;
         })
         .filter(Boolean)
@@ -57,8 +54,6 @@ const STRATEGY_GUIDE = fs.readFileSync(
 );
 
 // --- System prompt (static — enables Azure OpenAI prompt caching across all requests) ---
-// Player-count-specific rotation details are passed in the user message instead of here,
-// so the cacheable prefix stays identical regardless of game format.
 const SYSTEM_PROMPT = `You are an expert Agricola (board game) draft strategy advisor for 3- and 4-player games. You analyze a player's draft state and provide strategic guidance. The user message will tell you the exact PLAYER COUNT and round-to-hand rotation for this draft.
 
 You must respond with ONLY valid JSON matching this exact format — no markdown, no explanation, no text outside the JSON:
@@ -111,7 +106,6 @@ Rankings and stats differ between 3-player and 4-player games. The card index be
 
 `;
 
-// Build two system prompts (one per player count) for Azure OpenAI prompt caching
 const SYSTEM_PROMPT_4P = SYSTEM_PROMPT + COMPACT_INDEX_4P;
 const SYSTEM_PROMPT_3P = SYSTEM_PROMPT + COMPACT_INDEX_3P;
 
@@ -129,22 +123,15 @@ function enrichCards(names, playerCount) {
         .map(c => {
             const s = getStats(c, playerCount);
             return {
-                name: c.name,
-                rank: s.rank,
-                apr: s.apr,
-                adp: s.adp,
-                play_rate: s.play_rate,
-                elo_per_play: s.elo_per_play,
-                type: c.type,
-                description: c.description,
-                cost: c.cost,
-                vps: c.vps,
-                tags: c.tags,
+                name: c.name, rank: s.rank, apr: s.apr, adp: s.adp,
+                play_rate: s.play_rate, elo_per_play: s.elo_per_play,
+                type: c.type, description: c.description,
+                cost: c.cost, vps: c.vps, tags: c.tags,
             };
         });
 }
 
-// --- Light enrichment for opponent cards (type + tags for strategy inference) ---
+// --- Light enrichment for opponent cards ---
 function enrichOpponentCards(names, playerCount) {
     return names
         .map(name => CARD_MAP[name])
@@ -168,47 +155,15 @@ function buildUserMessage(body) {
     let msg = `PLAYER COUNT: ${playerCount}\nGAME FORMAT: ${rotationNote}\nCURRENT ROUND: ${round}\n\n`;
 
     msg += `CURRENT HAND (choose from these cards):\n${JSON.stringify(handCards, null, 1)}\n\n`;
-
     if (draftedCards.length > 0) {
         msg += `MY DRAFTED CARDS SO FAR:\n${JSON.stringify(draftedCards, null, 1)}\n\n`;
     }
-
     if (othersDrafted.length > 0) {
         const enrichedOpponents = enrichOpponentCards(othersDrafted, playerCount);
         msg += `CARDS TAKEN BY OPPONENTS (with type, rank, and strategy tags):\n${JSON.stringify(enrichedOpponents, null, 1)}\n\n`;
     }
-
     msg += 'Analyze my draft state and suggest the best picks from my current hand.';
     return msg;
-}
-
-// --- Validate LLM response structure ---
-function validateResponse(obj) {
-    if (!obj || typeof obj !== 'object') return false;
-    if (typeof obj.overall_analysis !== 'string') return false;
-    if (!obj.dimensions || typeof obj.dimensions !== 'object') return false;
-
-    // Accept both old format (bare string) and new format ({ rating, reason })
-    const getDimRating = (dim) => {
-        if (typeof dim === 'string') return dim;
-        if (typeof dim === 'object' && dim !== null) return dim.rating;
-        return undefined;
-    };
-
-    const dims = obj.dimensions;
-    if (!['weak', 'adequate', 'strong'].includes(getDimRating(dims.food))) return false;
-    if (!['weak', 'adequate', 'strong'].includes(getDimRating(dims.growth))) return false;
-    if (!['weak', 'adequate', 'strong'].includes(getDimRating(dims.extra_actions))) return false;
-    if (!['low', 'medium', 'high'].includes(getDimRating(dims.point_ceiling))) return false;
-    if (!['covered', 'not_covered'].includes(getDimRating(dims.plow))) return false;
-    if (typeof obj.risks !== 'string') return false;
-    if (!Array.isArray(obj.suggestions)) return false;
-    for (const s of obj.suggestions) {
-        if (typeof s.card_name !== 'string') return false;
-        if (typeof s.rank_number !== 'number') return false;
-        if (typeof s.rationale !== 'string') return false;
-    }
-    return true;
 }
 
 // --- Normalize suggestions to at most 2 occupations + 2 minor improvements ---
@@ -221,233 +176,234 @@ function normalizeSuggestions(parsed, handNames, context) {
         const card = CARD_MAP[s.card_name];
         if (card && card.type === 'Occupation') occs.push(s);
         else if (card && card.type === 'Minor Improvement') mins.push(s);
-        else unknown.push(s); // unknown type — keep, but at end so it doesn't crowd out typed picks
+        else unknown.push(s);
     }
     const trimmedOccs = occs.slice(0, 2).map((s, i) => ({ ...s, rank_number: i + 1 }));
     const trimmedMins = mins.slice(0, 2).map((s, i) => ({ ...s, rank_number: i + 1 }));
     if (occs.length > 2 || mins.length > 2) {
-        try { context.log.warn(`normalizeSuggestions trimmed: occs=${occs.length}->2, mins=${mins.length}->2`); } catch {}
+        try { context.warn(`normalizeSuggestions trimmed: occs=${occs.length}->2, mins=${mins.length}->2`); } catch {}
     }
     parsed.suggestions = [...trimmedOccs, ...trimmedMins, ...unknown];
 }
 
-module.exports = async function (context, req) {
-    const headers = {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-    };
-
-    // Handle preflight
-    if (req.method === 'OPTIONS') {
-        context.res = { status: 204, headers, body: '' };
-        return;
-    }
-
-    // Validate environment
-    const endpoint = process.env.AZURE_OPENAI_ENDPOINT;
-    const apiKey = process.env.AZURE_OPENAI_KEY;
-    const deployment = process.env.AZURE_OPENAI_STRATEGY_DEPLOYMENT || process.env.AZURE_OPENAI_DEPLOYMENT || 'o3';
-
-    if (!endpoint || !apiKey) {
-        context.res = {
-            status: 500,
-            headers,
-            body: JSON.stringify({ error: 'Strategy service is not configured.' }),
+// --- v4 handler registration ---
+app.http('strategy', {
+    methods: ['POST', 'OPTIONS'],
+    authLevel: 'anonymous',
+    route: 'strategy',
+    handler: async (request, context) => {
+        const corsHeaders = {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type',
         };
-        return;
-    }
 
-    // Rate limiting
-    const clientIP = req.headers['x-forwarded-for']
-        || req.headers['x-client-ip']
-        || req.headers['client-ip']
-        || 'unknown';
-
-    if (isRateLimited(clientIP)) {
-        context.res = {
-            status: 429,
-            headers,
-            body: JSON.stringify({ error: 'Too many requests. Try again in a few minutes.' }),
-        };
-        return;
-    }
-
-    // Validate request body
-    const body = req.body;
-    if (!body || typeof body !== 'object') {
-        context.res = {
-            status: 400,
-            headers,
-            body: JSON.stringify({ error: 'Invalid request body.' }),
-        };
-        return;
-    }
-
-    // Health probe: client checkAvailability() sends {} — answer 200 so we don't
-    // spam the console with red 400s on every page load.
-    if (Object.keys(body).length === 0 || body.probe === true) {
-        context.res = {
-            status: 200,
-            headers,
-            body: JSON.stringify({ available: true }),
-        };
-        return;
-    }
-
-    if (!Array.isArray(body.handNames) || body.handNames.length === 0) {
-        context.res = {
-            status: 400,
-            headers,
-            body: JSON.stringify({ error: 'handNames is required and must be a non-empty array.' }),
-        };
-        return;
-    }
-
-    // Build messages
-    const playerCount = body.playerCount === 3 ? 3 : 4;
-    const userMessage = buildUserMessage(body);
-
-    // Call Azure OpenAI
-    const apiVersion = '2025-04-01-preview';
-    const url = `${endpoint.replace(/\/$/, '')}/openai/deployments/${deployment}/chat/completions?api-version=${apiVersion}`;
-
-    const requestBody = {
-        messages: [
-            { role: 'system', content: playerCount === 3 ? SYSTEM_PROMPT_3P : SYSTEM_PROMPT_4P },
-            { role: 'user', content: userMessage },
-        ],
-        // o4-mini counts reasoning tokens against this cap. 3-8k reasoning is common
-        // for this prompt, so keep generous headroom or responses get truncated to empty.
-        max_completion_tokens: 16000,
-        response_format: { type: 'json_object' },
-    };
-
-    // Abort the upstream call before the Azure Functions gateway timeout kicks in
-    const controller = new AbortController();
-    const UPSTREAM_TIMEOUT_MS = 180000;
-    const timeoutId = setTimeout(() => controller.abort(), UPSTREAM_TIMEOUT_MS);
-    const startedAt = Date.now();
-
-    try {
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'api-key': apiKey,
-            },
-            body: JSON.stringify(requestBody),
-            signal: controller.signal,
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            context.log.error(`Azure OpenAI error: ${response.status} ${errorText}`);
-            context.res = {
-                status: 502,
-                headers,
-                body: JSON.stringify({
-                    error: 'Strategy service returned an error. Please try again.',
-                    detail: response.status,
-                }),
-            };
-            return;
+        // Preflight
+        if (request.method === 'OPTIONS') {
+            return { status: 204, headers: corsHeaders, body: '' };
         }
 
-        const result = await response.json();
-        const choice = result.choices?.[0] || {};
-        const content = choice.message?.content || '';
-        const finishReason = choice.finish_reason;
-        const usage = result.usage || {};
+        // Validate environment
+        const endpoint = process.env.AZURE_OPENAI_ENDPOINT;
+        const apiKey = process.env.AZURE_OPENAI_KEY;
+        const deployment = process.env.AZURE_OPENAI_STRATEGY_DEPLOYMENT || process.env.AZURE_OPENAI_DEPLOYMENT || 'o3';
 
-        // Detect reasoning-model truncation: finish_reason=length with empty content
-        // means reasoning tokens consumed the entire budget before producing output.
-        if (finishReason === 'length' && !content) {
-            const reasoningTokens = usage.completion_tokens_details?.reasoning_tokens;
-            context.log.error(`LLM hit max_completion_tokens before producing output. reasoning_tokens=${reasoningTokens} total=${usage.total_tokens}`);
-            context.res = {
-                status: 502,
-                headers,
-                body: JSON.stringify({
-                    error: 'The strategy service ran out of reasoning budget before producing a response. Try again, or reduce prompt complexity.',
-                    detail: `finish_reason=length, reasoning_tokens=${reasoningTokens}`,
-                }),
+        if (!endpoint || !apiKey) {
+            return {
+                status: 500,
+                headers: { 'Content-Type': 'application/json', ...corsHeaders },
+                body: JSON.stringify({ error: 'Strategy service is not configured.' }),
             };
-            return;
         }
 
-        // Parse and validate response
-        let parsed;
+        // Rate limit — checked before starting any stream so concurrent slow
+        // streams can't sneak past the cap during a long reasoning phase.
+        const clientIP = request.headers.get('x-forwarded-for')
+            || request.headers.get('x-client-ip')
+            || request.headers.get('client-ip')
+            || 'unknown';
+
+        if (isRateLimited(clientIP)) {
+            return {
+                status: 429,
+                headers: { 'Content-Type': 'application/json', ...corsHeaders },
+                body: JSON.stringify({ error: 'Too many requests. Try again in a few minutes.' }),
+            };
+        }
+
+        // Parse body
+        let body;
         try {
-            parsed = JSON.parse(content);
-        } catch (e) {
-            // o3 may occasionally wrap JSON in markdown code fences
-            const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/);
-            if (jsonMatch) {
-                try {
-                    parsed = JSON.parse(jsonMatch[1].trim());
-                } catch (e2) {
-                    // fall through to error
-                }
-            }
-            if (!parsed) {
-                context.log.error(`Failed to parse LLM response: ${content}`);
-                context.res = {
-                    status: 502,
-                    headers,
-                    body: JSON.stringify({ error: 'Strategy service returned an invalid response.' }),
-                };
-                return;
-            }
-        }
-
-        normalizeSuggestions(parsed, body.handNames, context);
-
-        if (!validateResponse(parsed)) {
-            context.log.warn(`LLM response failed validation: ${content}`);
-            // Return it anyway with a warning — partial results are better than nothing
-            context.res = {
-                status: 200,
-                headers,
-                body: JSON.stringify({
-                    ...parsed,
-                    _warning: 'Response structure did not fully validate.',
-                }),
+            body = await request.json();
+        } catch {
+            return {
+                status: 400,
+                headers: { 'Content-Type': 'application/json', ...corsHeaders },
+                body: JSON.stringify({ error: 'Invalid request body.' }),
             };
-            return;
         }
 
-        // Token usage for monitoring (already read above)
-        context.res = {
+        if (!body || typeof body !== 'object') {
+            return {
+                status: 400,
+                headers: { 'Content-Type': 'application/json', ...corsHeaders },
+                body: JSON.stringify({ error: 'Invalid request body.' }),
+            };
+        }
+
+        // Health probe — empty body or explicit probe flag → answer immediately (non-streaming)
+        if (Object.keys(body).length === 0 || body.probe === true) {
+            return {
+                status: 200,
+                headers: { 'Content-Type': 'application/json', ...corsHeaders },
+                body: JSON.stringify({ available: true }),
+            };
+        }
+
+        if (!Array.isArray(body.handNames) || body.handNames.length === 0) {
+            return {
+                status: 400,
+                headers: { 'Content-Type': 'application/json', ...corsHeaders },
+                body: JSON.stringify({ error: 'handNames is required and must be a non-empty array.' }),
+            };
+        }
+
+        // Build OpenAI request
+        const playerCount = body.playerCount === 3 ? 3 : 4;
+        const userMessage = buildUserMessage(body);
+        const apiVersion = '2025-04-01-preview';
+        const openAIUrl = `${endpoint.replace(/\/$/, '')}/openai/deployments/${deployment}/chat/completions?api-version=${apiVersion}`;
+
+        const openAIRequestBody = {
+            messages: [
+                { role: 'system', content: playerCount === 3 ? SYSTEM_PROMPT_3P : SYSTEM_PROMPT_4P },
+                { role: 'user', content: userMessage },
+            ],
+            max_completion_tokens: 16000,
+            response_format: { type: 'json_object' },
+            stream: true,
+        };
+
+        // Set up the streaming response pipe
+        const { readable, writable } = new TransformStream();
+        const writer = writable.getWriter();
+        const encoder = new TextEncoder();
+
+        const send = (line) => {
+            try { return writer.write(encoder.encode(line)); } catch { return Promise.resolve(); }
+        };
+
+        // Commit headers before the OpenAI call starts — this is what defeats
+        // edge-proxy TTFB timeouts regardless of how long the model takes.
+        const streamResponse = {
             status: 200,
-            headers,
-            body: JSON.stringify({
-                ...parsed,
-                _usage: {
-                    prompt_tokens: usage.prompt_tokens,
-                    completion_tokens: usage.completion_tokens,
-                    reasoning_tokens: usage.completion_tokens_details?.reasoning_tokens,
-                    total_tokens: usage.total_tokens,
-                },
-            }),
+            headers: {
+                'Content-Type': 'text/event-stream',
+                'Cache-Control': 'no-cache',
+                'Connection': 'keep-alive',
+                'X-Accel-Buffering': 'no',
+                ...corsHeaders,
+            },
+            body: readable,
         };
-    } catch (err) {
-        const elapsed = Date.now() - startedAt;
-        const isAbort = err.name === 'AbortError';
-        context.log.error(`Function error after ${elapsed}ms: ${err.name}: ${err.message}`);
-        context.res = {
-            status: isAbort ? 504 : 500,
-            headers,
-            body: JSON.stringify({
-                error: isAbort
-                    ? `The strategy service timed out after ${Math.round(elapsed / 1000)}s. Please try again.`
-                    : 'Internal error processing strategy request.',
-                detail: `${err.name}: ${err.message}`,
-                elapsed_ms: elapsed,
-            }),
-        };
-    } finally {
-        clearTimeout(timeoutId);
-    }
-};
+
+        // Background async IIFE — runs after we return the streaming response
+        (async () => {
+            // Heartbeat fires every 3s until the first real token arrives.
+            // Keeps the connection alive during the model's reasoning phase.
+            const heartbeat = setInterval(() => send(': keepalive\n\n'), 3000);
+            let firstToken = true;
+
+            // Abort the upstream call if the client disconnects.
+            const controller = new AbortController();
+            if (request.signal) {
+                request.signal.addEventListener('abort', () => controller.abort());
+            }
+            const timeoutId = setTimeout(() => controller.abort(), 180000);
+
+            try {
+                const upstreamResponse = await fetch(openAIUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'api-key': apiKey },
+                    body: JSON.stringify(openAIRequestBody),
+                    signal: controller.signal,
+                });
+
+                if (!upstreamResponse.ok) {
+                    const errText = await upstreamResponse.text();
+                    context.error(`Azure OpenAI error: ${upstreamResponse.status} ${errText}`);
+                    await send(`event: error\ndata: ${JSON.stringify({ message: 'Strategy service returned an error. Please try again.' })}\n\n`);
+                    return;
+                }
+
+                // Parse the OpenAI SSE stream and forward tokens
+                const reader = upstreamResponse.body.getReader();
+                const decoder = new TextDecoder();
+                let lineBuffer = '';
+                let accumulated = '';
+
+                outer: while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) break;
+
+                    lineBuffer += decoder.decode(value, { stream: true });
+
+                    let newlineIdx;
+                    while ((newlineIdx = lineBuffer.indexOf('\n')) !== -1) {
+                        const line = lineBuffer.slice(0, newlineIdx).trimEnd();
+                        lineBuffer = lineBuffer.slice(newlineIdx + 1);
+
+                        if (!line || line.startsWith(':')) continue;
+                        if (!line.startsWith('data: ')) continue;
+
+                        const data = line.slice(6);
+                        if (data === '[DONE]') {
+                            // Emit the normalized final state so the client has
+                            // a clean parsed+validated object to treat as canonical.
+                            let parsed;
+                            try { parsed = JSON.parse(accumulated); } catch { /* pass */ }
+                            if (!parsed) {
+                                // Fallback: strip markdown code fences occasionally emitted
+                                const m = accumulated.match(/```(?:json)?\s*([\s\S]*?)```/);
+                                if (m) { try { parsed = JSON.parse(m[1].trim()); } catch { /* pass */ } }
+                            }
+                            if (parsed) {
+                                normalizeSuggestions(parsed, body.handNames, context);
+                                await send(`event: normalized\ndata: ${JSON.stringify(parsed)}\n\n`);
+                            }
+                            await send('event: done\ndata: {}\n\n');
+                            break outer;
+                        }
+
+                        let chunk;
+                        try { chunk = JSON.parse(data); } catch { continue; }
+
+                        const delta = chunk.choices?.[0]?.delta?.content;
+                        if (delta != null && delta !== '') {
+                            if (firstToken) {
+                                clearInterval(heartbeat);
+                                firstToken = false;
+                            }
+                            accumulated += delta;
+                            await send(`event: token\ndata: ${JSON.stringify(delta)}\n\n`);
+                        }
+                    }
+                }
+
+            } catch (err) {
+                const isAbort = err.name === 'AbortError';
+                context.error(`Strategy stream error after ${Date.now()}ms: ${err.name}: ${err.message}`);
+                // Only send error event if this isn't a client-initiated abort
+                if (!isAbort) {
+                    await send(`event: error\ndata: ${JSON.stringify({ message: 'Internal error processing strategy request.' })}\n\n`);
+                }
+            } finally {
+                clearTimeout(timeoutId);
+                clearInterval(heartbeat);
+                try { await writer.close(); } catch { /* already closed */ }
+            }
+        })();
+
+        return streamResponse;
+    },
+});

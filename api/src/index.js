@@ -4,3 +4,4 @@
 // their function.json files alongside these.
 
 require('./functions/probe-stream');
+require('../strategy/index');
