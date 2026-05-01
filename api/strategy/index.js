@@ -284,18 +284,113 @@ app.http('strategy', {
             stream: true,
         };
 
-        // Set up the streaming response pipe
-        const { readable, writable } = new TransformStream();
-        const writer = writable.getWriter();
+        // Use ReadableStream with start(controller) — same pattern as probe-stream.
+        // Azure Functions starts forwarding to the client as soon as it reads the
+        // first enqueued chunk, so we enqueue an immediate keepalive before any
+        // await to guarantee data flows before the SWA 45s edge timeout fires.
         const encoder = new TextEncoder();
+        const reqBody = body;
 
-        const send = (line) => {
-            try { return writer.write(encoder.encode(line)); } catch { return Promise.resolve(); }
-        };
+        const stream = new ReadableStream({
+            async start(controller) {
+                const send = (line) => controller.enqueue(encoder.encode(line));
 
-        // Commit headers before the OpenAI call starts — this is what defeats
-        // edge-proxy TTFB timeouts regardless of how long the model takes.
-        const streamResponse = {
+                // Immediate keepalive — ensures Azure Functions sees data right away
+                // and begins forwarding the stream rather than buffering it.
+                send(': keepalive\n\n');
+
+                // Subsequent heartbeats every 3s during the model's reasoning phase.
+                const heartbeat = setInterval(() => send(': keepalive\n\n'), 3000);
+                let firstToken = true;
+
+                const ac = new AbortController();
+                if (request.signal) {
+                    request.signal.addEventListener('abort', () => ac.abort());
+                }
+                const timeoutId = setTimeout(() => ac.abort(), 180000);
+
+                try {
+                    const upstreamResponse = await fetch(openAIUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'api-key': apiKey },
+                        body: JSON.stringify(openAIRequestBody),
+                        signal: ac.signal,
+                    });
+
+                    if (!upstreamResponse.ok) {
+                        const errText = await upstreamResponse.text();
+                        context.error(`Azure OpenAI error: ${upstreamResponse.status} ${errText}`);
+                        send(`event: error\ndata: ${JSON.stringify({ message: 'Strategy service returned an error. Please try again.' })}\n\n`);
+                        return;
+                    }
+
+                    // Parse the OpenAI SSE stream and forward tokens
+                    const reader = upstreamResponse.body.getReader();
+                    const decoder = new TextDecoder();
+                    let lineBuffer = '';
+                    let accumulated = '';
+
+                    outer: while (true) {
+                        const { value, done } = await reader.read();
+                        if (done) break;
+
+                        lineBuffer += decoder.decode(value, { stream: true });
+
+                        let newlineIdx;
+                        while ((newlineIdx = lineBuffer.indexOf('\n')) !== -1) {
+                            const line = lineBuffer.slice(0, newlineIdx).trimEnd();
+                            lineBuffer = lineBuffer.slice(newlineIdx + 1);
+
+                            if (!line || line.startsWith(':')) continue;
+                            if (!line.startsWith('data: ')) continue;
+
+                            const data = line.slice(6);
+                            if (data === '[DONE]') {
+                                // Emit normalized final state as the canonical client snapshot.
+                                let parsed;
+                                try { parsed = JSON.parse(accumulated); } catch { /* pass */ }
+                                if (!parsed) {
+                                    const m = accumulated.match(/```(?:json)?\s*([\s\S]*?)```/);
+                                    if (m) { try { parsed = JSON.parse(m[1].trim()); } catch { /* pass */ } }
+                                }
+                                if (parsed) {
+                                    normalizeSuggestions(parsed, reqBody.handNames, context);
+                                    send(`event: normalized\ndata: ${JSON.stringify(parsed)}\n\n`);
+                                }
+                                send('event: done\ndata: {}\n\n');
+                                break outer;
+                            }
+
+                            let chunk;
+                            try { chunk = JSON.parse(data); } catch { continue; }
+
+                            const delta = chunk.choices?.[0]?.delta?.content;
+                            if (delta != null && delta !== '') {
+                                if (firstToken) {
+                                    clearInterval(heartbeat);
+                                    firstToken = false;
+                                }
+                                accumulated += delta;
+                                send(`event: token\ndata: ${JSON.stringify(delta)}\n\n`);
+                            }
+                        }
+                    }
+
+                } catch (err) {
+                    const isAbort = err.name === 'AbortError';
+                    context.error(`Strategy stream error: ${err.name}: ${err.message}`);
+                    if (!isAbort) {
+                        send(`event: error\ndata: ${JSON.stringify({ message: 'Internal error processing strategy request.' })}\n\n`);
+                    }
+                } finally {
+                    clearTimeout(timeoutId);
+                    clearInterval(heartbeat);
+                    controller.close();
+                }
+            },
+        });
+
+        return {
             status: 200,
             headers: {
                 'Content-Type': 'text/event-stream',
@@ -304,106 +399,7 @@ app.http('strategy', {
                 'X-Accel-Buffering': 'no',
                 ...corsHeaders,
             },
-            body: readable,
+            body: stream,
         };
-
-        // Background async IIFE — runs after we return the streaming response
-        (async () => {
-            // Heartbeat fires every 3s until the first real token arrives.
-            // Keeps the connection alive during the model's reasoning phase.
-            const heartbeat = setInterval(() => send(': keepalive\n\n'), 3000);
-            let firstToken = true;
-
-            // Abort the upstream call if the client disconnects.
-            const controller = new AbortController();
-            if (request.signal) {
-                request.signal.addEventListener('abort', () => controller.abort());
-            }
-            const timeoutId = setTimeout(() => controller.abort(), 180000);
-
-            try {
-                const upstreamResponse = await fetch(openAIUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'api-key': apiKey },
-                    body: JSON.stringify(openAIRequestBody),
-                    signal: controller.signal,
-                });
-
-                if (!upstreamResponse.ok) {
-                    const errText = await upstreamResponse.text();
-                    context.error(`Azure OpenAI error: ${upstreamResponse.status} ${errText}`);
-                    await send(`event: error\ndata: ${JSON.stringify({ message: 'Strategy service returned an error. Please try again.' })}\n\n`);
-                    return;
-                }
-
-                // Parse the OpenAI SSE stream and forward tokens
-                const reader = upstreamResponse.body.getReader();
-                const decoder = new TextDecoder();
-                let lineBuffer = '';
-                let accumulated = '';
-
-                outer: while (true) {
-                    const { value, done } = await reader.read();
-                    if (done) break;
-
-                    lineBuffer += decoder.decode(value, { stream: true });
-
-                    let newlineIdx;
-                    while ((newlineIdx = lineBuffer.indexOf('\n')) !== -1) {
-                        const line = lineBuffer.slice(0, newlineIdx).trimEnd();
-                        lineBuffer = lineBuffer.slice(newlineIdx + 1);
-
-                        if (!line || line.startsWith(':')) continue;
-                        if (!line.startsWith('data: ')) continue;
-
-                        const data = line.slice(6);
-                        if (data === '[DONE]') {
-                            // Emit the normalized final state so the client has
-                            // a clean parsed+validated object to treat as canonical.
-                            let parsed;
-                            try { parsed = JSON.parse(accumulated); } catch { /* pass */ }
-                            if (!parsed) {
-                                // Fallback: strip markdown code fences occasionally emitted
-                                const m = accumulated.match(/```(?:json)?\s*([\s\S]*?)```/);
-                                if (m) { try { parsed = JSON.parse(m[1].trim()); } catch { /* pass */ } }
-                            }
-                            if (parsed) {
-                                normalizeSuggestions(parsed, body.handNames, context);
-                                await send(`event: normalized\ndata: ${JSON.stringify(parsed)}\n\n`);
-                            }
-                            await send('event: done\ndata: {}\n\n');
-                            break outer;
-                        }
-
-                        let chunk;
-                        try { chunk = JSON.parse(data); } catch { continue; }
-
-                        const delta = chunk.choices?.[0]?.delta?.content;
-                        if (delta != null && delta !== '') {
-                            if (firstToken) {
-                                clearInterval(heartbeat);
-                                firstToken = false;
-                            }
-                            accumulated += delta;
-                            await send(`event: token\ndata: ${JSON.stringify(delta)}\n\n`);
-                        }
-                    }
-                }
-
-            } catch (err) {
-                const isAbort = err.name === 'AbortError';
-                context.error(`Strategy stream error after ${Date.now()}ms: ${err.name}: ${err.message}`);
-                // Only send error event if this isn't a client-initiated abort
-                if (!isAbort) {
-                    await send(`event: error\ndata: ${JSON.stringify({ message: 'Internal error processing strategy request.' })}\n\n`);
-                }
-            } finally {
-                clearTimeout(timeoutId);
-                clearInterval(heartbeat);
-                try { await writer.close(); } catch { /* already closed */ }
-            }
-        })();
-
-        return streamResponse;
     },
 });
