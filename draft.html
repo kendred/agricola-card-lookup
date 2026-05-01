@@ -955,10 +955,7 @@ function StrategyDashboard({ strategyResult, strategyLoading, strategyError, str
             {/* Overall Analysis */}
             <div className="strategy-section-label">Analysis</div>
             <div className={`strategy-analysis${strategyResult?.overall_analysis ? ' has-content' : ''}`}>
-                {strategyLoading && !strategyResult?.overall_analysis && <LoadingIndicator streamingPhase={streamingPhase} />}
-                {strategyResult?.overall_analysis}
-                {!strategyLoading && !strategyResult?.overall_analysis && 'Click "Get AI Advice" to analyze your draft.'}
-                {strategyLoading && strategyResult?.overall_analysis && <LoadingIndicator streamingPhase={streamingPhase} />}
+                {strategyResult?.overall_analysis || (!strategyLoading && 'Click "Get AI Advice" to analyze your draft.')}
             </div>
 
             {/* Strategy Archetypes */}
@@ -1030,13 +1027,15 @@ function StrategyDashboard({ strategyResult, strategyLoading, strategyError, str
                 </div>
             )}
 
-            {/* Get AI Advice button */}
+            {/* Get AI Advice button — shows thematic cycling messages while loading */}
             <button
                 className={`strategy-btn${strategyLoading ? ' loading' : ''}`}
                 disabled={!strategyAvailable || strategyLoading || !hasCards}
                 onClick={onGetAdvice}
             >
-                {strategyLoading ? 'Analyzing...' : (!strategyAvailable ? 'AI Advice (unavailable)' : (!hasCards ? 'Add cards to get advice' : 'Get AI Advice'))}
+                {strategyLoading
+                    ? <LoadingIndicator streamingPhase={streamingPhase} />
+                    : (!strategyAvailable ? 'AI Advice (unavailable)' : (!hasCards ? 'Add cards to get advice' : 'Get AI Advice'))}
             </button>
         </div>
     );
