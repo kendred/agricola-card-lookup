@@ -1,7 +1,4 @@
 // Azure Functions v4 entry. Loaded via "main" in package.json.
-// Registers v4-style functions. v3 functions in sibling folders
-// (ocr/, draft/, submit-card/) continue to load from their
-// function.json files alongside these.
 
 const { app } = require('@azure/functions');
 
@@ -14,3 +11,11 @@ app.setup({ enableHttpStream: true });
 
 require('./functions/probe-stream');
 require('../strategy/index');
+
+// Legacy v3 handlers (ocr, draft, submit-card) registered through a
+// thin v4 adapter. enableHttpStream rewrites the request shape for
+// every HTTP trigger in the worker, so they can no longer be loaded
+// via their original function.json files.
+require('./functions/ocr');
+require('./functions/draft');
+require('./functions/submit-card');
