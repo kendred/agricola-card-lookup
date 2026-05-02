@@ -1877,6 +1877,13 @@ function DraftApp() {
     const minors = useMemo(() =>
         currentHandCards.filter(c => c.type === 'Minor Improvement'), [currentHandCards]);
 
+    // For draft selection: filter out cards taken by others.
+    // Declared before handStats because handStats spreads these for returning rounds —
+    // Babel-in-browser hoists const as var, so referencing them later would yield undefined.
+    const othersDraftedSet = useMemo(() => new Set(othersDrafted), [othersDrafted]);
+    const availableOccs = useMemo(() => occupations.filter(c => !othersDraftedSet.has(c.name)), [occupations, othersDraftedSet]);
+    const availableMins = useMemo(() => minors.filter(c => !othersDraftedSet.has(c.name)), [minors, othersDraftedSet]);
+
     // Hand statistics (computed reactively when hand changes)
     // For returning rounds, exclude cards already taken by others — only available cards count.
     const handStats = useMemo(() => {
@@ -1901,11 +1908,6 @@ function DraftApp() {
     const handIsFull = isReturningRound
         ? currentHandNames.length > 0  // returning hands are pre-populated
         : (occupations.length === expectedHandSize && minors.length === expectedHandSize);
-
-    // For draft selection: filter out faded cards
-    const othersDraftedSet = useMemo(() => new Set(othersDrafted), [othersDrafted]);
-    const availableOccs = useMemo(() => occupations.filter(c => !othersDraftedSet.has(c.name)), [occupations, othersDraftedSet]);
-    const availableMins = useMemo(() => minors.filter(c => !othersDraftedSet.has(c.name)), [minors, othersDraftedSet]);
 
     const canConfirm = !markingPhase && selectedOccupation && selectedMinor;
 
