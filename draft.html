@@ -1890,8 +1890,10 @@ function DraftApp() {
         if (typeof draftStats === 'undefined' || !draftStats.isInitialized() || currentHandCards.length === 0) return null;
         const statsCards = isReturningRound ? [...availableOccs, ...availableMins] : currentHandCards;
         if (statsCards.length === 0) return null;
-        return draftStats.analyzeHand(statsCards, HAND_SIZE_BY_ROUND[currentRound] || 10, playerCount, currentRound, hands, draftedCards);
-    }, [currentHandCards, availableOccs, availableMins, isReturningRound, currentRound, playerCount, hands, draftedCards]);
+        const targetHand = rotation.roundToHand[currentRound];
+        const originalHandSize = HAND_SIZE_BY_ROUND[targetHand] || HAND_SIZE_BY_ROUND[currentRound] || 10;
+        return draftStats.analyzeHand(statsCards, HAND_SIZE_BY_ROUND[currentRound] || 10, playerCount, currentRound, hands, draftedCards, originalHandSize);
+    }, [currentHandCards, availableOccs, availableMins, isReturningRound, currentRound, playerCount, hands, draftedCards, rotation]);
 
     // Set of all card names used across all rounds (to prevent duplicates in search)
     const allUsedCardNames = useMemo(() => {

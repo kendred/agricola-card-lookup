@@ -114,7 +114,10 @@ var draftStats = (function () {
 
     // --- Hand percentile ---
     // Lower sum of ranks = better hand. Returns percentile (0-100, higher = better).
-    function handPercentile(handCards) {
+    // originalHandSize: the per-type deal size before any picks. For returning rounds
+    // the hand has already been picked over, so the expected baseline is the sum of
+    // order statistics k=priorPicks+1..originalHandSize, not a random n-card draw.
+    function handPercentile(handCards, originalHandSize) {
         if (!initialized) return null;
         var occCards = [];
         var minorCards = [];
@@ -126,21 +129,32 @@ var draftStats = (function () {
 
         if (occCards.length === 0 && minorCards.length === 0) return null;
 
-        // Expected sum and variance for each type
+        var N0 = (typeof originalHandSize === 'number' && originalHandSize > 0)
+            ? originalHandSize
+            : Math.max(occCards.length, minorCards.length);
+
         var expectedSum = 0;
         var totalVar = 0;
 
         if (occCards.length > 0) {
             var nOcc = occCards.length;
             var NOcc = occRanks.length;
-            expectedSum += nOcc * occMean;
-            // Finite-population correction: n * sigma^2 * (N-n)/(N-1)
+            var occN0 = Math.max(N0, nOcc);
+            var occPrior = Math.max(0, occN0 - nOcc);
+            for (var ko = occPrior + 1; ko <= occN0; ko++) {
+                expectedSum += expectedKthRank(ko, occN0, occRanks);
+            }
+            // Variance heuristic: finite-population correction against full pool.
             totalVar += nOcc * occVar * (NOcc - nOcc) / (NOcc - 1);
         }
         if (minorCards.length > 0) {
             var nMin = minorCards.length;
             var NMin = minorRanks.length;
-            expectedSum += nMin * minorMean;
+            var minN0 = Math.max(N0, nMin);
+            var minPrior = Math.max(0, minN0 - nMin);
+            for (var km = minPrior + 1; km <= minN0; km++) {
+                expectedSum += expectedKthRank(km, minN0, minorRanks);
+            }
             totalVar += nMin * minorVar * (NMin - nMin) / (NMin - 1);
         }
 
@@ -361,13 +375,21 @@ var draftStats = (function () {
     // --- Get all stats for a hand ---
     // seenHands: { roundNum: [cardName, ...] } — cards seen in each prior round
     // userDrafted: { roundNum: { occupation: name, minor: name } } — user's picks per round
-    function analyzeHand(handCards, handSize, playerCount, currentRound, seenHands, userDrafted) {
+    function analyzeHand(handCards, handSize, playerCount, currentRound, seenHands, userDrafted, originalHandSize) {
         if (!initialized) return null;
 
         var occCards = handCards.filter(function (c) { return c.type === 'Occupation' && typeof c.rank === 'number' && isFinite(c.rank); });
         var minorCards = handCards.filter(function (c) { return c.type === 'Minor Improvement' && typeof c.rank === 'number' && isFinite(c.rank); });
 
-        var percentile = handPercentile(handCards);
+        var nOcc = occCards.length;
+        var nMinor = minorCards.length;
+
+        var N0Default = Math.max(nOcc, nMinor);
+        var N0 = (typeof originalHandSize === 'number' && originalHandSize > 0)
+            ? originalHandSize
+            : N0Default;
+
+        var percentile = handPercentile(handCards, N0);
         var grade = handGrade(percentile);
 
         // Per-card quality
@@ -380,18 +402,20 @@ var draftStats = (function () {
             }
         });
 
-        // Expected ranks for the rank distribution table — use actual card count so the
-        // array always covers every row, even when a returning hand has more cards than
-        // the nominal round hand size.
-        var nOcc = occCards.length;
-        var nMinor = minorCards.length;
+        // Expected ranks for the rank distribution table — slot i corresponds to
+        // position priorPicks+i in an originally-N0-sized draw, since better-ranked
+        // cards have already been removed by prior picks on returning hands.
+        var occN0 = Math.max(N0, nOcc);
+        var occPrior = Math.max(0, occN0 - nOcc);
         var occExpected = [];
         for (var i = 1; i <= nOcc; i++) {
-            occExpected.push(Math.round(expectedKthRank(i, nOcc, occRanks)));
+            occExpected.push(Math.round(expectedKthRank(occPrior + i, occN0, occRanks)));
         }
+        var minN0 = Math.max(N0, nMinor);
+        var minPrior = Math.max(0, minN0 - nMinor);
         var minorExpected = [];
         for (var j = 1; j <= nMinor; j++) {
-            minorExpected.push(Math.round(expectedKthRank(j, nMinor, minorRanks)));
+            minorExpected.push(Math.round(expectedKthRank(minPrior + j, minN0, minorRanks)));
         }
 
         // Tag distributions for tags present in the hand
