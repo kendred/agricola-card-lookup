@@ -1042,6 +1042,23 @@ body {
     opacity: 0.5;
 }
 
+.summary-card-compact.ghost-slot {
+    opacity: 0.65;
+}
+
+.summary-card-compact.ghost-slot .ghost-slot-label {
+    font-style: italic;
+    color: #888;
+}
+
+.summary-card-compact.ghost-slot.played {
+    opacity: 0.3;
+}
+
+.summary-card-compact.ghost-slot.played .ghost-slot-label {
+    text-decoration: line-through;
+}
+
 .remaining-count {
     font-size: 0.8em;
     font-weight: 400;
