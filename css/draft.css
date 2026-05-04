@@ -1067,15 +1067,20 @@ body {
     background: rgba(0,0,0,0.04);
 }
 
-.ghost-slot-caret {
-    font-style: normal;
-    font-size: 0.8em;
-    color: #bbb;
-    margin-left: 3px;
+.ghost-identify-btn {
+    margin-left: 8px;
+    font-size: 0.75em;
+    color: #888;
+    background: rgba(0,0,0,0.07);
+    border-radius: 4px;
+    padding: 2px 7px;
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
-.summary-card-compact.ghost-slot-unassigned:hover .ghost-slot-caret {
-    color: #888;
+.summary-card-compact.ghost-slot-unassigned:hover .ghost-identify-btn {
+    background: rgba(0,0,0,0.12);
+    color: #555;
 }
 
 .ghost-reassign-btn {
