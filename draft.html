@@ -1421,8 +1421,7 @@ function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, 
                         onClick={(e) => e.stopPropagation()}
                     />
                 )}
-                <span className="card-name-inline ghost-slot-label">Unknown {typeLabel} pick</span>
-                {!readOnly && <span className="ghost-slot-hint">▾ identify</span>}
+                <span className="card-name-inline ghost-slot-label">Unknown {typeLabel} pick <span className="ghost-slot-caret">▾</span></span>
             </div>
         );
     };
