@@ -1217,8 +1217,9 @@ function CardDetailPopover({ card, anchorRect, onClose, wheelWatchNote, onWheelW
 }
 
 // ─── SummaryView Component ──────────────────────────────────────────
-function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, onCardClick, playedCards, onTogglePlayed, readOnly, playerCount = 4 }) {
+function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, onCardClick, playedCards, onTogglePlayed, readOnly, playerCount = 4, ghostAssignments = {}, onAssignGhostPick }) {
     const [viewMode, setViewMode] = useState('combined'); // 'combined' or 'myhand'
+    const [expandedSlotId, setExpandedSlotId] = useState(null);
 
     const allDrafted = [];
     Object.entries(draftedCards).forEach(([round, picks]) => {
@@ -1279,13 +1280,20 @@ function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, 
                 grouped[handNum] = [];
                 return;
             }
+            // Collect all cards the user drafted from this hand across all visits
+            const userPicksFromHand = new Set();
+            passRounds.forEach(r => {
+                const picks = draftedCards[r] || {};
+                if (picks.occupation) userPicksFromHand.add(picks.occupation);
+                if (picks.minor) userPicksFromHand.add(picks.minor);
+            });
             const slots = [];
-            for (let i = 0; i < perType; i++) slots.push({ id: `__ghost-h${handNum}-occ-${i}`, type: 'Occupation' });
-            for (let i = 0; i < perType; i++) slots.push({ id: `__ghost-h${handNum}-min-${i}`, type: 'Minor Improvement' });
+            for (let i = 0; i < perType; i++) slots.push({ id: `__ghost-h${handNum}-occ-${i}`, type: 'Occupation', handNum, lastUserRound, userPicksFromHand });
+            for (let i = 0; i < perType; i++) slots.push({ id: `__ghost-h${handNum}-min-${i}`, type: 'Minor Improvement', handNum, lastUserRound, userPicksFromHand });
             grouped[handNum] = slots;
         });
         return grouped;
-    }, [playerCount]);
+    }, [playerCount, draftedCards]);
 
     const allHandNums = useMemo(
         () => getRotation(playerCount).handGroups.map(hg => hg.handNum),
@@ -1327,20 +1335,97 @@ function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, 
         </div>
     );
 
-    const renderGhostSlot = (slot) => (
-        <div key={slot.id} className={`summary-card-compact others-pick ghost-slot${playedCards.has(slot.id) ? ' played' : ''}`}>
-            {!readOnly && (
-                <input
-                    type="checkbox"
-                    className="played-checkbox"
-                    checked={playedCards.has(slot.id)}
-                    onChange={() => onTogglePlayed(slot.id)}
-                    onClick={(e) => e.stopPropagation()}
-                />
-            )}
-            <span className="card-name-inline ghost-slot-label">Unknown {slot.type === 'Occupation' ? 'occ' : 'minor'} pick</span>
-        </div>
-    );
+    const othersDraftedSet = useMemo(() => new Set(othersDrafted || []), [othersDrafted]);
+
+    const renderGhostSlot = (slot) => {
+        const assignedName = ghostAssignments[slot.id] || null;
+        const assignedCard = assignedName ? cardMap[assignedName] : null;
+        const isExpanded = expandedSlotId === slot.id;
+        const isPlayed = playedCards.has(slot.id);
+
+        // Compute candidates: cards from the passed pool of the right type, not already claimed
+        const otherSlotNames = new Set(
+            Object.entries(ghostAssignments)
+                .filter(([id]) => id !== slot.id)
+                .map(([, name]) => name)
+        );
+        const candidates = (hands[slot.lastUserRound] || [])
+            .filter(name => {
+                const card = cardMap[name];
+                return card && card.type === slot.type
+                    && !slot.userPicksFromHand.has(name)
+                    && !othersDraftedSet.has(name)
+                    && !otherSlotNames.has(name);
+            })
+            .map(name => cardMap[name])
+            .sort((a, b) => (a.rank || 999) - (b.rank || 999));
+
+        const typeLabel = slot.type === 'Occupation' ? 'occ' : 'minor';
+
+        if (isExpanded) {
+            return (
+                <div key={slot.id} className="ghost-slot-expanded">
+                    <div className="ghost-slot-expanded-header">
+                        <span className="ghost-slot-label">Unknown {typeLabel} pick — select:</span>
+                        <button className="ghost-slot-close-btn" onClick={() => setExpandedSlotId(null)}>✕</button>
+                    </div>
+                    {assignedName && (
+                        <div className="ghost-candidate-item ghost-candidate-clear" onClick={() => { onAssignGhostPick && onAssignGhostPick(slot.id, null); setExpandedSlotId(null); }}>
+                            <span style={{ color: '#e74c3c' }}>✕ Clear assignment</span>
+                        </div>
+                    )}
+                    {candidates.length === 0 && (
+                        <div className="ghost-candidate-item ghost-candidate-empty">No candidates found</div>
+                    )}
+                    {candidates.map(card => (
+                        <div key={card.name} className="ghost-candidate-item" onClick={() => { onAssignGhostPick && onAssignGhostPick(slot.id, card.name); setExpandedSlotId(null); }}>
+                            <span className="ghost-candidate-rank">#{card.rank}</span>
+                            <span className="ghost-candidate-name">{card.name}</span>
+                            <TagPills tags={card.tags} abbreviated={true} />
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+
+        if (assignedCard) {
+            return (
+                <div key={slot.id} className={`summary-card-compact others-pick ghost-slot ghost-slot-assigned${isPlayed ? ' played' : ''}`}>
+                    {!readOnly && (
+                        <input
+                            type="checkbox"
+                            className="played-checkbox"
+                            checked={isPlayed}
+                            onChange={() => onTogglePlayed(slot.id)}
+                            onClick={(e) => e.stopPropagation()}
+                        />
+                    )}
+                    <span className="card-name-inline">{assignedCard.name}</span>
+                    <TagPills tags={assignedCard.tags} abbreviated={true} />
+                    <span className="card-stats-inline"><span>#{assignedCard.rank}</span></span>
+                    {!readOnly && (
+                        <button className="ghost-reassign-btn" title="Re-assign" onClick={(e) => { e.stopPropagation(); setExpandedSlotId(slot.id); }}>✎</button>
+                    )}
+                </div>
+            );
+        }
+
+        return (
+            <div key={slot.id} className={`summary-card-compact others-pick ghost-slot ghost-slot-unassigned${isPlayed ? ' played' : ''}`} onClick={!readOnly ? () => setExpandedSlotId(slot.id) : undefined}>
+                {!readOnly && (
+                    <input
+                        type="checkbox"
+                        className="played-checkbox"
+                        checked={isPlayed}
+                        onChange={() => onTogglePlayed(slot.id)}
+                        onClick={(e) => e.stopPropagation()}
+                    />
+                )}
+                <span className="card-name-inline ghost-slot-label">Unknown {typeLabel} pick</span>
+                {!readOnly && <span className="ghost-slot-hint">▾ identify</span>}
+            </div>
+        );
+    };
 
     const totalGhost = Object.values(ghostByHand).reduce((sum, slots) => sum + slots.length, 0);
     const playedGhostCount = Object.values(ghostByHand).reduce(
@@ -1505,6 +1590,7 @@ function HistoryEntryViewer({ id, cardMap, onClose, onCardClick }) {
                         onTogglePlayed={() => {}}
                         readOnly={true}
                         playerCount={entry.state.playerCount === 3 ? 3 : 4}
+                        ghostAssignments={entry.state.ghostAssignments || {}}
                     />
                 )}
             </div>
@@ -1575,6 +1661,7 @@ function DraftApp() {
     const [expandedSuggestion, setExpandedSuggestion] = useState(null);
     const [wheelWatch, setWheelWatch] = useState({});
     const [playedCards, setPlayedCards] = useState(new Set());
+    const [ghostAssignments, setGhostAssignments] = useState({});
     const autoAdviceTriggeredRef = useRef(false);
 
     // Cloud sync state
@@ -1713,6 +1800,9 @@ function DraftApp() {
                     if (saved.playedCards && Array.isArray(saved.playedCards)) {
                         setPlayedCards(new Set(saved.playedCards));
                     }
+                    if (saved.ghostAssignments && typeof saved.ghostAssignments === 'object') {
+                        setGhostAssignments(saved.ghostAssignments);
+                    }
                 }
                 setRestoredFromStorage(true);
                 setLoading(false);
@@ -1758,8 +1848,9 @@ function DraftApp() {
             wheelWatch,
             tempCards,
             playedCards: [...playedCards],
+            ghostAssignments,
         });
-    }, [restoredFromStorage, currentRound, playerCount, draftStarted, currentHandNames, hands, draftedCards, sortKey, markingPhase, markedRemaining, othersDrafted, farmGrid, strategyNotes, wheelWatch, tempCards, playedCards]);
+    }, [restoredFromStorage, currentRound, playerCount, draftStarted, currentHandNames, hands, draftedCards, sortKey, markingPhase, markedRemaining, othersDrafted, farmGrid, strategyNotes, wheelWatch, tempCards, playedCards, ghostAssignments]);
 
     // Auto-trigger AI advice when draft completes
     const draftComplete = draftStarted && currentRound > 7;
@@ -1796,6 +1887,7 @@ function DraftApp() {
                 wheelWatch,
                 tempCards,
                 playedCards: [...playedCards],
+                ghostAssignments,
             };
             draftSync.saveActiveDraft(stateObj).catch(err => {
                 console.warn('[draft-sync] cloud save failed:', err.message);
@@ -2009,6 +2101,7 @@ function DraftApp() {
         setStrategyError(null);
         setWheelWatch({});
         setPlayedCards(new Set());
+        setGhostAssignments({});
         autoAdviceTriggeredRef.current = false;
         setDraftStarted(true);
     };
@@ -2031,6 +2124,7 @@ function DraftApp() {
         setStrategyError(null);
         setWheelWatch({});
         setPlayedCards(new Set());
+        setGhostAssignments({});
         autoAdviceTriggeredRef.current = false;
         archivedRef.current = false;
         setDraftStarted(false);
@@ -2505,7 +2599,7 @@ function DraftApp() {
 
                             {/* Summary view (after completion) */}
                             {draftComplete && (
-                                <SummaryView draftedCards={draftedCards} cardMap={cardMap} onNewDraft={handleNewDraft} hands={hands} othersDrafted={othersDrafted} onCardClick={handleMiniCardClick} playedCards={playedCards} onTogglePlayed={handleTogglePlayedCard} playerCount={playerCount} />
+                                <SummaryView draftedCards={draftedCards} cardMap={cardMap} onNewDraft={handleNewDraft} hands={hands} othersDrafted={othersDrafted} onCardClick={handleMiniCardClick} playedCards={playedCards} onTogglePlayed={handleTogglePlayedCard} playerCount={playerCount} ghostAssignments={ghostAssignments} onAssignGhostPick={(slotId, cardName) => setGhostAssignments(prev => ({ ...prev, [slotId]: cardName }))} />
                             )}
 
                             {/* Search + Screenshot (only for rounds 1-4 manual entry) */}

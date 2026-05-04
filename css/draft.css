@@ -1043,7 +1043,7 @@ body {
 }
 
 .summary-card-compact.ghost-slot {
-    opacity: 0.65;
+    opacity: 0.75;
 }
 
 .summary-card-compact.ghost-slot .ghost-slot-label {
@@ -1057,6 +1057,115 @@ body {
 
 .summary-card-compact.ghost-slot.played .ghost-slot-label {
     text-decoration: line-through;
+}
+
+.summary-card-compact.ghost-slot-unassigned {
+    cursor: pointer;
+}
+
+.summary-card-compact.ghost-slot-unassigned:hover {
+    background: rgba(0,0,0,0.04);
+}
+
+.ghost-slot-hint {
+    margin-left: auto;
+    font-size: 0.78em;
+    color: #aaa;
+    font-style: italic;
+    flex-shrink: 0;
+}
+
+.ghost-reassign-btn {
+    margin-left: auto;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #aaa;
+    font-size: 0.85em;
+    padding: 0 2px;
+    flex-shrink: 0;
+}
+
+.ghost-reassign-btn:hover {
+    color: #555;
+}
+
+.ghost-slot-expanded {
+    border: 1px solid rgba(0,0,0,0.12);
+    border-radius: 6px;
+    margin: 2px 0;
+    background: #fafafa;
+    overflow: hidden;
+}
+
+.ghost-slot-expanded-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
+    background: rgba(0,0,0,0.04);
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.ghost-slot-close-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #888;
+    font-size: 0.9em;
+    padding: 0 2px;
+    line-height: 1;
+}
+
+.ghost-slot-close-btn:hover {
+    color: #333;
+}
+
+.ghost-candidate-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 0.85em;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.ghost-candidate-item:last-child {
+    border-bottom: none;
+}
+
+.ghost-candidate-item:hover {
+    background: rgba(0,0,0,0.05);
+}
+
+.ghost-candidate-clear:hover {
+    background: rgba(231,76,60,0.06);
+}
+
+.ghost-candidate-empty {
+    color: #aaa;
+    font-style: italic;
+    cursor: default;
+}
+
+.ghost-candidate-empty:hover {
+    background: none;
+}
+
+.ghost-candidate-rank {
+    color: #999;
+    min-width: 2.5em;
+    flex-shrink: 0;
+}
+
+.ghost-candidate-name {
+    font-weight: 500;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .remaining-count {
