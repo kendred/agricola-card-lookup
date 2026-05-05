@@ -615,6 +615,12 @@ body {
     gap: 24px;
 }
 
+.opponents-two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
 .summary-column-title {
     font-size: 1.1em;
     font-weight: 600;
@@ -1326,6 +1332,10 @@ body {
     }
 
     .summary-columns {
+        grid-template-columns: 1fr;
+    }
+
+    .opponents-two-col {
         grid-template-columns: 1fr;
     }
 

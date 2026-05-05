@@ -1218,8 +1218,16 @@ function CardDetailPopover({ card, anchorRect, onClose, wheelWatchNote, onWheelW
 
 // ─── SummaryView Component ──────────────────────────────────────────
 function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, onCardClick, playedCards, onTogglePlayed, readOnly, playerCount = 4, ghostAssignments = {}, onAssignGhostPick }) {
-    const [viewMode, setViewMode] = useState('combined'); // 'combined' or 'myhand'
+    const SUMMARY_VIEW_KEY = 'agricola-summary-view';
+    const [viewMode, setViewMode] = useState(
+        () => localStorage.getItem(SUMMARY_VIEW_KEY) || 'myhand'
+    );
     const [expandedSlotId, setExpandedSlotId] = useState(null);
+
+    function switchView(mode) {
+        setViewMode(mode);
+        localStorage.setItem(SUMMARY_VIEW_KEY, mode);
+    }
 
     const allDrafted = [];
     Object.entries(draftedCards).forEach(([round, picks]) => {
@@ -1438,59 +1446,24 @@ function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, 
     return (
         <div className="summary-section">
             <div className="summary-title">
-                {viewMode === 'combined' ? 'Draft Complete — Summary' : 'Draft Complete — Your Final Hand'}
+                {viewMode === 'myhand' ? 'Draft Complete — Your Final Hand' : "Draft Complete — Opponents' Cards"}
             </div>
             <div className="summary-toggle">
                 <button
-                    className={`toggle-btn${viewMode === 'combined' ? ' active' : ''}`}
-                    onClick={() => setViewMode('combined')}
+                    className={`toggle-btn${viewMode === 'myhand' ? ' active' : ''}`}
+                    onClick={() => switchView('myhand')}
                 >
-                    Combined View
+                    My Hand
                 </button>
                 <button
-                    className={`toggle-btn${viewMode === 'myhand' ? ' active' : ''}`}
-                    onClick={() => setViewMode('myhand')}
+                    className={`toggle-btn${viewMode === 'opponents' ? ' active' : ''}`}
+                    onClick={() => switchView('opponents')}
                 >
-                    Just My Hand
+                    Opponents' Cards
                 </button>
             </div>
 
-            {viewMode === 'combined' ? (
-                <div className="summary-columns">
-                    <div>
-                        <div className="summary-column-title">Your Hand ({allDrafted.length} cards)</div>
-                        <div className="summary-subgroup">
-                            <div className="summary-subgroup-title">Occupations ({occs.length})</div>
-                            {occs.map(renderSummaryCard)}
-                        </div>
-                        <div className="summary-subgroup">
-                            <div className="summary-subgroup-title">Minor Improvements ({mins.length})</div>
-                            {mins.map(renderSummaryCard)}
-                        </div>
-                    </div>
-                    <div>
-                        <div className="summary-column-title">Opponents' Cards ({totalOthers}){playedOpponentCount > 0 && <span className="remaining-count"> {totalOthers - playedOpponentCount} / {totalOthers} remaining</span>}</div>
-                        {totalOthers === 0 ? (
-                            <div style={{ color: '#999', fontStyle: 'italic', padding: '12px 0' }}>
-                                No opponent cards were marked during the draft.
-                            </div>
-                        ) : (
-                            allHandNums.map(handNum => {
-                                const handCards = othersByHand[handNum] || [];
-                                const ghostSlots = ghostByHand[handNum] || [];
-                                if (handCards.length === 0 && ghostSlots.length === 0) return null;
-                                return (
-                                    <div key={handNum} className="opponents-hand-group">
-                                        <div className="opponents-hand-header">Hand {handNum}</div>
-                                        {handCards.map(renderOpponentCard)}
-                                        {ghostSlots.map(renderGhostSlot)}
-                                    </div>
-                                );
-                            })
-                        )}
-                    </div>
-                </div>
-            ) : (
+            {viewMode === 'myhand' ? (
                 <div className="summary-columns">
                     <div>
                         <div className="summary-column-title">Minor Improvements ({mins.length}/7)</div>
@@ -1501,7 +1474,40 @@ function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, 
                         {occs.map(renderSummaryCard)}
                     </div>
                 </div>
-            )}
+            ) : (() => {
+                const midpoint = Math.ceil(allHandNums.length / 2);
+                const leftHands = allHandNums.slice(0, midpoint);
+                const rightHands = allHandNums.slice(midpoint);
+                const renderHandGroup = (handNum) => {
+                    const handCards = othersByHand[handNum] || [];
+                    const ghostSlots = ghostByHand[handNum] || [];
+                    if (handCards.length === 0 && ghostSlots.length === 0) return null;
+                    return (
+                        <div key={handNum} className="opponents-hand-group">
+                            <div className="opponents-hand-header">Hand {handNum}</div>
+                            {handCards.map(renderOpponentCard)}
+                            {ghostSlots.map(renderGhostSlot)}
+                        </div>
+                    );
+                };
+                return (
+                    <div>
+                        <div className="summary-column-title">
+                            Opponents' Cards ({totalOthers}){playedOpponentCount > 0 && <span className="remaining-count"> {totalOthers - playedOpponentCount} / {totalOthers} remaining</span>}
+                        </div>
+                        {totalOthers === 0 ? (
+                            <div style={{ color: '#999', fontStyle: 'italic', padding: '12px 0' }}>
+                                No opponent cards were marked during the draft.
+                            </div>
+                        ) : (
+                            <div className="opponents-two-col">
+                                <div>{leftHands.map(renderHandGroup)}</div>
+                                <div>{rightHands.map(renderHandGroup)}</div>
+                            </div>
+                        )}
+                    </div>
+                );
+            })()}
 
             {!readOnly && (
                 <div style={{ textAlign: 'center', marginTop: '24px' }}>
