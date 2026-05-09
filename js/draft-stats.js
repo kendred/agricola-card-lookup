@@ -384,7 +384,12 @@ var draftStats = (function () {
         var nOcc = occCards.length;
         var nMinor = minorCards.length;
 
-        var N0Default = Math.max(nOcc, nMinor);
+        // Total counts (incl. unrankable starters like Farm Hand) — these reflect
+        // the actual hand size for the prior-picks calculation below.
+        var nOccTotal = handCards.filter(function (c) { return c.type === 'Occupation'; }).length;
+        var nMinorTotal = handCards.filter(function (c) { return c.type === 'Minor Improvement'; }).length;
+
+        var N0Default = Math.max(nOccTotal, nMinorTotal);
         var N0 = (typeof originalHandSize === 'number' && originalHandSize > 0)
             ? originalHandSize
             : N0Default;
@@ -405,14 +410,14 @@ var draftStats = (function () {
         // Expected ranks for the rank distribution table — slot i corresponds to
         // position priorPicks+i in an originally-N0-sized draw, since better-ranked
         // cards have already been removed by prior picks on returning hands.
-        var occN0 = Math.max(N0, nOcc);
-        var occPrior = Math.max(0, occN0 - nOcc);
+        var occN0 = Math.max(N0, nOccTotal);
+        var occPrior = Math.max(0, occN0 - nOccTotal);
         var occExpected = [];
         for (var i = 1; i <= nOcc; i++) {
             occExpected.push(Math.round(expectedKthRank(occPrior + i, occN0, occRanks)));
         }
-        var minN0 = Math.max(N0, nMinor);
-        var minPrior = Math.max(0, minN0 - nMinor);
+        var minN0 = Math.max(N0, nMinorTotal);
+        var minPrior = Math.max(0, minN0 - nMinorTotal);
         var minorExpected = [];
         for (var j = 1; j <= nMinor; j++) {
             minorExpected.push(Math.round(expectedKthRank(minPrior + j, minN0, minorRanks)));

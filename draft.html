@@ -1809,6 +1809,9 @@ function DraftApp() {
                     if (saved.ghostAssignments && typeof saved.ghostAssignments === 'object') {
                         setGhostAssignments(saved.ghostAssignments);
                     }
+                    if (saved.autoAdviceTriggered) {
+                        autoAdviceTriggeredRef.current = true;
+                    }
                 }
                 setRestoredFromStorage(true);
                 setLoading(false);
@@ -1855,17 +1858,23 @@ function DraftApp() {
             tempCards,
             playedCards: [...playedCards],
             ghostAssignments,
+            autoAdviceTriggered: autoAdviceTriggeredRef.current,
         });
-    }, [restoredFromStorage, currentRound, playerCount, draftStarted, currentHandNames, hands, draftedCards, sortKey, markingPhase, markedRemaining, othersDrafted, farmGrid, strategyNotes, wheelWatch, tempCards, playedCards, ghostAssignments]);
+    }, [restoredFromStorage, currentRound, playerCount, draftStarted, currentHandNames, hands, draftedCards, sortKey, markingPhase, markedRemaining, othersDrafted, farmGrid, strategyNotes, wheelWatch, tempCards, playedCards, ghostAssignments, strategyResult]);
 
-    // Auto-trigger AI advice when draft completes
+    // Auto-trigger AI advice when draft completes.
+    // handleGetAdvice is held in a ref so this effect doesn't re-run every time
+    // currentHandNames (a dep of handleGetAdvice) changes — that previously made
+    // the gate fragile, e.g. firing on a restored complete draft after OCR add.
     const draftComplete = draftStarted && currentRound > 7;
+    const handleGetAdviceRef = useRef(null);
+    useEffect(() => { handleGetAdviceRef.current = handleGetAdvice; });
     useEffect(() => {
         if (draftComplete && strategyAvailable && !strategyResult && !strategyLoading && !strategyError && !autoAdviceTriggeredRef.current) {
             autoAdviceTriggeredRef.current = true;
-            handleGetAdvice();
+            if (handleGetAdviceRef.current) handleGetAdviceRef.current();
         }
-    }, [draftComplete, strategyAvailable, strategyResult, strategyLoading, strategyError, handleGetAdvice]);
+    }, [draftComplete, strategyAvailable, strategyResult, strategyLoading, strategyError]);
 
     // Debounced cloud save (alongside the synchronous localStorage save above).
     // Skips while draft is complete — the archive effect handles completion.
@@ -1894,6 +1903,7 @@ function DraftApp() {
                 tempCards,
                 playedCards: [...playedCards],
                 ghostAssignments,
+                autoAdviceTriggered: autoAdviceTriggeredRef.current,
             };
             draftSync.saveActiveDraft(stateObj).catch(err => {
                 console.warn('[draft-sync] cloud save failed:', err.message);
@@ -1934,6 +1944,7 @@ function DraftApp() {
             wheelWatch,
             tempCards,
             playedCards: [...playedCards],
+            autoAdviceTriggered: autoAdviceTriggeredRef.current,
         };
 
         const occupationNames = [];
@@ -1954,8 +1965,29 @@ function DraftApp() {
             finalRound: 7,
         };
 
-        draftSync.archiveDraft(stateObj, summaryMeta)
-            .then(() => draftSync.deleteActiveDraft().catch(() => {}))
+        const arraysEqual = (a, b) => a.length === b.length && a.every((v, i) => v === b[i]);
+
+        // Dedupe: if the most recent history entry matches this draft's
+        // occ/min/playerCount, skip the archive but still drop the active slot.
+        // Common cause: cold reload of an already-archived completed draft when
+        // deleteActiveDraft failed or didn't run.
+        draftSync.listHistory()
+            .then(r => {
+                const latest = (r && r.entries || [])[0];
+                if (!latest || !latest.summaryMeta) return false;
+                const m = latest.summaryMeta;
+                return arraysEqual(m.occupationNames || [], occupationNames)
+                    && arraysEqual(m.minorNames || [], minorNames)
+                    && (m.playerCount || 0) === playerCount;
+            })
+            .catch(() => false)
+            .then(isDuplicate => {
+                if (isDuplicate) {
+                    return draftSync.deleteActiveDraft().catch(() => {});
+                }
+                return draftSync.archiveDraft(stateObj, summaryMeta)
+                    .then(() => draftSync.deleteActiveDraft().catch(() => {}));
+            })
             .catch(err => {
                 console.warn('[draft-sync] archive failed:', err.message);
                 archivedRef.current = false;
