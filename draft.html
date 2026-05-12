@@ -2381,8 +2381,14 @@ function DraftApp() {
             if (picks.minor) draftedNames.push(picks.minor);
         });
 
+        // Exclude cards already taken by opponents in earlier visits to this hand
+        // (in returning rounds these remain in currentHandNames but are visually faded).
+        const takenSet = new Set(othersDrafted);
+        const availableHand = currentHandNames.filter(name => !takenSet.has(name));
         // If current hand is empty, fall back to drafted cards for analysis
-        const handToSend = currentHandNames.length > 0 ? currentHandNames : draftedNames;
+        const handToSend = availableHand.length > 0
+            ? availableHand
+            : (currentHandNames.length > 0 ? currentHandNames : draftedNames);
         if (handToSend.length === 0) return; // button should be disabled, but guard anyway
 
         setStrategyLoading(true);
@@ -2735,16 +2741,17 @@ function DraftApp() {
                                     {(() => {
                                         // Show suggestions only during selection phase
                                         const showSuggestions = handIsFull && !markingPhase && strategyResult?.suggestions;
+                                        const suggestionTakenSet = new Set(othersDrafted);
                                         const occSuggestions = showSuggestions
                                             ? strategyResult.suggestions.filter(s => {
                                                 const card = cardMap[s.card_name];
-                                                return card && card.type === 'Occupation';
+                                                return card && card.type === 'Occupation' && !suggestionTakenSet.has(s.card_name);
                                             })
                                             : null;
                                         const minSuggestions = showSuggestions
                                             ? strategyResult.suggestions.filter(s => {
                                                 const card = cardMap[s.card_name];
-                                                return card && card.type === 'Minor Improvement';
+                                                return card && card.type === 'Minor Improvement' && !suggestionTakenSet.has(s.card_name);
                                             })
                                             : null;
                                         return (
