@@ -2889,12 +2889,12 @@ function DraftApp() {
                         <div className="stats-section">
                             <div className="stats-section-label">RANK DISTRIBUTION</div>
                             <div className="stats-rank-columns">
-                                {[{ label: 'Minor Improvements', cards: minors, expected: handStats.minorExpected },
-                                  { label: 'Occupations', cards: occupations, expected: handStats.occExpected }].map(group => {
-                                    const sorted = [...group.cards]
-                                        .filter(c => typeof c.rank === 'number' && isFinite(c.rank))
-                                        .sort((a, b) => a.rank - b.rank);
-                                    if (sorted.length === 0) return null;
+                                {[{ label: 'Minor Improvements', cards: isReturningRound ? availableMins : minors, expected: handStats.minorExpected },
+                                  { label: 'Occupations', cards: isReturningRound ? availableOccs : occupations, expected: handStats.occExpected }].map(group => {
+                                    const isRanked = (c) => typeof c.rank === 'number' && isFinite(c.rank);
+                                    const ranked = group.cards.filter(isRanked).sort((a, b) => a.rank - b.rank);
+                                    const unranked = group.cards.filter(c => !isRanked(c));
+                                    if (ranked.length === 0 && unranked.length === 0) return null;
                                     return (
                                         <div key={group.label}>
                                             <div style={{ fontSize: '0.8em', fontWeight: 600, color: '#666', marginBottom: '4px' }}>{group.label}</div>
@@ -2903,7 +2903,7 @@ function DraftApp() {
                                                     <tr><th>Card</th><th>Rank</th><th>Exp.</th><th>Delta</th></tr>
                                                 </thead>
                                                 <tbody>
-                                                    {sorted.map((card, idx) => {
+                                                    {ranked.map((card, idx) => {
                                                         const exp = group.expected[idx];
                                                         const delta = exp != null ? card.rank - exp : null;
                                                         const color = delta == null ? '#888' : delta < -20 ? '#28a745' : delta > 20 ? '#c0392b' : '#888';
@@ -2918,6 +2918,14 @@ function DraftApp() {
                                                             </tr>
                                                         );
                                                     })}
+                                                    {unranked.map(card => (
+                                                        <tr key={card.name}>
+                                                            <td className="stats-card-name">{card.name}</td>
+                                                            <td>—</td>
+                                                            <td>—</td>
+                                                            <td style={{ color: '#888' }}>—</td>
+                                                        </tr>
+                                                    ))}
                                                 </tbody>
                                             </table>
                                         </div>
