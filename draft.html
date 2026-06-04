@@ -2552,19 +2552,21 @@ function DraftApp() {
     const handleUndo = useCallback(() => {
         if (currentRound <= 1) return;
         const prevRound = currentRound - 1;
+        // When undoing from a returning round, reverse any Done Marking that was called:
+        // remove this round's hand cards from othersDrafted so the next visit starts clean.
+        if (isReturningRound && currentHandNames.length > 0) {
+            const currentHandSet = new Set(currentHandNames);
+            setOthersDrafted(prev => prev.filter(name => !currentHandSet.has(name)));
+        }
         setCurrentHandNames(hands[prevRound] || []);
         setHands(prev => { const next = { ...prev }; delete next[prevRound]; return next; });
         setDraftedCards(prev => { const next = { ...prev }; delete next[prevRound]; return next; });
         setSelectedOccupation(null);
         setSelectedMinor(null);
-        // If undoing into a returning round, restore marking phase
-        if (prevRound >= 5) {
-            setMarkingPhase(false); // drop into draft mode since hand was already marked
-        } else {
-            setMarkingPhase(false);
-        }
+        setMarkingPhase(false);
+        setMarkedRemaining(new Set());
         setCurrentRound(prevRound);
-    }, [currentRound, hands]);
+    }, [currentRound, hands, isReturningRound, currentHandNames]);
 
     // ─── Render ────────────────────────────────────────────────────
     if (loading) return <div className="loading">Loading card data...</div>;
