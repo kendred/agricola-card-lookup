@@ -932,8 +932,17 @@ function LoadingIndicator({ streamingPhase }) {
     );
 }
 
+// Rating option sets for each strategy dimension (used in manual mode).
+const DIMENSION_OPTIONS = {
+    food:          ['weak', 'adequate', 'strong'],
+    growth:        ['weak', 'adequate', 'strong'],
+    extra_actions: ['weak', 'adequate', 'strong'],
+    point_ceiling: ['low', 'medium', 'high'],
+    plow:          ['covered', 'not_covered'],
+};
+
 // ─── StrategyDashboard Component ────────────────────────────────────
-function StrategyDashboard({ strategyResult, strategyLoading, strategyError, strategyAvailable, hasCards, farmGrid, onFarmCellClick, strategyNotes, onNotesChange, onGetAdvice, onDismissError, streamingPhase }) {
+function StrategyDashboard({ strategyResult, strategyLoading, strategyError, strategyAvailable, hasCards, farmGrid, onFarmCellClick, strategyNotes, onNotesChange, onGetAdvice, onDismissError, streamingPhase, aiEnabled, onToggleAi, manualDimensions, onManualDimensionChange }) {
     const dims = strategyResult?.dimensions;
     const [showReasoning, setShowReasoning] = React.useState(false);
 
@@ -955,18 +964,57 @@ function StrategyDashboard({ strategyResult, strategyLoading, strategyError, str
         );
     };
 
+    const renderManualDimension = (label, key) => {
+        const dim = manualDimensions?.[key] || { rating: '', reason: '' };
+        const cls = dim.rating ? dim.rating.replace(/ /g, '_') : 'placeholder';
+        return (
+            <div className="dimension-row manual">
+                <span className="dimension-label">{label}</span>
+                <div className="dimension-value-group">
+                    <select
+                        className={`dimension-rating dimension-value ${cls}`}
+                        value={dim.rating}
+                        onChange={(e) => onManualDimensionChange(key, 'rating', e.target.value)}
+                    >
+                        <option value="">—</option>
+                        {(DIMENSION_OPTIONS[key] || []).map(opt => (
+                            <option key={opt} value={opt}>{opt.replace(/_/g, ' ')}</option>
+                        ))}
+                    </select>
+                    <input
+                        type="text"
+                        className="dimension-reason-input"
+                        placeholder="note…"
+                        value={dim.reason}
+                        onChange={(e) => onManualDimensionChange(key, 'reason', e.target.value)}
+                    />
+                </div>
+            </div>
+        );
+    };
+
     return (
         <div className="strategy-dashboard">
-            <div className="strategy-dashboard-title">Strategy</div>
-
-            {/* Overall Analysis */}
-            <div className="strategy-section-label">Analysis</div>
-            <div className={`strategy-analysis${strategyResult?.overall_analysis ? ' has-content' : ''}`}>
-                {strategyResult?.overall_analysis || (!strategyLoading && 'Click "Get AI Advice" to analyze your draft.')}
+            <div className="strategy-dashboard-header">
+                <div className="strategy-dashboard-title">Strategy</div>
+                <label className="ai-toggle" title="Turn AI recommendations on or off">
+                    <input type="checkbox" checked={aiEnabled} onChange={onToggleAi} />
+                    <span>AI recommendations</span>
+                </label>
             </div>
 
-            {/* Strategy Archetypes */}
-            {strategyResult?.archetypes && strategyResult.archetypes.length > 0 && (
+            {/* Overall Analysis (AI only) */}
+            {aiEnabled && (
+                <React.Fragment>
+                    <div className="strategy-section-label">Analysis</div>
+                    <div className={`strategy-analysis${strategyResult?.overall_analysis ? ' has-content' : ''}`}>
+                        {strategyResult?.overall_analysis || (!strategyLoading && 'Click "Get AI Advice" to analyze your draft.')}
+                    </div>
+                </React.Fragment>
+            )}
+
+            {/* Strategy Archetypes (AI only) */}
+            {aiEnabled && strategyResult?.archetypes && strategyResult.archetypes.length > 0 && (
                 <div className="archetype-section">
                     <div className="strategy-section-label">Strategy Direction</div>
                     <div className="archetype-badges">
@@ -977,8 +1025,8 @@ function StrategyDashboard({ strategyResult, strategyLoading, strategyError, str
                 </div>
             )}
 
-            {/* Internal Reasoning (collapsible) */}
-            {strategyResult?.reasoning && (
+            {/* Internal Reasoning (collapsible, AI only) */}
+            {aiEnabled && strategyResult?.reasoning && (
                 <div className="reasoning-section">
                     <button
                         className="reasoning-toggle"
@@ -994,13 +1042,14 @@ function StrategyDashboard({ strategyResult, strategyLoading, strategyError, str
                 </div>
             )}
 
-            {/* Dimensions */}
+            {/* Dimensions — AI ratings when enabled, manual inputs when off */}
+            {!aiEnabled && <div className="strategy-section-label">Strategy Elements</div>}
             <div className="dimension-section">
-                {renderDimension('Food', 'food')}
-                {renderDimension('Growth', 'growth')}
-                {renderDimension('Extra Actions', 'extra_actions')}
-                {renderDimension('Point Ceiling', 'point_ceiling')}
-                {renderDimension('Plow', 'plow')}
+                {aiEnabled ? renderDimension('Food', 'food') : renderManualDimension('Food', 'food')}
+                {aiEnabled ? renderDimension('Growth', 'growth') : renderManualDimension('Growth', 'growth')}
+                {aiEnabled ? renderDimension('Extra Actions', 'extra_actions') : renderManualDimension('Extra Actions', 'extra_actions')}
+                {aiEnabled ? renderDimension('Point Ceiling', 'point_ceiling') : renderManualDimension('Point Ceiling', 'point_ceiling')}
+                {aiEnabled ? renderDimension('Plow', 'plow') : renderManualDimension('Plow', 'plow')}
             </div>
 
             <hr className="strategy-divider" />
@@ -1018,32 +1067,37 @@ function StrategyDashboard({ strategyResult, strategyLoading, strategyError, str
                 onChange={(e) => onNotesChange(e.target.value)}
             />
 
-            <hr className="strategy-divider" />
+            {/* Risks, error banner, and advice button (AI only) */}
+            {aiEnabled && (
+                <React.Fragment>
+                    <hr className="strategy-divider" />
 
-            {/* Risks */}
-            <div className="strategy-section-label">Risks</div>
-            <div className={`strategy-risks${strategyResult?.risks ? ' has-content' : ''}`}>
-                {strategyResult?.risks || 'No risks identified yet.'}
-            </div>
+                    {/* Risks */}
+                    <div className="strategy-section-label">Risks</div>
+                    <div className={`strategy-risks${strategyResult?.risks ? ' has-content' : ''}`}>
+                        {strategyResult?.risks || 'No risks identified yet.'}
+                    </div>
 
-            {/* Error banner */}
-            {strategyError && (
-                <div className="screenshot-banner screenshot-error" style={{ marginBottom: 12 }}>
-                    <span>{strategyError}</span>
-                    <button className="screenshot-dismiss" onClick={onDismissError}>✕</button>
-                </div>
+                    {/* Error banner */}
+                    {strategyError && (
+                        <div className="screenshot-banner screenshot-error" style={{ marginBottom: 12 }}>
+                            <span>{strategyError}</span>
+                            <button className="screenshot-dismiss" onClick={onDismissError}>✕</button>
+                        </div>
+                    )}
+
+                    {/* Get AI Advice button — shows thematic cycling messages while loading */}
+                    <button
+                        className={`strategy-btn${strategyLoading ? ' loading' : ''}`}
+                        disabled={!strategyAvailable || strategyLoading || !hasCards}
+                        onClick={onGetAdvice}
+                    >
+                        {strategyLoading
+                            ? <LoadingIndicator streamingPhase={streamingPhase} />
+                            : (!strategyAvailable ? 'AI Advice (unavailable)' : (!hasCards ? 'Add cards to get advice' : 'Get AI Advice'))}
+                    </button>
+                </React.Fragment>
             )}
-
-            {/* Get AI Advice button — shows thematic cycling messages while loading */}
-            <button
-                className={`strategy-btn${strategyLoading ? ' loading' : ''}`}
-                disabled={!strategyAvailable || strategyLoading || !hasCards}
-                onClick={onGetAdvice}
-            >
-                {strategyLoading
-                    ? <LoadingIndicator streamingPhase={streamingPhase} />
-                    : (!strategyAvailable ? 'AI Advice (unavailable)' : (!hasCards ? 'Add cards to get advice' : 'Get AI Advice'))}
-            </button>
         </div>
     );
 }
@@ -1659,6 +1713,14 @@ function DraftApp() {
     };
     const [farmGrid, setFarmGrid] = useState(INITIAL_FARM_GRID);
     const [strategyNotes, setStrategyNotes] = useState('');
+    const [aiEnabled, setAiEnabled] = useState(true); // AI recommendations master toggle
+    const [manualDimensions, setManualDimensions] = useState({
+        food: { rating: '', reason: '' },
+        growth: { rating: '', reason: '' },
+        extra_actions: { rating: '', reason: '' },
+        point_ceiling: { rating: '', reason: '' },
+        plow: { rating: '', reason: '' },
+    });
     const [strategyAvailable, setStrategyAvailable] = useState(false);
     const [strategyResult, setStrategyResult] = useState(null);
     const [strategyLoading, setStrategyLoading] = useState(false);
@@ -1797,6 +1859,12 @@ function DraftApp() {
                     if (saved.strategyNotes) {
                         setStrategyNotes(saved.strategyNotes);
                     }
+                    if (typeof saved.aiEnabled === 'boolean') {
+                        setAiEnabled(saved.aiEnabled);
+                    }
+                    if (saved.manualDimensions && typeof saved.manualDimensions === 'object') {
+                        setManualDimensions(prev => ({ ...prev, ...saved.manualDimensions }));
+                    }
                     if (saved.wheelWatch && typeof saved.wheelWatch === 'object') {
                         setWheelWatch(saved.wheelWatch);
                     }
@@ -1854,13 +1922,15 @@ function DraftApp() {
             othersDrafted,
             farmGrid,
             strategyNotes,
+            aiEnabled,
+            manualDimensions,
             wheelWatch,
             tempCards,
             playedCards: [...playedCards],
             ghostAssignments,
             autoAdviceTriggered: autoAdviceTriggeredRef.current,
         });
-    }, [restoredFromStorage, currentRound, playerCount, draftStarted, currentHandNames, hands, draftedCards, sortKey, markingPhase, markedRemaining, othersDrafted, farmGrid, strategyNotes, wheelWatch, tempCards, playedCards, ghostAssignments, strategyResult]);
+    }, [restoredFromStorage, currentRound, playerCount, draftStarted, currentHandNames, hands, draftedCards, sortKey, markingPhase, markedRemaining, othersDrafted, farmGrid, strategyNotes, aiEnabled, manualDimensions, wheelWatch, tempCards, playedCards, ghostAssignments, strategyResult]);
 
     // Auto-trigger AI advice when draft completes.
     // handleGetAdvice is held in a ref so this effect doesn't re-run every time
@@ -1870,11 +1940,11 @@ function DraftApp() {
     const handleGetAdviceRef = useRef(null);
     useEffect(() => { handleGetAdviceRef.current = handleGetAdvice; });
     useEffect(() => {
-        if (draftComplete && strategyAvailable && !strategyResult && !strategyLoading && !strategyError && !autoAdviceTriggeredRef.current) {
+        if (aiEnabled && draftComplete && strategyAvailable && !strategyResult && !strategyLoading && !strategyError && !autoAdviceTriggeredRef.current) {
             autoAdviceTriggeredRef.current = true;
             if (handleGetAdviceRef.current) handleGetAdviceRef.current();
         }
-    }, [draftComplete, strategyAvailable, strategyResult, strategyLoading, strategyError]);
+    }, [aiEnabled, draftComplete, strategyAvailable, strategyResult, strategyLoading, strategyError]);
 
     // Debounced cloud save (alongside the synchronous localStorage save above).
     // Skips while draft is complete — the archive effect handles completion.
@@ -1899,6 +1969,8 @@ function DraftApp() {
                 othersDrafted,
                 farmGrid,
                 strategyNotes,
+                aiEnabled,
+                manualDimensions,
                 wheelWatch,
                 tempCards,
                 playedCards: [...playedCards],
@@ -1916,7 +1988,7 @@ function DraftApp() {
                 cloudSaveTimerRef.current = null;
             }
         };
-    }, [restoredFromStorage, currentUser, draftStarted, draftComplete, currentRound, playerCount, currentHandNames, hands, draftedCards, sortKey, markingPhase, markedRemaining, othersDrafted, farmGrid, strategyNotes, wheelWatch, tempCards, playedCards]);
+    }, [restoredFromStorage, currentUser, draftStarted, draftComplete, currentRound, playerCount, currentHandNames, hands, draftedCards, sortKey, markingPhase, markedRemaining, othersDrafted, farmGrid, strategyNotes, aiEnabled, manualDimensions, wheelWatch, tempCards, playedCards]);
 
     // Archive completed drafts to cloud history, then clear active slot.
     useEffect(() => {
@@ -1941,6 +2013,8 @@ function DraftApp() {
             othersDrafted,
             farmGrid,
             strategyNotes,
+            aiEnabled,
+            manualDimensions,
             wheelWatch,
             tempCards,
             playedCards: [...playedCards],
@@ -2370,6 +2444,11 @@ function DraftApp() {
         }
     }, [screenshotProcessing, cards, cardMap, currentHandNames, allUsedCardNames, currentRound, handleAddCards, isReturningRound, markingPhase, markedRemaining, addTempCard]);
 
+    // Manual dimension editing (used when AI recommendations are toggled off)
+    const handleManualDimensionChange = useCallback((key, field, value) => {
+        setManualDimensions(prev => ({ ...prev, [key]: { ...prev[key], [field]: value } }));
+    }, []);
+
     // Strategy advisor handler
     const handleGetAdvice = useCallback(async () => {
         if (strategyLoading) return;
@@ -2742,7 +2821,7 @@ function DraftApp() {
                                 <div className="hand-columns">
                                     {(() => {
                                         // Show suggestions only during selection phase
-                                        const showSuggestions = handIsFull && !markingPhase && strategyResult?.suggestions;
+                                        const showSuggestions = aiEnabled && handIsFull && !markingPhase && strategyResult?.suggestions;
                                         const suggestionTakenSet = new Set(othersDrafted);
                                         const occSuggestions = showSuggestions
                                             ? strategyResult.suggestions.filter(s => {
@@ -2852,6 +2931,10 @@ function DraftApp() {
                                 onNotesChange={setStrategyNotes}
                                 onGetAdvice={handleGetAdvice}
                                 onDismissError={() => setStrategyError(null)}
+                                aiEnabled={aiEnabled}
+                                onToggleAi={() => setAiEnabled(v => !v)}
+                                manualDimensions={manualDimensions}
+                                onManualDimensionChange={handleManualDimensionChange}
                             />
                         </div>
                     </div>
