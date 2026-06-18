@@ -943,6 +943,36 @@ const DIMENSION_OPTIONS = {
     plow:          ['covered', 'not_covered'],
 };
 
+function emptyManualDimensions() {
+    return {
+        food: { rating: '', reason: '' },
+        growth: { rating: '', reason: '' },
+        extra_actions: { rating: '', reason: '' },
+        point_ceiling: { rating: '', reason: '' },
+        plow: { rating: '', reason: '' },
+    };
+}
+
+// Textarea that grows downward to fit its content (manual reason notes + matches
+// how multi-line AI content wraps). Resizes on value change and on mount/restore.
+function AutoGrowTextarea({ value, onChange, className }) {
+    const ref = React.useRef(null);
+    const resize = () => {
+        const el = ref.current;
+        if (el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
+    };
+    React.useLayoutEffect(resize, [value]);
+    return (
+        <textarea
+            ref={ref}
+            className={className}
+            rows={1}
+            value={value}
+            onChange={(e) => { onChange(e); resize(); }}
+        />
+    );
+}
+
 // ─── StrategyDashboard Component ────────────────────────────────────
 function StrategyDashboard({ strategyResult, strategyLoading, strategyError, strategyAvailable, hasCards, farmGrid, onFarmCellClick, strategyNotes, onNotesChange, onGetAdvice, onDismissError, streamingPhase, aiEnabled, onToggleAi, manualDimensions, onManualDimensionChange }) {
     const dims = strategyResult?.dimensions;
@@ -968,29 +998,29 @@ function StrategyDashboard({ strategyResult, strategyLoading, strategyError, str
 
     const renderManualDimension = (label, key) => {
         const dim = manualDimensions?.[key] || { rating: '', reason: '' };
+        const opts = DIMENSION_OPTIONS[key] || [];
         const cls = dim.rating ? dim.rating.replace(/ /g, '_') : 'placeholder';
+        const hint = opts.map(o => o.replace(/_/g, ' ')).join(' / ');
         return (
             <div className="dimension-row manual">
-                <span className="dimension-label">{label}</span>
-                <div className="dimension-value-group">
+                <div className="dimension-row-main">
+                    <span className="dimension-label">{label}</span>
                     <select
                         className={`dimension-rating dimension-value ${cls}`}
                         value={dim.rating}
                         onChange={(e) => onManualDimensionChange(key, 'rating', e.target.value)}
                     >
-                        <option value="">—</option>
-                        {(DIMENSION_OPTIONS[key] || []).map(opt => (
+                        <option value="">{hint}</option>
+                        {opts.map(opt => (
                             <option key={opt} value={opt}>{opt.replace(/_/g, ' ')}</option>
                         ))}
                     </select>
-                    <input
-                        type="text"
-                        className="dimension-reason-input"
-                        placeholder="note…"
-                        value={dim.reason}
-                        onChange={(e) => onManualDimensionChange(key, 'reason', e.target.value)}
-                    />
                 </div>
+                <AutoGrowTextarea
+                    className="dimension-reason-input"
+                    value={dim.reason}
+                    onChange={(e) => onManualDimensionChange(key, 'reason', e.target.value)}
+                />
             </div>
         );
     };
@@ -1000,8 +1030,9 @@ function StrategyDashboard({ strategyResult, strategyLoading, strategyError, str
             <div className="strategy-dashboard-header">
                 <div className="strategy-dashboard-title">Strategy</div>
                 <label className="ai-toggle" title="Turn AI recommendations on or off">
+                    <span className="ai-toggle-label">AI recommendations</span>
                     <input type="checkbox" checked={aiEnabled} onChange={onToggleAi} />
-                    <span>AI recommendations</span>
+                    <span className="ai-toggle-switch" aria-hidden="true"></span>
                 </label>
             </div>
 
@@ -1716,13 +1747,7 @@ function DraftApp() {
     const [farmGrid, setFarmGrid] = useState(INITIAL_FARM_GRID);
     const [strategyNotes, setStrategyNotes] = useState('');
     const [aiEnabled, setAiEnabled] = useState(true); // AI recommendations master toggle
-    const [manualDimensions, setManualDimensions] = useState({
-        food: { rating: '', reason: '' },
-        growth: { rating: '', reason: '' },
-        extra_actions: { rating: '', reason: '' },
-        point_ceiling: { rating: '', reason: '' },
-        plow: { rating: '', reason: '' },
-    });
+    const [manualDimensions, setManualDimensions] = useState(emptyManualDimensions);
     const [strategyAvailable, setStrategyAvailable] = useState(false);
     const [strategyResult, setStrategyResult] = useState(null);
     const [strategyLoading, setStrategyLoading] = useState(false);
@@ -2211,6 +2236,7 @@ function DraftApp() {
         setTempCards({});
         setFarmGrid(INITIAL_FARM_GRID());
         setStrategyNotes('');
+        setManualDimensions(emptyManualDimensions());
         setStrategyResult(null);
         setStrategyError(null);
         setWheelWatch({});
@@ -2234,6 +2260,7 @@ function DraftApp() {
         setTempCards({});
         setFarmGrid(INITIAL_FARM_GRID());
         setStrategyNotes('');
+        setManualDimensions(emptyManualDimensions());
         setStrategyResult(null);
         setStrategyError(null);
         setWheelWatch({});
