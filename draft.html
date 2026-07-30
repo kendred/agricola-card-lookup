@@ -24,7 +24,7 @@
     </div>
 
     <script type="text/babel">
-const { useState, useEffect, useRef, useCallback, useMemo } = React;
+const { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } = React;
 
 // ─── Constants ──────────────────────────────────────────────────────
 const HAND_SIZE_BY_ROUND = { 1: 10, 2: 9, 3: 8, 4: 7, 5: 6, 6: 5, 7: 4 };
@@ -1186,31 +1186,59 @@ function YourHand({ draftedCards, cardMap, onCardClick }) {
 function CardDetailPopover({ card, anchorRect, onClose, wheelWatchNote, onWheelWatchNoteChange }) {
     const popoverRef = useRef(null);
     const noteInputRef = useRef(null);
-    const [position, setPosition] = useState({ top: 0, left: 0 });
+    const [position, setPosition] = useState({ top: 0, left: 0, maxHeight: null });
 
-    useEffect(() => {
+    // Keep the popover fully inside the viewport. Content can grow after mount
+    // (card image finishing load, wheel-watch note appearing), so this re-runs
+    // on every size change — otherwise the bottom-edge clamp is computed from a
+    // stale height and the popover hangs off the bottom of the screen.
+    const reposition = useCallback(() => {
         if (!anchorRect || !popoverRef.current) return;
         const popover = popoverRef.current;
-        const rect = popover.getBoundingClientRect();
+        const MARGIN = 16;
+        const GAP = 8;
         const viewportW = window.innerWidth;
         const viewportH = window.innerHeight;
+        const availH = Math.max(160, viewportH - MARGIN * 2);
+        const rect = popover.getBoundingClientRect();
+        // scrollHeight is the uncapped content height; rect.height is what's
+        // actually rendered once max-height clips it.
+        const height = Math.min(Math.max(rect.height, popover.scrollHeight), availH);
+
+        let left = anchorRect.right + GAP;
+        if (left + rect.width > viewportW - MARGIN) {
+            left = anchorRect.left - rect.width - GAP;
+        }
+        if (left < MARGIN) {
+            left = Math.max(MARGIN, (viewportW - rect.width) / 2);
+        }
 
         let top = anchorRect.top;
-        let left = anchorRect.right + 8;
+        if (top + height > viewportH - MARGIN) {
+            top = viewportH - MARGIN - height;
+        }
+        if (top < MARGIN) top = MARGIN;
 
-        if (left + rect.width > viewportW - 16) {
-            left = anchorRect.left - rect.width - 8;
-        }
-        if (left < 16) {
-            left = Math.max(16, (viewportW - rect.width) / 2);
-        }
-        if (top + rect.height > viewportH - 16) {
-            top = viewportH - rect.height - 16;
-        }
-        if (top < 16) top = 16;
-
-        setPosition({ top, left });
+        setPosition(prev => (
+            Math.abs(prev.top - top) < 0.5 && Math.abs(prev.left - left) < 0.5 && prev.maxHeight === availH
+                ? prev
+                : { top, left, maxHeight: availH }
+        ));
     }, [anchorRect]);
+
+    useLayoutEffect(reposition, [reposition]);
+
+    useEffect(() => {
+        const popover = popoverRef.current;
+        if (!popover) return;
+        const observer = new ResizeObserver(reposition);
+        observer.observe(popover);
+        window.addEventListener('resize', reposition);
+        return () => {
+            observer.disconnect();
+            window.removeEventListener('resize', reposition);
+        };
+    }, [reposition]);
 
     useEffect(() => {
         if (wheelWatchNote != null && noteInputRef.current) {
@@ -1241,7 +1269,7 @@ function CardDetailPopover({ card, anchorRect, onClose, wheelWatchNote, onWheelW
         <div
             ref={popoverRef}
             className="card-detail-popover"
-            style={{ top: position.top, left: position.left }}
+            style={{ top: position.top, left: position.left, maxHeight: position.maxHeight || undefined }}
         >
             <button className="popover-close" onClick={onClose}>&times;</button>
             <div className="popover-header">
@@ -1264,7 +1292,7 @@ function CardDetailPopover({ card, anchorRect, onClose, wheelWatchNote, onWheelW
             </div>
             {imagePath && (
                 <div className="popover-image">
-                    <img src={imagePath} alt={card.name} />
+                    <img src={imagePath} alt={card.name} onLoad={reposition} />
                 </div>
             )}
             {card.prerequisites && (
