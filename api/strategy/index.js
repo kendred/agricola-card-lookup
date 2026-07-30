@@ -80,7 +80,7 @@ You must respond with ONLY valid JSON matching this exact format — no markdown
 
 Rules for reasoning:
 - The "reasoning" field comes FIRST and must be filled with genuine analysis BEFORE producing the other fields. Think through the draft state carefully.
-- For "archetypes", list the 1-2 most prominent strategy directions forming from drafted card tags. Use archetype names from the strategy guide: Day Laborer, Fishing, Traveling Players, Grain, Sow, Major/Minor, Lesson, Big House, Small House, Stone House, Stable, Animal. If no clear archetype has emerged (typically rounds 1-2), use ["Flexible"].
+- For "archetypes", list the 1-2 most prominent strategy directions forming from drafted card tags. Use archetype names from the strategy guide: Day Laborer, Fishing, Traveling Players, Grain, Sow, Major/Minor, Lesson, Big House, Small House, Stone House, Stable. If no clear archetype has emerged (typically rounds 1-2), use ["Flexible"].
 
 Rules for suggestions:
 - You MUST return exactly 2 Occupation suggestions and exactly 2 Minor Improvement suggestions (4 total). Never return 3 of one type and 1 of the other — count the types in your suggestions array before responding. Only return fewer than 2 of a type if the current hand genuinely contains fewer than 2 cards of that type.

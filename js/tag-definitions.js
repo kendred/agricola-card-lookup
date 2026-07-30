@@ -10,7 +10,6 @@ var TAG_DEFINITIONS = {
     'Fishing':           { abbrev: 'F',   color: '#3498db' },
     'Traveling Players': { abbrev: 'TP',  color: '#e91e9e' },
     'Sow':               { abbrev: 'Sow', color: '#2ecc71' },
-    'Animal':            { abbrev: 'Ani', color: '#6d4c41' },
     'Lesson':            { abbrev: 'L',   color: '#2980b9' },
     'Stable':            { abbrev: 'ST',  color: '#7f8c8d' },
 };
