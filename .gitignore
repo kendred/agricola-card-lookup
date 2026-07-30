@@ -1,6 +1,7 @@
 .DS_Store
 node_modules/
 .env
+.claude/settings.local.json
 PROGRESS.md
 TODO.md
 STREAMING_PLAN.md
