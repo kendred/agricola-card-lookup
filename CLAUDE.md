@@ -32,7 +32,7 @@ Configured in `.claude/launch.json`. Alternative: `python3 .claude/serve.py`.
 | `js/card-image-list.js` | Card image filename mapping |
 | `api/strategy/index.js` | Azure Function: AI strategy advisor (system prompt + card index) |
 | `api/ocr/index.js` | Azure Function: screenshot OCR via GPT-4o vision |
-| `data/agricola-cards.json` | Master card database (773 cards). Duplicated at `api/data/` for Azure Functions. |
+| `data/agricola-cards.json` | Master card database (808 cards). Duplicated at `api/data/` for Azure Functions. |
 | `docs/agricola-strategy-guide.md` | Strategy framework embedded in AI system prompt |
 
 ## Architecture Conventions
@@ -73,14 +73,35 @@ Configured in `.claude/launch.json`. Alternative: `python3 .claude/serve.py`.
 }
 ```
 
+## Card Intake (pulling submitted cards from GitHub issues)
+
+New cards arrive as **open GitHub issues labeled `card-submission`**, titled `[Card Submission] <name>`. Each body has a human-readable table plus a machine-readable JSON block (`name`, `type`, `description`, `cost`, `prerequisites`, `vps`, `passing`, `card_id`, `tags`). List them with `gh issue list --label card-submission`.
+
+**The intake JSON is unreliable** — submissions are OCR'd from card photos, so the parser routinely mangles data. **Never auto-import.** Always present the parsed cards to the user for **approve / deny / fix** review *before* writing anything to the data files.
+
+### Process
+1. Pull all open `card-submission` issues and lay them out for the user to approve / deny / fix (a review widget works well; a markdown table is fine too). Flag likely OCR errors so the user can spot-check.
+2. **Approved** cards → append as-is. **Fix** cards → correct the text with the user (go 1-by-1; don't guess the physical card's wording — propose a correction and confirm). **Deny** cards → leave in the DB untouched.
+3. **Before adding any card, check it doesn't already exist by name** — accounting for truncated names (e.g. "Petrified" was really the existing "Petrified Wood"). If it exists, close the issue as a duplicate instead of adding.
+4. Append approved/fixed cards to **both** `data/agricola-cards.json` **and** `api/data/agricola-cards.json` — these two files must stay byte-identical. New cards get `rank: null` (and null for all stat fields: `adp`, `apr`, `play_rate`, `elo_per_play`, `value`, `value_when_played`); rankless cards sort to the bottom of the rankings.
+5. Close the resolved issues (`gh issue close <n> --comment "..."`): added cards note they were imported; denies note they can be resubmitted; duplicates reference the existing card.
+
+### Known OCR failure patterns (scrutinize these)
+- **Dropped resource/point icons** → numbers with missing nouns ("place 2 ___", "worth 1 ___"). Infer from context (wood/stone/point) and confirm.
+- **Wrong resource** → e.g. a card that should yield vegetables says "food"; the card *name* is often the tell.
+- **Food icon misread as a VP** (and vice-versa) → e.g. Dwelling's "1 VP" was actually a 1-food cost.
+- **Wrong card type** → e.g. Whisky Distiller came in as a Minor Improvement but is an Occupation. Type has consequences: **Occupations never have a cost, VP, or the passing flag, and never carry improvement-build prerequisites** ("N minor improvements"). Only Minor Improvements can be passing.
+- **`passing` almost always submitted as `false`** regardless of truth — confirm per card (only minors can be passing).
+- **Truncated names** → the issue title may be a fragment of the real card name.
+
 ## Draft Tool Concepts
 - **Rounds 1-4**: New hands dealt. Hand sizes: 10/9/8/7. User picks 1 occ + 1 minor per round.
 - **Rounds 5-7**: Hands return (minus cards taken by all players). "Marking phase" = user identifies which cards remain.
 - **Hand rotation**: Hands 1-3 pass clockwise, return in rounds 5-7. Hand 4 appears only in round 4.
-- **Strategy tags**: 12 archetypes (Day Laborer, Fishing, Big House, Small House, Stone House, Grain, Sow, Major/Minor, Lesson, Stable, Animal, Traveling Players).
+- **Strategy tags**: 11 archetypes (Day Laborer, Fishing, Big House, Small House, Stone House, Grain, Sow, Major/Minor, Lesson, Stable, Traveling Players). (Animal was retired as a draftable tag — animals are a farm backbone, not a tag-based engine.)
 
 ## AI Strategy System
-- System prompt includes: role definition, JSON response schema, strategy guide (~260 lines), and a compact index of all 773 cards
+- System prompt includes: role definition, JSON response schema, strategy guide (~260 lines), and a compact index of all 808 cards
 - Response includes: `reasoning` (chain-of-thought), `archetypes`, `overall_analysis`, `dimensions` (with justifications), `risks`, `suggestions` (2 occs + 2 minors)
 - Draft stage awareness: rounds 1-2 brief, 3-4 moderate, 5-7 full analysis
 

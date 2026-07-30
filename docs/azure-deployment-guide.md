@@ -117,7 +117,7 @@ az staticwebapp create \
 
 ### Step 5: Configure Environment Variables
 
-The Azure Functions need your OpenAI credentials. In the Azure Portal:
+The Azure Functions need your OpenAI credentials and a GitHub token for card submissions. In the Azure Portal:
 
 1. Go to your Static Web App resource
 2. Click **Configuration** (under Settings in the left menu)
@@ -129,10 +129,23 @@ The Azure Functions need your OpenAI credentials. In the Azure Portal:
 | `AZURE_OPENAI_KEY` | Your Key 1 from Step 2 |
 | `AZURE_OPENAI_DEPLOYMENT` | `gpt-4o` (or whatever you named the OCR deployment) |
 | `AZURE_OPENAI_STRATEGY_DEPLOYMENT` | `o3` (or whatever you named the strategy deployment) |
+| `GITHUB_TOKEN` | A GitHub PAT with `issues:write` on this repo (see below) |
 
 4. Click **Save**
 
 > **Gotcha:** These settings are only available to the Functions runtime, never exposed to the browser. But make sure you don't accidentally commit them to your repo.
+
+#### Creating the GitHub token (`GITHUB_TOKEN`)
+
+The `/api/submit-card` function opens a GitHub issue whenever a user adds a temporary card not found in the database. It needs a token scoped narrowly to this repo:
+
+1. Go to **GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens**
+2. Click **Generate new token**
+3. Set **Repository access** to "Only select repositories" → pick `kendred/agricola-card-lookup`
+4. Under **Permissions**, enable **Issues → Read and write**
+5. Copy the token and paste it as the `GITHUB_TOKEN` app setting
+
+> **Note:** Fine-grained PATs can have expiration dates (30/60/90 days or custom). If card submissions silently stop creating issues in the future, the most likely cause is an expired token — regenerate it and update the app setting.
 
 ### Step 6: Verify Deployment
 
@@ -194,7 +207,8 @@ There's no `local.settings.json` in the repo (correctly — it should be gitigno
     "AZURE_OPENAI_ENDPOINT": "https://your-endpoint.openai.azure.com/",
     "AZURE_OPENAI_KEY": "your-key-here",
     "AZURE_OPENAI_DEPLOYMENT": "gpt-4o",
-    "AZURE_OPENAI_STRATEGY_DEPLOYMENT": "o3"
+    "AZURE_OPENAI_STRATEGY_DEPLOYMENT": "o3",
+    "GITHUB_TOKEN": "your-github-pat-here"
   }
 }
 ```
@@ -232,6 +246,7 @@ The $200 free credit for new accounts covers many months of use.
 | `AZURE_OPENAI_KEY` | Both functions | API key for Azure OpenAI |
 | `AZURE_OPENAI_DEPLOYMENT` | OCR function (+ strategy fallback) | Model deployment name for OCR (defaults to `gpt-4o`) |
 | `AZURE_OPENAI_STRATEGY_DEPLOYMENT` | Strategy function | Model deployment name for strategy advisor (defaults to `o3`) |
+| `GITHUB_TOKEN` | `submit-card` function | Fine-grained PAT with `issues:write` on this repo — used to open a GitHub issue for each unrecognized card submitted by a user |
 
 ---
 
