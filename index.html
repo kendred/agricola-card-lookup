@@ -1341,6 +1341,18 @@ function hasStats(card) {
     return card.rank != null;
 }
 
+// A card with no ranking data for either player count (e.g. a newly intaken
+// card that hasn't been ranked yet). These are shown at the bottom of the list
+// in every mode rather than hidden.
+function isUnranked(card) {
+    return card.rank == null && card.stats_3p == null;
+}
+
+// Whether a card should appear in the current player-count view.
+function isVisibleInMode(card) {
+    return hasStats(card) || isUnranked(card);
+}
+
 // Calculate min/max for gradients (recalculated when player count changes)
 let minPlayRate, maxPlayRate, minValue, maxValue, minValuePlayed, maxValuePlayed, minEloPerPlay, maxEloPerPlay;
 
@@ -1440,8 +1452,9 @@ function updateClearSortButton() {
 // Filter and sort cards
 function getFilteredAndSortedCards() {
     let filtered = cards.filter(card => {
-        // In current player count mode, only show cards with stats
-        if (!hasStats(card)) return false;
+        // In current player count mode, show cards with stats plus unranked
+        // cards (which sort to the bottom via the rank fallback below).
+        if (!isVisibleInMode(card)) return false;
 
         if (currentFilters.type !== 'all') {
             if (currentFilters.type === 'minor' && card.type !== 'Minor Improvement') return false;
@@ -1530,7 +1543,7 @@ function renderTable() {
     const cardsToShow = getFilteredAndSortedCards();
     
     // Update header text
-    const totalWithStats = cards.filter(c => hasStats(c)).length;
+    const totalWithStats = cards.filter(c => isVisibleInMode(c)).length;
     const playerLabel = playerCountMode === 3 ? '3P' : '4P';
     if (cardsToShow.length === totalWithStats) {
         tableHeader.textContent = `All ${playerLabel} Cards (${totalWithStats})`;
@@ -1552,7 +1565,7 @@ function renderTable() {
 
         return `
         <tr data-name="${card.name}">
-            <td class="table-rank">#${stats.rank}</td>
+            <td class="table-rank">${stats.rank != null ? '#' + stats.rank : '—'}</td>
             <td class="table-name">${card.name}${tagDots}</td>
             <td class="table-type">${card.type || 'N/A'}</td>
             <td>${stats.adp || 'N/A'}</td>
