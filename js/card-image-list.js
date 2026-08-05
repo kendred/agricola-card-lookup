@@ -1,4 +1,16 @@
 // Shared list of all card image filenames — used by both index.html and draft.html
+
+// Cards whose names collide after normalization, so name matching alone can't
+// pick the right image. Keyed by card_id and checked before the name lookup;
+// null means "no image exists" — better than falling through to a lookalike
+// card's art, which is silently wrong.
+var CARD_IMAGE_OVERRIDES = {
+    'C054': 'market stall.png',   // Market Stall — grain + fence for 5 food
+    'B008': 'marketstall.png',    // Market Stall — grain for 1 vegetable
+    'B142': 'greengrocer.png',    // Greengrocer
+    'C103': null,                 // Green Grocer — no image; don't borrow B142's
+};
+
 var CARD_IMAGE_LIST = [
     'abort oriel.png',
     'acornsbasket.png',

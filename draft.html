@@ -86,9 +86,12 @@ CARD_IMAGE_LIST.forEach(filename => {
     cardImageMap[normalized] = filename;
 });
 
-function getCardImagePath(cardName) {
-    const normalized = normalizeForMatch(cardName);
-    const filename = cardImageMap[normalized];
+function getCardImagePath(cardName, cardId) {
+    if (cardId && Object.prototype.hasOwnProperty.call(CARD_IMAGE_OVERRIDES, cardId)) {
+        const override = CARD_IMAGE_OVERRIDES[cardId];
+        return override ? `card-images/${override}` : null;
+    }
+    const filename = cardImageMap[normalizeForMatch(cardName)];
     return filename ? `card-images/${filename}` : null;
 }
 
@@ -1263,7 +1266,7 @@ function CardDetailPopover({ card, anchorRect, onClose, wheelWatchNote, onWheelW
         };
     }, [onClose]);
 
-    const imagePath = getCardImagePath(card.name);
+    const imagePath = getCardImagePath(card.name, card.card_id);
 
     return (
         <div

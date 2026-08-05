@@ -7844,21 +7844,29 @@
   {
     "name": "Market Stall",
     "rank": 294,
-    "pwr": "2.23",
-    "adp": "4.3",
+    "adp": "4.30",
     "play_rate": "76%",
     "elo_per_play": "3.83",
-    "value": "9.589",
+    "value": "16.469",
     "value_when_played": "5.0",
     "description": "After the field phase of each harvest, you can exchange 1 grain plus 1 fence (both from your supply) for 5 food.",
     "card_id": "C054",
     "type": "Minor Improvement",
-    "cost": "",
+    "cost": "1 Clay",
     "vps": "",
     "prerequisites": "",
     "passing": false,
     "tags": [],
-    "stats_3p": null
+    "apr": "6.45",
+    "stats_3p": {
+      "rank": 380,
+      "adp": "3.00",
+      "apr": "6.71",
+      "play_rate": "93%",
+      "elo_per_play": "2.64",
+      "value": "7.92",
+      "value_when_played": "2.8"
+    }
   },
   {
     "name": "Truffle Slicer",
@@ -13105,11 +13113,10 @@
   {
     "name": "Greengrocer",
     "rank": 494,
-    "pwr": "1.4",
     "adp": "3.53",
     "play_rate": "66%",
     "elo_per_play": "-2.28",
-    "value": "4.942",
+    "value": "-8.0484",
     "value_when_played": "-3.5",
     "description": "Each time you use the \"Grain Seeds\" action space, you also get 1 vegetable.",
     "card_id": "B142",
@@ -13121,7 +13128,16 @@
     "tags": [
       "Grain"
     ],
-    "stats_3p": null
+    "stats_3p": {
+      "rank": 228,
+      "adp": "2.83",
+      "apr": "8.07",
+      "play_rate": "47%",
+      "elo_per_play": "4.06",
+      "value": "11.4898",
+      "value_when_played": "8.7"
+    },
+    "apr": "6.48"
   },
   {
     "name": "Ropemaker",
@@ -13552,20 +13568,20 @@
     }
   },
   {
-    "name": "Market Stall",
+    "name": "Market Stall (B008)",
     "rank": 511,
     "adp": "5.53",
     "play_rate": "54%",
     "elo_per_play": "1.22",
     "value": "6.7466",
     "value_when_played": "2.3",
-    "description": "After the field phase of each harvest, you can exchange 1 grain plus 1 fence (both from your supply) for 5 food.",
-    "card_id": "C054",
+    "description": "You immediately get 1 vegetable. (Effectively, you are exchanging 1 grain for 1 vegetable.)",
+    "card_id": "B008",
     "type": "Minor Improvement",
-    "cost": "",
+    "cost": "1 Grain",
     "vps": "",
     "prerequisites": "",
-    "passing": false,
+    "passing": true,
     "tags": [],
     "apr": "10.37",
     "stats_3p": {
@@ -15095,15 +15111,7 @@
     "passing": false,
     "tags": [],
     "apr": "9.13",
-    "stats_3p": {
-      "rank": 228,
-      "adp": "2.83",
-      "apr": "8.07",
-      "play_rate": "47%",
-      "elo_per_play": "4.06",
-      "value": "11.4898",
-      "value_when_played": "8.7"
-    }
+    "stats_3p": null
   },
   {
     "name": "Wood Harvester",
@@ -20548,7 +20556,8 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": []
+    "tags": [],
+    "stats_3p": null
   },
   {
     "name": "Festival Planning",
@@ -20569,7 +20578,8 @@
     "tags": [
       "Sow",
       "Major/Minor"
-    ]
+    ],
+    "stats_3p": null
   },
   {
     "name": "Sheep Walker",
@@ -20587,7 +20597,8 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": []
+    "tags": [],
+    "stats_3p": null
   },
   {
     "name": "Publican",
@@ -20605,7 +20616,8 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": []
+    "tags": [],
+    "stats_3p": null
   },
   {
     "name": "Farm Hand",
@@ -20623,7 +20635,8 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": []
+    "tags": [],
+    "stats_3p": null
   },
   {
     "name": "Material Hub",
@@ -20641,7 +20654,8 @@
     "vps": "",
     "prerequisites": "1 reed and 1 stone in your supply",
     "passing": false,
-    "tags": []
+    "tags": [],
+    "stats_3p": null
   },
   {
     "name": "Basket Chair",
@@ -20659,7 +20673,8 @@
     "vps": "1",
     "prerequisites": "",
     "passing": false,
-    "tags": []
+    "tags": [],
+    "stats_3p": null
   },
   {
     "name": "Workshop Assistant",
@@ -20677,7 +20692,8 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": []
+    "tags": [],
+    "stats_3p": null
   },
   {
     "name": "Farmyard Worker",
@@ -20695,7 +20711,8 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": []
+    "tags": [],
+    "stats_3p": null
   },
   {
     "name": "Imitator",
@@ -20713,7 +20730,8 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": []
+    "tags": [],
+    "stats_3p": null
   },
   {
     "name": "Cabbage Buyer",
@@ -20731,7 +20749,8 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": []
+    "tags": [],
+    "stats_3p": null
   },
   {
     "name": "Dwelling",
@@ -20749,7 +20768,8 @@
     "vps": "",
     "prerequisites": "",
     "passing": true,
-    "tags": []
+    "tags": [],
+    "stats_3p": null
   },
   {
     "name": "Sweep",
@@ -20767,7 +20787,8 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": []
+    "tags": [],
+    "stats_3p": null
   },
   {
     "name": "Bassinet",
@@ -20785,7 +20806,8 @@
     "vps": "1",
     "prerequisites": "",
     "passing": false,
-    "tags": []
+    "tags": [],
+    "stats_3p": null
   },
   {
     "name": "Roll-Over Plow",
@@ -20803,7 +20825,8 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": []
+    "tags": [],
+    "stats_3p": null
   },
   {
     "name": "Wood Palisades",
@@ -20821,7 +20844,8 @@
     "vps": "",
     "prerequisites": "2 occupations",
     "passing": false,
-    "tags": []
+    "tags": [],
+    "stats_3p": null
   },
   {
     "name": "Whisky Distiller",
@@ -20839,7 +20863,8 @@
     "vps": "",
     "prerequisites": "",
     "passing": false,
-    "tags": []
+    "tags": [],
+    "stats_3p": null
   },
   {
     "name": "Land Consolidation",
@@ -20857,7 +20882,8 @@
     "vps": "1",
     "prerequisites": "",
     "passing": false,
-    "tags": []
+    "tags": [],
+    "stats_3p": null
   },
   {
     "name": "Bumper Crop",
@@ -20875,7 +20901,8 @@
     "vps": "1",
     "prerequisites": "2 Grain Fields",
     "passing": false,
-    "tags": []
+    "tags": [],
+    "stats_3p": null
   },
   {
     "name": "Working Gloves",
@@ -20893,6 +20920,7 @@
     "vps": "",
     "prerequisites": "1 occupation",
     "passing": false,
-    "tags": []
+    "tags": [],
+    "stats_3p": null
   }
 ]

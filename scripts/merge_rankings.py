@@ -22,6 +22,29 @@ TSV_4P = os.path.join(ROOT_DIR, 'data', 'agricola-4p-rankings.tsv')
 TSV_3P = os.path.join(ROOT_DIR, 'data', 'agricola-3p-rankings.tsv')
 
 
+# TSV rows identify cards by name only, so two cards printed with the same name
+# (e.g. the C054 and B008 Market Stalls) can't be told apart by the matcher.
+# List their card_ids in the order their rows appear in each TSV — i.e. by
+# ascending rank — so each row lands on the right card. A duplicate name that
+# isn't listed here aborts the merge rather than silently clobbering one card.
+#
+# Note the DB name may be disambiguated ("Market Stall (B008)") while the TSV
+# still carries the printed name; matching happens on the normalized TSV name.
+DUPLICATE_ROW_ORDER = {
+    'marketstall': {'4p': ['C054', 'B008'], '3p': ['C054', 'B008']},
+}
+
+
+def exact_key(name: str) -> str:
+    """Lowercase + collapse whitespace, but keep it otherwise intact.
+
+    Preserves the distinction between genuinely different cards whose names
+    only differ by spacing/punctuation (e.g. Greengrocer B142 vs Green Grocer
+    C103), which normalize() below deliberately collapses.
+    """
+    return ' '.join(name.lower().split())
+
+
 def normalize(name: str) -> str:
     """Lowercase, remove spaces, hyphens, apostrophes, periods, accents."""
     s = name.lower().strip()
@@ -111,11 +134,15 @@ def main():
         cards = json.load(f)
     print(f"Loaded {len(cards)} cards from JSON")
 
-    # Build normalized name -> card index map
-    norm_to_idx = {}
+    # Name -> card indices (a name can cover >1 card), plus a card_id index
+    exact_to_indices = {}
+    norm_to_indices = {}
+    id_to_idx = {}
     for i, card in enumerate(cards):
-        n = normalize(card['name'])
-        norm_to_idx[n] = i
+        exact_to_indices.setdefault(exact_key(card['name']), []).append(i)
+        norm_to_indices.setdefault(normalize(card['name']), []).append(i)
+        if card.get('card_id'):
+            id_to_idx[card['card_id']] = i
 
     # Parse TSVs
     rows_4p = parse_tsv(TSV_4P)
@@ -123,14 +150,65 @@ def main():
     print(f"Parsed {len(rows_4p)} rows from 4p TSV")
     print(f"Parsed {len(rows_3p)} rows from 3p TSV")
 
+    # Consumed one at a time as duplicate-named rows come up, in TSV order
+    dup_queues = {
+        tsv_key: {n: list(ids[tsv_key]) for n, ids in DUPLICATE_ROW_ORDER.items()}
+        for tsv_key in ('4p', '3p')
+    }
+    ambiguous = []
+    # card index -> TSV names that wrote to it, per TSV. Two names landing on
+    # one card is the signature of the silent-clobber bug this guards against.
+    written = {'4p': {}, '3p': {}}
+
+    def resolve_index(n, name, tsv_key):
+        """TSV row -> card index. None means unmatched; ambiguity is fatal.
+
+        Order matters: hand-listed duplicates first (their DB names have been
+        disambiguated, so an exact match would wrongly grab just one of them),
+        then exact name, then the accent/punctuation-insensitive fallback.
+        """
+        if n in DUPLICATE_ROW_ORDER:
+            queue = dup_queues[tsv_key][n]
+            if not queue:
+                ambiguous.append(
+                    f"{name} ({tsv_key}): more TSV rows than card_ids listed in "
+                    f"DUPLICATE_ROW_ORDER['{n}']")
+                return None
+            card_id = queue.pop(0)
+            if card_id not in id_to_idx:
+                ambiguous.append(
+                    f"{name} ({tsv_key}): DUPLICATE_ROW_ORDER lists card_id "
+                    f"{card_id}, which is not in the card database")
+                return None
+            print(f"  duplicate name '{name}' ({tsv_key}) -> {card_id}")
+            return id_to_idx[card_id]
+        exact = exact_to_indices.get(exact_key(name))
+        if exact and len(exact) == 1:
+            return exact[0]
+        indices = norm_to_indices.get(n)
+        if not indices:
+            return None
+        if len(indices) > 1:
+            names = ', '.join(f"{cards[i]['name']} [{cards[i].get('card_id') or '?'}]"
+                              for i in indices)
+            ambiguous.append(
+                f"{name} ({tsv_key}): matches {len(indices)} cards ({names}). Add "
+                f"'{n}' to DUPLICATE_ROW_ORDER with their card_ids in TSV order")
+            return None
+        return indices[0]
+
+    def record(idx, name, tsv_key):
+        written[tsv_key].setdefault(idx, []).append(name)
+
     # --- Match and merge 4p data ---
     unmatched_4p = []
     matched_4p = 0
     for row in rows_4p:
         name = row.get('Card Name', '').strip()
         n = normalize(name)
-        if n in norm_to_idx:
-            idx = norm_to_idx[n]
+        idx = resolve_index(n, name, '4p')
+        if idx is not None:
+            record(idx, name, '4p')
             stats = derive_stats(row)
             # Update top-level fields
             cards[idx]['rank'] = stats['rank']
@@ -163,11 +241,16 @@ def main():
     for row in rows_3p:
         name = row.get('Card Name', '').strip()
         n = normalize(name)
-        if n in norm_to_idx:
-            idx = norm_to_idx[n]
+        flagged = len(ambiguous)
+        idx = resolve_index(n, name, '3p')
+        if idx is not None:
+            record(idx, name, '3p')
             stats = derive_stats(row)
             cards[idx]['stats_3p'] = stats
             matched_3p += 1
+        elif len(ambiguous) > flagged:
+            # Ambiguous, not new — the run aborts below; don't invent a card
+            continue
         else:
             # 3p-only card (banned in 4p) — add as new entry
             stats = derive_stats(row)
@@ -208,10 +291,76 @@ def main():
     print(f"  {cards_with_3p} with 3p data, {cards_without_3p} without")
     print(f"  {banned_count} banned-in-4p cards (3p only)")
 
-    # Write output
+    # --- Refuse to write on ambiguity ---
+    leftover = [(tsv_key, n, q) for tsv_key, queues in dup_queues.items()
+                for n, q in queues.items() if q]
+    for tsv_key, n, q in leftover:
+        ambiguous.append(
+            f"{n} ({tsv_key}): DUPLICATE_ROW_ORDER lists {q} but the TSV had no "
+            f"row(s) left for them — did a card drop out of the rankings?")
+
+    if ambiguous:
+        print("\nABORTED — ambiguous name matches, nothing written:")
+        for msg in ambiguous:
+            print(f"  - {msg}")
+        return 1
+
+    # --- Integrity checks (catch silent merge failures before they ship) ---
+    problems = []
+
+    # Two TSV rows landing on one card means one card's stats were overwritten
+    # by another card's — the bug that gave both Market Stalls the same stats.
+    for tsv_key in ('4p', '3p'):
+        for idx, names in written[tsv_key].items():
+            if len(names) > 1:
+                problems.append(
+                    f"{cards[idx]['name']} [{cards[idx].get('card_id') or 'no id'}]: "
+                    f"{len(names)} {tsv_key} rows landed on it ({', '.join(names)})")
+
+    # ...and the mirror image: a card claiming 4p stats that no row updated is
+    # holding data from an earlier merge. Rankless cards (new intake, or banned
+    # in 4p) are expected to have no row.
+    for i, c in enumerate(cards):
+        if c.get('rank') is not None and i not in written['4p']:
+            problems.append(
+                f"{c['name']} [{c.get('card_id') or 'no id'}]: has rank {c['rank']} "
+                f"but no 4p TSV row matched it — stats are stale")
+
+    for c in cards:
+        label = f"{c['name']} [{c.get('card_id') or 'no id'}]"
+        if c.get('pwr') is not None:
+            problems.append(f"{label}: still has a 'pwr' field (never merged)")
+        if c.get('rank') is not None and not c.get('apr'):
+            problems.append(f"{label}: has rank {c['rank']} but no apr (stale entry)")
+
+    seen_ids = {}
+    for c in cards:
+        cid = c.get('card_id')
+        if not cid:
+            continue
+        if cid in seen_ids:
+            problems.append(f"card_id {cid} used by both '{seen_ids[cid]}' and '{c['name']}'")
+        seen_ids[cid] = c['name']
+
+    seen_names = {}
+    for c in cards:
+        if c['name'] in seen_names:
+            problems.append(
+                f"duplicate name '{c['name']}' — name is the lookup key across the "
+                f"app, so give one of them a disambiguated name (e.g. 'Name (ID)')")
+        seen_names[c['name']] = True
+
+    if problems:
+        print(f"\nABORTED — {len(problems)} integrity problem(s), nothing written:")
+        for msg in problems:
+            print(f"  - {msg}")
+        return 1
+
+    # Write output (both copies must stay byte-identical)
+    payload = json.dumps(cards, indent=2, ensure_ascii=False) + '\n'
     for path in [CARDS_JSON, API_CARDS_JSON]:
         with open(path, 'w', encoding='utf-8') as f:
-            json.dump(cards, f, indent=2, ensure_ascii=False)
+            f.write(payload)
         print(f"Wrote {path}")
 
     if unmatched_4p:

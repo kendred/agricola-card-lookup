@@ -4993,7 +4993,7 @@ const cards = [
     "description": "After the field phase of each harvest, you can exchange 1 grain plus 1 fence (both from your supply) for 5 food.",
     "card_id": "C054",
     "type": "Minor Improvement",
-    "cost": "",
+    "cost": "1 Clay",
     "vps": "",
     "prerequisites": "",
     "passing": false
@@ -8672,7 +8672,7 @@ const cards = [
     "passing": false
   },
   {
-    "name": "Market Stall",
+    "name": "Market Stall (B008)",
     "rank": 511,
     "pwr": "1.34",
     "adp": "5.53",
@@ -8680,13 +8680,13 @@ const cards = [
     "elo_per_play": "1.22",
     "value": "7.4102",
     "value_when_played": "2.3",
-    "description": "After the field phase of each harvest, you can exchange 1 grain plus 1 fence (both from your supply) for 5 food.",
-    "card_id": "C054",
+    "description": "You immediately get 1 vegetable. (Effectively, you are exchanging 1 grain for 1 vegetable.)",
+    "card_id": "B008",
     "type": "Minor Improvement",
-    "cost": "",
+    "cost": "1 Grain",
     "vps": "",
     "prerequisites": "",
-    "passing": false
+    "passing": true
   },
   {
     "name": "Party Organizer",

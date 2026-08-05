@@ -1564,7 +1564,7 @@ function renderTable() {
         }).join('');
 
         return `
-        <tr data-name="${card.name}">
+        <tr data-index="${cards.indexOf(card)}">
             <td class="table-rank">${stats.rank != null ? '#' + stats.rank : '—'}</td>
             <td class="table-name">${card.name}${tagDots}</td>
             <td class="table-type">${card.type || 'N/A'}</td>
@@ -1581,8 +1581,7 @@ function renderTable() {
     
     document.querySelectorAll('#cardTableBody tr').forEach(row => {
         row.addEventListener('click', () => {
-            const cardName = row.dataset.name;
-            const card = cards.find(c => c.name === cardName);
+            const card = cards[Number(row.dataset.index)];
             displayCard(card);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
@@ -1775,8 +1774,10 @@ searchInput.addEventListener('input', (e) => {
         return;
     }
     
+    // Track the index so duplicate names (e.g. the two Market Stalls) stay distinct
     const matches = cards
-        .filter(card => card.name.toLowerCase().includes(query))
+        .map((card, index) => ({ card, index }))
+        .filter(({ card }) => card.name.toLowerCase().includes(query))
         .slice(0, 10);
     
     if (matches.length === 0) {
@@ -1786,10 +1787,10 @@ searchInput.addEventListener('input', (e) => {
     }
     
     suggestionsDiv.innerHTML = matches
-        .map(card => {
+        .map(({ card, index }) => {
             const stats = getCardStats(card);
             return `
-            <div class="suggestion-item" data-name="${card.name}">
+            <div class="suggestion-item" data-index="${index}">
                 <span class="suggestion-rank">#${stats.rank || 'N/R'}</span>
                 <span class="suggestion-name">${card.name}</span>
                 <span class="suggestion-apr">APR: ${stats.apr || 'N/A'}</span>
@@ -1802,10 +1803,9 @@ searchInput.addEventListener('input', (e) => {
     
     document.querySelectorAll('.suggestion-item').forEach(item => {
         item.addEventListener('click', () => {
-            const cardName = item.dataset.name;
-            const card = cards.find(c => c.name === cardName);
+            const card = cards[Number(item.dataset.index)];
             displayCard(card);
-            searchInput.value = cardName;
+            searchInput.value = card.name;
             suggestionsDiv.classList.remove('active');
         });
     });
@@ -1857,9 +1857,12 @@ imageFiles.forEach(filename => {
     cardImageMap[normalized] = filename;
 });
 
-function getCardImagePath(cardName) {
-    const normalized = normalizeForMatch(cardName);
-    const filename = cardImageMap[normalized];
+function getCardImagePath(cardName, cardId) {
+    if (cardId && Object.prototype.hasOwnProperty.call(CARD_IMAGE_OVERRIDES, cardId)) {
+        const override = CARD_IMAGE_OVERRIDES[cardId];
+        return override ? `card-images/${override}` : null;
+    }
+    const filename = cardImageMap[normalizeForMatch(cardName)];
     return filename ? `card-images/${filename}` : null;
 }
 
@@ -1878,7 +1881,7 @@ function displayCard(card) {
         return def ? `<div class="card-tag-pill" style="background:${def.color}">${tag}</div>` : '';
     }).join('');
 
-    const imagePath = getCardImagePath(card.name);
+    const imagePath = getCardImagePath(card.name, card.card_id);
 
     const description = card.description ?
         `<div class="card-description">${card.description}</div>` :
