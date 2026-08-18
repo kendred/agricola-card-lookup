@@ -1,0 +1,64 @@
+{
+  "handNames": [
+    "Potato Ridger",
+    "Crack Weeder",
+    "Brewing Water",
+    "Forest Well",
+    "Manservant",
+    "Freemason",
+    "Food Merchant",
+    "Transactor"
+  ],
+  "draftedNames": [
+    "Assistant Tiller",
+    "Feed Pellets",
+    "Collector",
+    "Profiteering",
+    "Established Person",
+    "Artisan District",
+    "Site Manager",
+    "Mining Hammer",
+    "Priest",
+    "Hauberg",
+    "Nutrition Expert",
+    "Child's Toy"
+  ],
+  "othersDrafted": [
+    "Basket Chair",
+    "Turnwrest Plow",
+    "Waterlily Pond",
+    "Patron",
+    "Sheep Keeper",
+    "Animal Husbandry Worker",
+    "Forest School",
+    "Ceilings",
+    "Lawn Fertilzer",
+    "Treegardener",
+    "Pet Broker",
+    "Home Brewer",
+    "Seed Pellets",
+    "Bookmark",
+    "Iron Oven",
+    "Seducer",
+    "Private Teacher",
+    "Roof Examiner"
+  ],
+  "round": 7,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "19033r_r7",
+    "sourceDraft": "hist_8214613003992_19033r",
+    "archivedAt": 1785386996007,
+    "handNumber": 3,
+    "handSize": 8,
+    "expectedHandSize": 8,
+    "userPicks": [
+      "Freemason",
+      "Forest Well"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "handNames": [
+    "Trellises",
+    "Mantlepiece",
+    "Private Forest",
+    "Grain Bag",
+    "Field Clay",
+    "Wood Cutter",
+    "Bohemian",
+    "Sower",
+    "Stable Cleaner",
+    "Bargain Hunter",
+    "Lunchtime Beer",
+    "Cabbage Buyer"
+  ],
+  "draftedNames": [
+    "Animal Husbandry Worker",
+    "Breed Registry",
+    "Cultivator",
+    "Artisan District",
+    "Task Artisan",
+    "Ceilings",
+    "Veggie Lover",
+    "Feed Pellets"
+  ],
+  "othersDrafted": [
+    "Renovation Company",
+    "Straw-Thatched Roof",
+    "Town Hall",
+    "Collier",
+    "Farm Hand",
+    "Collector"
+  ],
+  "round": 5,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "am48tz_r5",
+    "sourceDraft": "hist_8221457687498_am48tz",
+    "archivedAt": 1778542312501,
+    "handNumber": 1,
+    "handSize": 12,
+    "expectedHandSize": 12,
+    "userPicks": [
+      "Stable Cleaner",
+      "Private Forest"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

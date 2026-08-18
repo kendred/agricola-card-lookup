@@ -1,0 +1,52 @@
+{
+  "handNames": [
+    "Town Hall",
+    "Winter Caretaker",
+    "Interior Decorator",
+    "Clay Firer",
+    "Parvenu",
+    "Mountain Plowman",
+    "Prodigy",
+    "Basket",
+    "Gift Basket",
+    "Stable Yard",
+    "Luxurious Hostel",
+    "Tea Time"
+  ],
+  "draftedNames": [
+    "Chimney Sweep",
+    "Harvest House",
+    "Priest",
+    "Canvas Sack",
+    "Lord of the Manor",
+    "Ox Goad",
+    "Reseller",
+    "Muddy Waters"
+  ],
+  "othersDrafted": [
+    "Ash Trees",
+    "Animal Catcher",
+    "Plow Hero",
+    "Ebonist",
+    "Wooden Whey Bucket",
+    "Upholstery"
+  ],
+  "round": 5,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "enh505_r5",
+    "sourceDraft": "hist_8213608846867_enh505",
+    "archivedAt": 1786391153132,
+    "handNumber": 1,
+    "handSize": 12,
+    "expectedHandSize": 12,
+    "userPicks": [
+      "Winter Caretaker",
+      "Tea Time"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

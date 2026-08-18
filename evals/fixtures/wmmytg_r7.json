@@ -1,0 +1,64 @@
+{
+  "handNames": [
+    "Food Basket",
+    "Grassland Harrow",
+    "Final Scenario",
+    "Grain Bag",
+    "Slurry Spreader",
+    "Riverine Shepherd",
+    "Shifting Cultivator",
+    "Sculptor"
+  ],
+  "draftedNames": [
+    "Claypit Owner",
+    "Barn Shed",
+    "Animal Husbandry Worker",
+    "Mud Patch",
+    "Fodder Planter",
+    "Baseboards",
+    "Vegetable Vendor",
+    "Food Chest",
+    "Omnifarmer",
+    "Basket Chair",
+    "Pen Builder",
+    "Stone Weir"
+  ],
+  "othersDrafted": [
+    "Muddy Puddles",
+    "Stone House Reconstruction",
+    "Twibil",
+    "Shovel Bearer",
+    "Haydryer",
+    "Patron",
+    "Hook Knife",
+    "Flail",
+    "Fodder Beets",
+    "Thresher",
+    "Sheep Provider",
+    "Dung Collector",
+    "Throwing Axe",
+    "Grain Depot",
+    "Shepherd's Whistle",
+    "Sheep Keeper",
+    "Green Grocer",
+    "Delayed Wayfarer"
+  ],
+  "round": 7,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "wmmytg_r7",
+    "sourceDraft": "hist_8222497692369_wmmytg",
+    "archivedAt": 1777502307630,
+    "handNumber": 3,
+    "handSize": 8,
+    "expectedHandSize": 8,
+    "userPicks": [
+      "Shifting Cultivator",
+      "Food Basket"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

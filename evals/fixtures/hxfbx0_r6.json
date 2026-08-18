@@ -1,0 +1,58 @@
+{
+  "handNames": [
+    "Publican",
+    "Ropemaker",
+    "Mineralogist",
+    "Clay Kneader",
+    "Clay Carrier",
+    "Baking Sheet",
+    "Mandoline",
+    "Sheep Well",
+    "Pellet Press",
+    "Cookery Extension"
+  ],
+  "draftedNames": [
+    "Shed Builder",
+    "Beer Stall",
+    "Midnight Fencer",
+    "Shepherd's Whistle",
+    "Plow Maker",
+    "Carpenter's Axe",
+    "Pipe Smoker",
+    "Maintenance Premium",
+    "Plowman",
+    "Schnapps Distillery"
+  ],
+  "othersDrafted": [
+    "Loom",
+    "Animal Bedding",
+    "Upholstery",
+    "Village Peasant",
+    "Hide Farmer",
+    "Wares Salesman",
+    "Cottager",
+    "Seed Servant",
+    "Prophet",
+    "Claw Knife",
+    "Mineral Feeder",
+    "Plant Fertilizer"
+  ],
+  "round": 6,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "hxfbx0_r6",
+    "sourceDraft": "hist_8213144043589_hxfbx0",
+    "archivedAt": 1786855956410,
+    "handNumber": 2,
+    "handSize": 10,
+    "expectedHandSize": 10,
+    "userPicks": [
+      "Publican",
+      "Sheep Well"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

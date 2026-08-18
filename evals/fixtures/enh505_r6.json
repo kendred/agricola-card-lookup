@@ -1,0 +1,58 @@
+{
+  "handNames": [
+    "Shelter",
+    "Mill Wheel",
+    "Dwelling Mound",
+    "Farm Building",
+    "Brick Hammer",
+    "Slurry Spreader",
+    "Silokeeper",
+    "Butler",
+    "Freemason",
+    "Forest Owner"
+  ],
+  "draftedNames": [
+    "Chimney Sweep",
+    "Harvest House",
+    "Priest",
+    "Canvas Sack",
+    "Lord of the Manor",
+    "Ox Goad",
+    "Reseller",
+    "Muddy Waters",
+    "Winter Caretaker",
+    "Tea Time"
+  ],
+  "othersDrafted": [
+    "Ash Trees",
+    "Animal Catcher",
+    "Plow Hero",
+    "Ebonist",
+    "Wooden Whey Bucket",
+    "Upholstery",
+    "Schnapps Distillery",
+    "Fatstock Stretcher",
+    "Shepherd's Whistle",
+    "Scythe Worker",
+    "Pet Grower",
+    "Plowman"
+  ],
+  "round": 6,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "enh505_r6",
+    "sourceDraft": "hist_8213608846867_enh505",
+    "archivedAt": 1786391153132,
+    "handNumber": 2,
+    "handSize": 10,
+    "expectedHandSize": 10,
+    "userPicks": [
+      "Freemason",
+      "Shelter"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

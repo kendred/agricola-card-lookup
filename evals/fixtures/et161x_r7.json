@@ -1,0 +1,64 @@
+{
+  "handNames": [
+    "Hook Knife",
+    "Mill Wheel",
+    "Woodcraft",
+    "Fodder Chamber",
+    "Thresher",
+    "Building Tycoon",
+    "Braid Maker",
+    "Bargain Hunter"
+  ],
+  "draftedNames": [
+    "Haydryer",
+    "Bookshelf",
+    "Champion Breeder",
+    "Carpenter's Axe",
+    "Drudgery Reeve",
+    "Earth Oven",
+    "Plow Driver",
+    "Stable Tree",
+    "Night-School Student",
+    "Beanfield",
+    "Clay Deliveryman",
+    "Misanthropy"
+  ],
+  "othersDrafted": [
+    "Fatstock Stretcher",
+    "Lynchet",
+    "Profiteering",
+    "Ranch Provost",
+    "Ebonist",
+    "Museum Caretaker",
+    "Mining Hammer",
+    "Bed in the Grain Field",
+    "Green Grocer",
+    "Bellfounder",
+    "Vegetable Vendor",
+    "Market Booth",
+    "Clearing Spade",
+    "Lumber Mill",
+    "Upscale Lifestyle",
+    "Woolgrower",
+    "Schnapps Distiller",
+    "Domestician Expert"
+  ],
+  "round": 7,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "et161x_r7",
+    "sourceDraft": "hist_8218926925938_et161x",
+    "archivedAt": 1781073074061,
+    "handNumber": 3,
+    "handSize": 8,
+    "expectedHandSize": 8,
+    "userPicks": [
+      "Thresher",
+      "Fodder Chamber"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

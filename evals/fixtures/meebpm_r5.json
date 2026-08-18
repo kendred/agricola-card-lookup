@@ -1,0 +1,60 @@
+{
+  "handNames": [
+    "Facades Carving",
+    "Seed Pellets",
+    "Butter Churn",
+    "Mill Wheel",
+    "Fishing Net",
+    "Grain Sieve",
+    "Roughcaster",
+    "Hollow Warden",
+    "Rustic",
+    "Little Stick Knitter",
+    "Master Renovator",
+    "Whisky Distiller"
+  ],
+  "draftedNames": [
+    "Barrow Pusher",
+    "Hutch",
+    "Field Cultivator",
+    "Lettuce Patch",
+    "Priest",
+    "Harvest House",
+    "Seed Servant",
+    "Earth Oven"
+  ],
+  "othersDrafted": [
+    "Club House",
+    "Crack Weeder",
+    "Mason",
+    "Stable Master",
+    "Manger",
+    "Club House",
+    "Crack Weeder",
+    "Mason",
+    "Stable Master",
+    "Delayed Wayfarer",
+    "Three-Field Rotation",
+    "Dolly's Mother",
+    "Patch Caregiver",
+    "Clay Warden"
+  ],
+  "round": 5,
+  "playerCount": 3,
+  "_meta": {
+    "fixtureId": "meebpm_r5",
+    "sourceDraft": "hist_8216469805130_meebpm",
+    "archivedAt": 1783530194869,
+    "handNumber": 2,
+    "handSize": 12,
+    "expectedHandSize": 12,
+    "userPicks": [
+      "Hollow Warden",
+      "Seed Pellets"
+    ],
+    "returningRound": true,
+    "approximateOpponents": true,
+    "ambiguousAttribution": [],
+    "valid": false
+  }
+}

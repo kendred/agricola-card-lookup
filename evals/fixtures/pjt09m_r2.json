@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Farmyard Manure",
+    "Young Animal Market",
+    "Final Scenario",
+    "Forestry Studies",
+    "Brewing Water",
+    "Mole Plow",
+    "Dwelling Mound",
+    "Studio Boat",
+    "Dolly's Mother",
+    "Slurry Spreader",
+    "Clay Puncher",
+    "Carpenter",
+    "Home Brewer",
+    "Seed Trader",
+    "Retail Dealer",
+    "Clay Firer",
+    "Plow Maker",
+    "Elder Baker"
+  ],
+  "draftedNames": [
+    "Field Watchman",
+    "Carrot Museum"
+  ],
+  "othersDrafted": [],
+  "round": 2,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "pjt09m_r2",
+    "sourceDraft": "hist_8213694648668_pjt09m",
+    "archivedAt": 1786305351331,
+    "handNumber": 2,
+    "handSize": 18,
+    "expectedHandSize": 18,
+    "userPicks": [
+      "Seed Trader",
+      "Dolly's Mother"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

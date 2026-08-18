@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Wool Blankets",
+    "Pond Hut",
+    "Corn Scoop",
+    "Gardener's Knife",
+    "Club House",
+    "Firewood",
+    "Muddy Waters",
+    "Wood Worker",
+    "Green Grocer",
+    "Parrot Breeder",
+    "Hoof Caregiver",
+    "Material Deliveryman",
+    "Reseller",
+    "Delivery Nurse"
+  ],
+  "draftedNames": [
+    "Chimney Sweep",
+    "Harvest House",
+    "Priest",
+    "Canvas Sack",
+    "Lord of the Manor",
+    "Ox Goad"
+  ],
+  "othersDrafted": [],
+  "round": 4,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "enh505_r4",
+    "sourceDraft": "hist_8213608846867_enh505",
+    "archivedAt": 1786391153132,
+    "handNumber": 4,
+    "handSize": 14,
+    "expectedHandSize": 14,
+    "userPicks": [
+      "Reseller",
+      "Muddy Waters"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

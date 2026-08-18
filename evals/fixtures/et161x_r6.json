@@ -1,0 +1,58 @@
+{
+  "handNames": [
+    "Large Greenhouse",
+    "Cookery Lesson",
+    "Stone Clearing",
+    "Pole Barns",
+    "Misanthropy",
+    "Lutenist",
+    "Geologist",
+    "Home Brewer",
+    "Clay Deliveryman",
+    "Visionary"
+  ],
+  "draftedNames": [
+    "Haydryer",
+    "Bookshelf",
+    "Champion Breeder",
+    "Carpenter's Axe",
+    "Drudgery Reeve",
+    "Earth Oven",
+    "Plow Driver",
+    "Stable Tree",
+    "Night-School Student",
+    "Beanfield"
+  ],
+  "othersDrafted": [
+    "Fatstock Stretcher",
+    "Lynchet",
+    "Profiteering",
+    "Ranch Provost",
+    "Ebonist",
+    "Museum Caretaker",
+    "Mining Hammer",
+    "Bed in the Grain Field",
+    "Green Grocer",
+    "Bellfounder",
+    "Vegetable Vendor",
+    "Market Booth"
+  ],
+  "round": 6,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "et161x_r6",
+    "sourceDraft": "hist_8218926925938_et161x",
+    "archivedAt": 1781073074061,
+    "handNumber": 2,
+    "handSize": 10,
+    "expectedHandSize": 10,
+    "userPicks": [
+      "Clay Deliveryman",
+      "Misanthropy"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

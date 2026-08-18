@@ -1,0 +1,44 @@
+{
+  "handNames": [
+    "Facades Carving",
+    "Beer Keg",
+    "Feedyard",
+    "Writing Boards",
+    "Granary",
+    "Stone Clearing",
+    "Education Bonus",
+    "Seed Almanac",
+    "Barn Cats",
+    "Artichoke Field",
+    "Roughcaster",
+    "Tinsmith Master",
+    "Estate Worker",
+    "Salter",
+    "Winter Caretaker",
+    "Animal Activist",
+    "Tree Cutter",
+    "Land Heir",
+    "Mountain Plowman",
+    "Master Renovator"
+  ],
+  "draftedNames": [],
+  "othersDrafted": [],
+  "round": 1,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "bb2edx_r1",
+    "sourceDraft": "hist_8218181703539_bb2edx",
+    "archivedAt": 1781818296460,
+    "handNumber": 1,
+    "handSize": 20,
+    "expectedHandSize": 20,
+    "userPicks": [
+      "Winter Caretaker",
+      "Education Bonus"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

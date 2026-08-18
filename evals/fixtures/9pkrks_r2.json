@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Farmyard Manure",
+    "Lasso",
+    "Hook Knife",
+    "Half-Timbered House",
+    "Farm Store",
+    "Feed Fence",
+    "Grain Sieve",
+    "Child's Toy",
+    "Wood Harvester",
+    "Working Gloves",
+    "Joiner of the Sea",
+    "Shoreforester",
+    "Brushwood Collector",
+    "Salter",
+    "Sheep Whisperer",
+    "Pasture Master",
+    "Potato Planter",
+    "Stable Milker"
+  ],
+  "draftedNames": [
+    "Cottar",
+    "Wheel Plow"
+  ],
+  "othersDrafted": [],
+  "round": 2,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "9pkrks_r2",
+    "sourceDraft": "hist_8220427257336_9pkrks",
+    "archivedAt": 1779572742663,
+    "handNumber": 2,
+    "handSize": 18,
+    "expectedHandSize": 18,
+    "userPicks": [
+      "Shoreforester",
+      "Feed Fence"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

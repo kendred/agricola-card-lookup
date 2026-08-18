@@ -1,0 +1,44 @@
+{
+  "handNames": [
+    "Three-Field Rotation",
+    "Beer Stall",
+    "Corn Schnapps Distillery",
+    "Lawn Fertilzer",
+    "Wooden Whey Bucket",
+    "Cesspit",
+    "Civic Facade",
+    "Lynchet",
+    "Grain Sieve",
+    "Animal Bedding",
+    "Homekeeper",
+    "Case Builder",
+    "Estate Worker",
+    "Constable",
+    "Fish Farmer",
+    "Chimney Sweep",
+    "Stockman",
+    "Site Manager",
+    "Prodigy",
+    "Sweep"
+  ],
+  "draftedNames": [],
+  "othersDrafted": [],
+  "round": 1,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "pq9fn4_r1",
+    "sourceDraft": "hist_8216446981893_pq9fn4",
+    "archivedAt": 1783553018106,
+    "handNumber": 1,
+    "handSize": 20,
+    "expectedHandSize": 20,
+    "userPicks": [
+      "Chimney Sweep",
+      "Cesspit"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

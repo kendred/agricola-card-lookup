@@ -1,0 +1,58 @@
+{
+  "handNames": [
+    "Farmyard Manure",
+    "Young Animal Market",
+    "Final Scenario",
+    "Forestry Studies",
+    "Dwelling Mound",
+    "Slurry Spreader",
+    "Clay Puncher",
+    "Home Brewer",
+    "Retail Dealer",
+    "Elder Baker"
+  ],
+  "draftedNames": [
+    "Field Watchman",
+    "Carrot Museum",
+    "Seed Trader",
+    "Dolly's Mother",
+    "Housemaster",
+    "Seaweed Fertilizer",
+    "Pickler",
+    "Hawktower",
+    "Hill Cultivator",
+    "Potters Market"
+  ],
+  "othersDrafted": [
+    "Wood Rake",
+    "Potter Ceramics",
+    "Shepherd's Whistle",
+    "Seasonal Worker",
+    "Trap Builder",
+    "Dentist",
+    "Brewing Water",
+    "Mole Plow",
+    "Studio Boat",
+    "Carpenter",
+    "Clay Firer",
+    "Plow Maker"
+  ],
+  "round": 6,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "pjt09m_r6",
+    "sourceDraft": "hist_8213694648668_pjt09m",
+    "archivedAt": 1786305351331,
+    "handNumber": 2,
+    "handSize": 10,
+    "expectedHandSize": 10,
+    "userPicks": [
+      "Home Brewer",
+      "Final Scenario"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

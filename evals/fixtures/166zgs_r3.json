@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Threshing Board",
+    "Calcium Fertilizers",
+    "Gift Basket",
+    "Hard Porcelain",
+    "Milking Place",
+    "Paintbrush",
+    "Barn Cats",
+    "Shepherd's Whistle",
+    "Lodger",
+    "Publican",
+    "Conjurer",
+    "Stock Protector",
+    "Basket Weaver",
+    "Bellfounder",
+    "Reader",
+    "Tinsmith Master"
+  ],
+  "draftedNames": [
+    "Barrow Pusher",
+    "Seed Almanac",
+    "Field Caretaker",
+    "Festival Planning"
+  ],
+  "othersDrafted": [],
+  "round": 3,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "166zgs_r3",
+    "sourceDraft": "hist_8221718375859_166zgs",
+    "archivedAt": 1778281624140,
+    "handNumber": 3,
+    "handSize": 16,
+    "expectedHandSize": 16,
+    "userPicks": [
+      "Basket Weaver",
+      "Barn Cats"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

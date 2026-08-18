@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Paper Knife",
+    "Claypipe",
+    "Stockyard",
+    "Forest Inn",
+    "Ravenous Hunger",
+    "Retraining",
+    "Churchyard",
+    "Ox Goad",
+    "Chief Forester",
+    "Drudgery Reeve",
+    "District Manager",
+    "Inner Districts Director",
+    "Lord of the Manor",
+    "Bellfounder",
+    "Casual Worker",
+    "Transactor"
+  ],
+  "draftedNames": [
+    "Chimney Sweep",
+    "Harvest House",
+    "Priest",
+    "Canvas Sack"
+  ],
+  "othersDrafted": [],
+  "round": 3,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "enh505_r3",
+    "sourceDraft": "hist_8213608846867_enh505",
+    "archivedAt": 1786391153132,
+    "handNumber": 3,
+    "handSize": 16,
+    "expectedHandSize": 16,
+    "userPicks": [
+      "Lord of the Manor",
+      "Ox Goad"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

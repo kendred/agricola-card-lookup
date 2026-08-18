@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Corn Scoop",
+    "Stable Tree",
+    "Forestry Studies",
+    "Butter Churn",
+    "Remodeling",
+    "Blade Shears",
+    "Storeroom",
+    "Riverine Shepherd",
+    "Joiner of the Sea",
+    "Plow Driver",
+    "Consultant",
+    "Tinsmith Master",
+    "Village Peasant",
+    "Resource Recycler"
+  ],
+  "draftedNames": [
+    "Haydryer",
+    "Bookshelf",
+    "Champion Breeder",
+    "Carpenter's Axe",
+    "Drudgery Reeve",
+    "Earth Oven"
+  ],
+  "othersDrafted": [],
+  "round": 4,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "et161x_r4",
+    "sourceDraft": "hist_8218926925938_et161x",
+    "archivedAt": 1781073074061,
+    "handNumber": 4,
+    "handSize": 14,
+    "expectedHandSize": 14,
+    "userPicks": [
+      "Plow Driver",
+      "Stable Tree"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

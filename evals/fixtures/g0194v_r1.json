@@ -1,0 +1,44 @@
+{
+  "handNames": [
+    "Comb and Cutter",
+    "Angler",
+    "Clutterer",
+    "Farm Hand",
+    "Tree Farm Joiner",
+    "Cowherd",
+    "German Heath Keeper",
+    "Sheep Agent",
+    "Veggie Lover",
+    "Vegetable Vendor",
+    "Lazybones",
+    "Bumper Crop",
+    "Telegram",
+    "Potato Ridger",
+    "Clay Embankment",
+    "Storage Barn",
+    "Thick Forest",
+    "Canvas Sack",
+    "Wholesale Market",
+    "Petrified Wood"
+  ],
+  "draftedNames": [],
+  "othersDrafted": [],
+  "round": 1,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "g0194v_r1",
+    "sourceDraft": "hist_8215388524325_g0194v",
+    "archivedAt": 1784611475674,
+    "handNumber": 1,
+    "handSize": 20,
+    "expectedHandSize": 20,
+    "userPicks": [
+      "Vegetable Vendor",
+      "Canvas Sack"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

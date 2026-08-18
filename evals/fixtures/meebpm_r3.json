@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Forest School",
+    "Grassland Harrow",
+    "Strawberry Patch",
+    "Harvest House",
+    "Acorns Basket",
+    "Blueprint",
+    "Renovation Materials",
+    "Misanthropy",
+    "Small Trader",
+    "Knapper",
+    "Priest",
+    "Green Grocer",
+    "Home Brewer",
+    "Animal Feeder",
+    "Pipe Smoker",
+    "Prophet"
+  ],
+  "draftedNames": [
+    "Barrow Pusher",
+    "Hutch",
+    "Field Cultivator",
+    "Lettuce Patch"
+  ],
+  "othersDrafted": [],
+  "round": 3,
+  "playerCount": 3,
+  "_meta": {
+    "fixtureId": "meebpm_r3",
+    "sourceDraft": "hist_8216469805130_meebpm",
+    "archivedAt": 1783530194869,
+    "handNumber": 3,
+    "handSize": 16,
+    "expectedHandSize": 16,
+    "userPicks": [
+      "Priest",
+      "Harvest House"
+    ],
+    "returningRound": false,
+    "approximateOpponents": true,
+    "ambiguousAttribution": [],
+    "valid": false
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Double-Turn Plow",
+    "Ale-Benches",
+    "Junk Room",
+    "Ceilings",
+    "Drill Harrow",
+    "Work Permit",
+    "Sheep Rug",
+    "Pumpernickel",
+    "Task Artisan",
+    "Patch Caregiver",
+    "Inner Districts Director",
+    "Craftsmanship Promoter",
+    "Mayor Candidate",
+    "Flax Farmer",
+    "Roastmaster",
+    "Animal Tamer's Apprentice"
+  ],
+  "draftedNames": [
+    "Animal Husbandry Worker",
+    "Breed Registry",
+    "Cultivator",
+    "Artisan District"
+  ],
+  "othersDrafted": [],
+  "round": 3,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "am48tz_r3",
+    "sourceDraft": "hist_8221457687498_am48tz",
+    "archivedAt": 1778542312501,
+    "handNumber": 3,
+    "handSize": 16,
+    "expectedHandSize": 16,
+    "userPicks": [
+      "Task Artisan",
+      "Ceilings"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

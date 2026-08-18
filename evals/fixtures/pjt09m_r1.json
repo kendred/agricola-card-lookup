@@ -1,0 +1,44 @@
+{
+  "handNames": [
+    "Digging Spade",
+    "Potters Market",
+    "Stable Yard",
+    "Wood Rake",
+    "Potter Ceramics",
+    "Carrot Museum",
+    "Sheep Rug",
+    "Simple Oven",
+    "Field Spade",
+    "Shepherd's Whistle",
+    "Seasonal Worker",
+    "Field Watchman",
+    "Plow Hero",
+    "Trap Builder",
+    "Transactor",
+    "Dentist",
+    "Recluse",
+    "Hill Cultivator",
+    "Wares Salesman",
+    "Parvenu"
+  ],
+  "draftedNames": [],
+  "othersDrafted": [],
+  "round": 1,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "pjt09m_r1",
+    "sourceDraft": "hist_8213694648668_pjt09m",
+    "archivedAt": 1786305351331,
+    "handNumber": 1,
+    "handSize": 20,
+    "expectedHandSize": 20,
+    "userPicks": [
+      "Field Watchman",
+      "Carrot Museum"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

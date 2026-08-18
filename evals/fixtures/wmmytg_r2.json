@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Mud Patch",
+    "Hook Knife",
+    "Flail",
+    "Woodcraft",
+    "Pioneering Spirit",
+    "Brotherly Love",
+    "Ox Skull",
+    "Fodder Beets",
+    "Stone Weir",
+    "Cookery Outfitter",
+    "Riparian Builder",
+    "Thresher",
+    "Sheep Provider",
+    "Animal Husbandry Worker",
+    "Kelp Gatherer",
+    "Animal Tamer's Apprentice",
+    "Pen Builder",
+    "Dung Collector"
+  ],
+  "draftedNames": [
+    "Claypit Owner",
+    "Barn Shed"
+  ],
+  "othersDrafted": [],
+  "round": 2,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "wmmytg_r2",
+    "sourceDraft": "hist_8222497692369_wmmytg",
+    "archivedAt": 1777502307630,
+    "handNumber": 2,
+    "handSize": 18,
+    "expectedHandSize": 18,
+    "userPicks": [
+      "Animal Husbandry Worker",
+      "Mud Patch"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

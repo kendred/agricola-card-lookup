@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Forest School",
+    "Drift-Net Boat",
+    "Ceilings",
+    "Lawn Fertilzer",
+    "Carpenter's Yard",
+    "Pellet Press",
+    "Child's Toy",
+    "Profiteering",
+    "Bartering Hut",
+    "Treegardener",
+    "Village Peasant",
+    "Nutrition Expert",
+    "House Steward",
+    "Pet Broker",
+    "Collector",
+    "Home Brewer",
+    "Usufructuary",
+    "Stockman"
+  ],
+  "draftedNames": [
+    "Assistant Tiller",
+    "Feed Pellets"
+  ],
+  "othersDrafted": [],
+  "round": 2,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "19033r_r2",
+    "sourceDraft": "hist_8214613003992_19033r",
+    "archivedAt": 1785386996007,
+    "handNumber": 2,
+    "handSize": 18,
+    "expectedHandSize": 18,
+    "userPicks": [
+      "Collector",
+      "Profiteering"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

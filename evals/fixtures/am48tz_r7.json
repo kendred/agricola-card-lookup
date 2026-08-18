@@ -1,0 +1,64 @@
+{
+  "handNames": [
+    "Ale-Benches",
+    "Junk Room",
+    "Work Permit",
+    "Pumpernickel",
+    "Patch Caregiver",
+    "Inner Districts Director",
+    "Mayor Candidate",
+    "Flax Farmer"
+  ],
+  "draftedNames": [
+    "Animal Husbandry Worker",
+    "Breed Registry",
+    "Cultivator",
+    "Artisan District",
+    "Task Artisan",
+    "Ceilings",
+    "Veggie Lover",
+    "Feed Pellets",
+    "Stable Cleaner",
+    "Private Forest",
+    "Seed Researcher",
+    "Beer Tap"
+  ],
+  "othersDrafted": [
+    "Renovation Company",
+    "Straw-Thatched Roof",
+    "Town Hall",
+    "Collier",
+    "Farm Hand",
+    "Collector",
+    "Toolbox",
+    "Sundial",
+    "Thunderbolt",
+    "Priest",
+    "Shed Builder",
+    "Dung Collector",
+    "Double-Turn Plow",
+    "Drill Harrow",
+    "Sheep Rug",
+    "Craftsmanship Promoter",
+    "Roastmaster",
+    "Animal Tamer's Apprentice"
+  ],
+  "round": 7,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "am48tz_r7",
+    "sourceDraft": "hist_8221457687498_am48tz",
+    "archivedAt": 1778542312501,
+    "handNumber": 3,
+    "handSize": 8,
+    "expectedHandSize": 8,
+    "userPicks": [
+      "Patch Caregiver",
+      "Work Permit"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

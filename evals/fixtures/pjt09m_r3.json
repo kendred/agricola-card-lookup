@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Corn Scoop",
+    "Feedyard",
+    "Future Building Site",
+    "Reed Belt",
+    "Seaweed Fertilizer",
+    "Gritter",
+    "Game Trade",
+    "Land Register",
+    "Consultant",
+    "Housemaster",
+    "Groom",
+    "Clay Carrier",
+    "Plowman",
+    "Mayor Candidate",
+    "Old Miser",
+    "Motivator"
+  ],
+  "draftedNames": [
+    "Field Watchman",
+    "Carrot Museum",
+    "Seed Trader",
+    "Dolly's Mother"
+  ],
+  "othersDrafted": [],
+  "round": 3,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "pjt09m_r3",
+    "sourceDraft": "hist_8213694648668_pjt09m",
+    "archivedAt": 1786305351331,
+    "handNumber": 3,
+    "handSize": 16,
+    "expectedHandSize": 16,
+    "userPicks": [
+      "Housemaster",
+      "Seaweed Fertilizer"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

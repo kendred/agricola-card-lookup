@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Family Friendly Home",
+    "Debt Security",
+    "Corn Scoop",
+    "Mantlepiece",
+    "Market Stall",
+    "Blade Shears",
+    "Retraining",
+    "Straw Manure",
+    "Scythe Worker",
+    "Firewood Collector",
+    "Conservator",
+    "Seducer",
+    "Farmyard Worker",
+    "German Heath Keeper",
+    "Casual Worker",
+    "Carter"
+  ],
+  "draftedNames": [
+    "Kindling Gatherer",
+    "Shifting Cultivation",
+    "Bonehead",
+    "Mole Plow"
+  ],
+  "othersDrafted": [],
+  "round": 3,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "m987xg_r3",
+    "sourceDraft": "hist_8214550904117_m987xg",
+    "archivedAt": 1785449095882,
+    "handNumber": 3,
+    "handSize": 16,
+    "expectedHandSize": 16,
+    "userPicks": [
+      "Conservator",
+      "Family Friendly Home"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

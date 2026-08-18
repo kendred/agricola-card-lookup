@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Vegetable Slicer",
+    "Dwelling Mound",
+    "Truffle Slicer",
+    "Changeover",
+    "Feed Pellets",
+    "Wood Saw",
+    "Beaver Colony",
+    "Roughcaster",
+    "Buyer",
+    "Cowherd",
+    "Interior Decorator",
+    "Renovation Preparer",
+    "Veggie Lover",
+    "Margrave"
+  ],
+  "draftedNames": [
+    "Animal Husbandry Worker",
+    "Breed Registry",
+    "Cultivator",
+    "Artisan District",
+    "Task Artisan",
+    "Ceilings"
+  ],
+  "othersDrafted": [],
+  "round": 4,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "am48tz_r4",
+    "sourceDraft": "hist_8221457687498_am48tz",
+    "archivedAt": 1778542312501,
+    "handNumber": 4,
+    "handSize": 14,
+    "expectedHandSize": 14,
+    "userPicks": [
+      "Veggie Lover",
+      "Feed Pellets"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

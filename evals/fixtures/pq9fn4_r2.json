@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Asparagus Gift",
+    "Chick Stable",
+    "Maintenance Premium",
+    "Recycled Brick",
+    "Stone House Reconstruction",
+    "Piggy Bank",
+    "Bookmark",
+    "Raised Bed",
+    "Iron Oven",
+    "Riparian Builder",
+    "Consultant",
+    "Emissary",
+    "Gardening Head Official",
+    "Party Organizer",
+    "Tree Inspector",
+    "Grain Thief",
+    "Diligent Farmer",
+    "Mountain Plowman"
+  ],
+  "draftedNames": [
+    "Chimney Sweep",
+    "Cesspit"
+  ],
+  "othersDrafted": [],
+  "round": 2,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "pq9fn4_r2",
+    "sourceDraft": "hist_8216446981893_pq9fn4",
+    "archivedAt": 1783553018106,
+    "handNumber": 2,
+    "handSize": 18,
+    "expectedHandSize": 18,
+    "userPicks": [
+      "Gardening Head Official",
+      "Stone House Reconstruction"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

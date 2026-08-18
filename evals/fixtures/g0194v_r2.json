@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Nest Site",
+    "Large Greenhouse",
+    "Acorns Basket",
+    "New Market",
+    "Skimmer Plow",
+    "Fodder Beets",
+    "Iron Oven",
+    "Pumpernickel",
+    "Established Person",
+    "Potato Harvester",
+    "Hoof Caregiver",
+    "Fish Farmer",
+    "Food Merchant",
+    "Wood Barterer",
+    "Hewer",
+    "Entrepreneur",
+    "Master Tanner",
+    "Working Gloves"
+  ],
+  "draftedNames": [
+    "Vegetable Vendor",
+    "Canvas Sack"
+  ],
+  "othersDrafted": [],
+  "round": 2,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "g0194v_r2",
+    "sourceDraft": "hist_8215388524325_g0194v",
+    "archivedAt": 1784611475674,
+    "handNumber": 2,
+    "handSize": 18,
+    "expectedHandSize": 18,
+    "userPicks": [
+      "Wood Barterer",
+      "Fodder Beets"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

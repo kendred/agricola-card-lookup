@@ -1,0 +1,64 @@
+{
+  "handNames": [
+    "Debt Security",
+    "Abort Oriel",
+    "Brotherly Love",
+    "Herbal Garden",
+    "Stone Buyer",
+    "Forest Owner",
+    "Land Surveyor",
+    "Miller"
+  ],
+  "draftedNames": [
+    "Winter Caretaker",
+    "Education Bonus",
+    "Bonehead",
+    "Melon Patch",
+    "Porter",
+    "Sleight of Hand",
+    "Brushwood Collector",
+    "Half-Timbered House",
+    "Tinsmith Master",
+    "Writing Boards",
+    "Stock Protector",
+    "Mineral Feeder"
+  ],
+  "othersDrafted": [
+    "Beer Keg",
+    "Seed Almanac",
+    "Artichoke Field",
+    "Estate Worker",
+    "Animal Activist",
+    "Mountain Plowman",
+    "Double-Turn Plow",
+    "Steam Plow",
+    "Breed Registry",
+    "Field Caretaker",
+    "Agricultural Labourer",
+    "Stone Custodian",
+    "Drinking Trough",
+    "Wholesale Market",
+    "Supply Boat",
+    "Animal Reeve",
+    "Wealthy Man",
+    "Reader"
+  ],
+  "round": 7,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "bb2edx_r7",
+    "sourceDraft": "hist_8218181703539_bb2edx",
+    "archivedAt": 1781818296460,
+    "handNumber": 3,
+    "handSize": 8,
+    "expectedHandSize": 8,
+    "userPicks": [
+      "Miller",
+      "Abort Oriel"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "handNames": [
+    "Debt Security",
+    "Hauberg",
+    "Truffle Slicer",
+    "New Market",
+    "Field Spade",
+    "Priest",
+    "Tinsmith Master",
+    "Cattle Feeder",
+    "Clay Kneader",
+    "Plow Maker",
+    "Old Miser",
+    "Market Booth"
+  ],
+  "draftedNames": [
+    "Assistant Tiller",
+    "Feed Pellets",
+    "Collector",
+    "Profiteering",
+    "Established Person",
+    "Artisan District",
+    "Site Manager",
+    "Mining Hammer"
+  ],
+  "othersDrafted": [
+    "Basket Chair",
+    "Turnwrest Plow",
+    "Waterlily Pond",
+    "Patron",
+    "Sheep Keeper",
+    "Animal Husbandry Worker"
+  ],
+  "round": 5,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "19033r_r5",
+    "sourceDraft": "hist_8214613003992_19033r",
+    "archivedAt": 1785386996007,
+    "handNumber": 1,
+    "handSize": 12,
+    "expectedHandSize": 12,
+    "userPicks": [
+      "Priest",
+      "Hauberg"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

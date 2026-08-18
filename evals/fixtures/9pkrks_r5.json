@@ -1,0 +1,52 @@
+{
+  "handNames": [
+    "Forestry Studies",
+    "Mill Wheel",
+    "Beer Table",
+    "Whale Oil",
+    "Alchemists Lab",
+    "Lazy Sowman",
+    "Open Air Farmer",
+    "Market Crier",
+    "Mud Wallower",
+    "Rock Beater",
+    "Old Miser",
+    "Roll-Over Plow"
+  ],
+  "draftedNames": [
+    "Cottar",
+    "Wheel Plow",
+    "Shoreforester",
+    "Feed Fence",
+    "Paper Maker",
+    "Ale-Benches",
+    "Farm Hand",
+    "Special Food"
+  ],
+  "othersDrafted": [
+    "New Purchase",
+    "Luxurious Hostel",
+    "Raised Bed",
+    "Manservant",
+    "Patch Caregiver",
+    "Sheep Keeper"
+  ],
+  "round": 5,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "9pkrks_r5",
+    "sourceDraft": "hist_8220427257336_9pkrks",
+    "archivedAt": 1779572742663,
+    "handNumber": 1,
+    "handSize": 12,
+    "expectedHandSize": 12,
+    "userPicks": [
+      "Market Crier",
+      "Beer Table"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

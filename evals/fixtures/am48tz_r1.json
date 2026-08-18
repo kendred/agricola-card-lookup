@@ -1,0 +1,44 @@
+{
+  "handNames": [
+    "Renovation Company",
+    "Trellises",
+    "Mantlepiece",
+    "Straw-Thatched Roof",
+    "Private Forest",
+    "Town Hall",
+    "Grain Bag",
+    "Breed Registry",
+    "Field Clay",
+    "Wood Cutter",
+    "Bohemian",
+    "Collier",
+    "Farm Hand",
+    "Collector",
+    "Sower",
+    "Stable Cleaner",
+    "Animal Husbandry Worker",
+    "Bargain Hunter",
+    "Lunchtime Beer",
+    "Cabbage Buyer"
+  ],
+  "draftedNames": [],
+  "othersDrafted": [],
+  "round": 1,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "am48tz_r1",
+    "sourceDraft": "hist_8221457687498_am48tz",
+    "archivedAt": 1778542312501,
+    "handNumber": 1,
+    "handSize": 20,
+    "expectedHandSize": 20,
+    "userPicks": [
+      "Animal Husbandry Worker",
+      "Breed Registry"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

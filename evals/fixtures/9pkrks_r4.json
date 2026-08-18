@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Calcium Fertilizers",
+    "Agricultural Fertilizers",
+    "Acorns Basket",
+    "Christianity",
+    "Fishing Net",
+    "Horse-Drawn Boat",
+    "Special Food",
+    "Priest",
+    "Rustic",
+    "Housebook Master",
+    "Farm Hand",
+    "Freemason",
+    "Cattle Buyer",
+    "Grain Thief"
+  ],
+  "draftedNames": [
+    "Cottar",
+    "Wheel Plow",
+    "Shoreforester",
+    "Feed Fence",
+    "Paper Maker",
+    "Ale-Benches"
+  ],
+  "othersDrafted": [],
+  "round": 4,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "9pkrks_r4",
+    "sourceDraft": "hist_8220427257336_9pkrks",
+    "archivedAt": 1779572742663,
+    "handNumber": 4,
+    "handSize": 14,
+    "expectedHandSize": 14,
+    "userPicks": [
+      "Farm Hand",
+      "Special Food"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "handNames": [
+    "Claypipe",
+    "Canoe",
+    "Pitchfork",
+    "Stable Yard",
+    "Slurry Spreader",
+    "Mushroom Collector",
+    "Nutrition Expert",
+    "Seed Researcher"
+  ],
+  "draftedNames": [
+    "Chimney Sweep",
+    "Cesspit",
+    "Gardening Head Official",
+    "Stone House Reconstruction",
+    "Field Cultivator",
+    "Hod",
+    "Market Master",
+    "Excursion to the Quarry",
+    "Estate Worker",
+    "Animal Bedding",
+    "Consultant",
+    "Iron Oven"
+  ],
+  "othersDrafted": [
+    "Beer Stall",
+    "Wooden Whey Bucket",
+    "Lynchet",
+    "Constable",
+    "Stockman",
+    "Site Manager",
+    "Chick Stable",
+    "Bookmark",
+    "Raised Bed",
+    "Emissary",
+    "Diligent Farmer",
+    "Mountain Plowman",
+    "Vegetable Slicer",
+    "Mattock",
+    "Storehouse Steward",
+    "Animal Dealer",
+    "Pattern Maker",
+    "Mineral"
+  ],
+  "round": 7,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "pq9fn4_r7",
+    "sourceDraft": "hist_8216446981893_pq9fn4",
+    "archivedAt": 1783553018106,
+    "handNumber": 3,
+    "handSize": 8,
+    "expectedHandSize": 8,
+    "userPicks": [
+      "Nutrition Expert",
+      "Claypipe"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}
