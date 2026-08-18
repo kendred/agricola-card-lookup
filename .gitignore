@@ -12,3 +12,4 @@ evals/raw-drafts.json
 api/local.settings.json
 # Eval run outputs — regenerable, and they accumulate
 evals/reports/
+evals/*.log

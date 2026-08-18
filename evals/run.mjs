@@ -28,6 +28,7 @@ const DEFAULTS = {
   sample: 0,          // 0 == all
   delay: 0,           // ms between requests
   only: null,         // substring filter on fixtureId
+  variant: 'current', // 'current' | 'baseline' | 'both'
   timeout: 300000,
 };
 
@@ -153,23 +154,28 @@ async function main() {
   mkdirSync(outDir, { recursive: true });
 
   const done = new Set(existsSync(outDir) ? readdirSync(outDir).map((f) => basename(f, '.json')) : []);
+  const variants = cfg.variant === 'both' ? ['current', 'baseline'] : [cfg.variant];
   const jobs = [];
   for (const entry of entries) {
-    for (let run = 1; run <= cfg.runs; run++) {
-      const id = `${entry.fixtureId}__run${run}`;
-      if (!done.has(id)) jobs.push({ entry, run, id });
+    for (const variant of variants) {
+      for (let run = 1; run <= cfg.runs; run++) {
+        const id = `${entry.fixtureId}__${variant}__run${run}`;
+        if (!done.has(id)) jobs.push({ entry, run, id, variant });
+      }
     }
   }
 
   console.log(`endpoint: ${cfg.endpoint}`);
-  console.log(`fixtures: ${entries.length}  runs each: ${cfg.runs}  pending: ${jobs.length}`);
+  console.log(`fixtures: ${entries.length}  variant(s): ${variants.join(', ')}  `
+    + `runs each: ${cfg.runs}  pending: ${jobs.length}`);
   console.log(`output:   ${outDir}\n`);
   if (!jobs.length) return console.log('nothing to do (all results already on disk)');
 
   let ok = 0, failed = 0, limited = 0;
   for (const [n, job] of jobs.entries()) {
     const fixture = JSON.parse(readFileSync(join(cfg.fixtures, job.entry.file), 'utf8'));
-    const { _meta, ...body } = fixture;
+    const { _meta, ...base } = fixture;
+    const body = { ...base, promptVariant: job.variant };
 
     let result = await callStrategy(cfg.endpoint, body, cfg.timeout);
 
@@ -187,6 +193,7 @@ async function main() {
     writeFileSync(join(outDir, `${job.id}.json`), JSON.stringify({
       fixtureId: job.entry.fixtureId,
       run: job.run,
+      variant: job.variant,
       round: job.entry.round,
       playerCount: job.entry.playerCount,
       request: body,
