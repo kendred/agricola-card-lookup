@@ -767,7 +767,7 @@ function PriorHands({ hands, draftedCards, cardMap, currentRound, othersDrafted,
         <div className="prior-hands-section">
             <div className="prior-hands-title">Prior Hands</div>
             <div className="tag-legend">
-                {Object.entries(TAG_DEFINITIONS).map(([name, def]) => (
+                {Object.entries(tagsForPlayerCount(playerCount)).map(([name, def]) => (
                     <span key={name} className={`tag-legend-item${selectedTags.has(name) ? ' tag-legend-item-active' : ''}`}
                           onClick={() => toggleTag(name)}
                           style={selectedTags.has(name) ? { background: def.color + '22', borderColor: def.color } : undefined}>
