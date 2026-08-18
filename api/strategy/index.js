@@ -32,7 +32,9 @@ const COMPACT_INDEX_3P = buildCompactIndex(3);
 
 // --- Rate limiting (in-memory, resets on cold start) ---
 const rateLimitMap = new Map();
-const RATE_LIMIT_MAX = 5;
+// Overridable so eval runs can drive the endpoint hard locally. Unset in
+// production, where it stays at 5 requests per 10 minutes per IP.
+const RATE_LIMIT_MAX = Number(process.env.STRATEGY_RATE_LIMIT_MAX) || 5;
 const RATE_LIMIT_WINDOW = 10 * 60 * 1000; // 10 minutes
 
 function isRateLimited(ip) {
@@ -62,7 +64,7 @@ const STRATEGY_GUIDE = fs.readFileSync(
 );
 
 // --- System prompt (static — enables Azure OpenAI prompt caching across all requests) ---
-const SYSTEM_PROMPT = `You are an expert Agricola (board game) draft strategy advisor for 3- and 4-player games. You analyze a player's draft state and provide strategic guidance. The user message will tell you the exact PLAYER COUNT and round-to-hand rotation for this draft.
+const SYSTEM_PROMPT_TEMPLATE = `You are an expert Agricola (board game) draft strategy advisor for 3- and 4-player games. You analyze a player's draft state and provide strategic guidance. The user message will tell you the exact PLAYER COUNT and round-to-hand rotation for this draft.
 
 You must respond with ONLY valid JSON matching this exact format — no markdown, no explanation, no text outside the JSON:
 
@@ -105,7 +107,16 @@ Draft stage awareness:
 - Rounds 3-4 (4-8 drafted cards): Moderate analysis. Identify emerging patterns and note which dimensions are starting to take shape.
 - Rounds 5-7 (8-14 drafted cards): Full analysis. Provide detailed gap assessment and specific synergy recommendations.
 
-GAME RULES (AUTHORITATIVE):
+%%RULES_BLOCK%%STRATEGIC FRAMEWORK:
+%%GUIDE_PREAMBLE%%
+${STRATEGY_GUIDE}
+
+COMPLETE CARD INDEX (format "name|rank|adp|type" where type is O=Occupation, M=Minor Improvement). Use this to reason about what cards may still appear in future hands and what the opponents could potentially draft. Fully-enriched details (description, tags, play rate, elo, cost, VPs) for the player's current hand and drafted cards are provided in the user message — rely on that for detailed analysis.
+Rankings and stats differ between 3-player and 4-player games. The card index below matches the player count for this game.
+
+`;
+
+const RULES_BLOCK = `GAME RULES (AUTHORITATIVE):
 
 The following is the definitive rules reference for this game, taken from the official
 rulebook. It overrides any conflicting recollection you may have about Agricola. Base every
@@ -116,20 +127,28 @@ reference does not describe.
 
 ${RULES_REFERENCE}
 
-STRATEGIC FRAMEWORK:
-
-The following is strategic interpretation, not rules. Where it summarizes a mechanic, the
-rules reference above is authoritative.
-
-${STRATEGY_GUIDE}
-
-COMPLETE CARD INDEX (format "name|rank|adp|type" where type is O=Occupation, M=Minor Improvement). Use this to reason about what cards may still appear in future hands and what the opponents could potentially draft. Fully-enriched details (description, tags, play rate, elo, cost, VPs) for the player's current hand and drafted cards are provided in the user message — rely on that for detailed analysis.
-Rankings and stats differ between 3-player and 4-player games. The card index below matches the player count for this game.
-
 `;
 
-const SYSTEM_PROMPT_4P = SYSTEM_PROMPT + COMPACT_INDEX_4P;
-const SYSTEM_PROMPT_3P = SYSTEM_PROMPT + COMPACT_INDEX_3P;
+const GUIDE_PREAMBLE_WITH_RULES = `
+The following is strategic interpretation, not rules. Where it summarizes a mechanic, the
+rules reference above is authoritative.`;
+
+// Prompt variants. 'current' is what production serves. 'baseline' reconstructs
+// the pre-rules-reference prompt so the eval harness can measure what adding the
+// rules actually bought — see docs/strategy-quality-plan.md, Stage 2. Without it
+// Stage 1 stays an untested assumption.
+function buildSystemPrompt(playerCount, variant) {
+    const withRules = variant !== 'baseline';
+    return SYSTEM_PROMPT_TEMPLATE
+        .replace('%%RULES_BLOCK%%', withRules ? RULES_BLOCK : '')
+        .replace('%%GUIDE_PREAMBLE%%', withRules ? GUIDE_PREAMBLE_WITH_RULES : '')
+        + (playerCount === 3 ? COMPACT_INDEX_3P : COMPACT_INDEX_4P);
+}
+
+const PROMPTS = {
+    current: { 3: buildSystemPrompt(3, 'current'), 4: buildSystemPrompt(4, 'current') },
+    baseline: { 3: buildSystemPrompt(3, 'baseline'), 4: buildSystemPrompt(4, 'baseline') },
+};
 
 // --- Resolve stats based on player count ---
 function getStats(card, playerCount) {
@@ -292,18 +311,24 @@ app.http('strategy', {
 
         // Build OpenAI request
         const playerCount = body.playerCount === 3 ? 3 : 4;
+        const promptVariant = body.promptVariant === 'baseline' ? 'baseline' : 'current';
         const userMessage = buildUserMessage(body);
         const apiVersion = '2025-04-01-preview';
         const openAIUrl = `${endpoint.replace(/\/$/, '')}/openai/deployments/${deployment}/chat/completions?api-version=${apiVersion}`;
 
         const openAIRequestBody = {
             messages: [
-                { role: 'system', content: playerCount === 3 ? SYSTEM_PROMPT_3P : SYSTEM_PROMPT_4P },
+                { role: 'system', content: (PROMPTS[promptVariant] || PROMPTS.current)[playerCount] },
                 { role: 'user', content: userMessage },
             ],
             max_completion_tokens: 16000,
             response_format: { type: 'json_object' },
             stream: true,
+            // Final chunk carries exact token counts, including the reasoning
+            // tokens that dominate cost on o-series models and are otherwise
+            // invisible. Its `choices` array is empty, which the delta parse
+            // below already tolerates via optional chaining.
+            stream_options: { include_usage: true },
         };
 
         // Use ReadableStream with start(controller) — same pattern as probe-stream.
@@ -386,6 +411,10 @@ app.http('strategy', {
                             let chunk;
                             try { chunk = JSON.parse(data); } catch { continue; }
 
+                            if (chunk.usage) {
+                                send(`event: usage\ndata: ${JSON.stringify(chunk.usage)}\n\n`);
+                            }
+
                             const delta = chunk.choices?.[0]?.delta?.content;
                             if (delta != null && delta !== '') {
                                 if (firstToken) {
@@ -425,3 +454,7 @@ app.http('strategy', {
         };
     },
 });
+
+// Exposed for the eval harness: lets a prompt-variant check verify what is
+// actually being sent without issuing a billed request.
+module.exports = { PROMPTS };

@@ -65,6 +65,7 @@ async function callStrategy(endpoint, body, timeoutMs) {
     const decoder = new TextDecoder();
     let buffer = '';
     let normalized = null;
+    let usage = null;
     let rawText = '';
     let firstTokenAt = null;
 
@@ -90,6 +91,8 @@ async function callStrategy(endpoint, body, timeoutMs) {
         if (type === 'token') {
           if (firstTokenAt === null) firstTokenAt = Date.now() - started;
           try { rawText += JSON.parse(data); } catch { /* partial */ }
+        } else if (type === 'usage') {
+          try { usage = JSON.parse(data); } catch { /* keep null */ }
         } else if (type === 'normalized') {
           try { normalized = JSON.parse(data); } catch { /* keep null */ }
         } else if (type === 'error') {
@@ -103,6 +106,7 @@ async function callStrategy(endpoint, body, timeoutMs) {
     return {
       ok: normalized !== null,
       normalized,
+      usage,
       rawText,
       firstTokenMs: firstTokenAt,
       elapsedMs: Date.now() - started,

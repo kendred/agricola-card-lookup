@@ -57,7 +57,9 @@ deck restriction; corrected the player-count boards (3p adds **4** spaces, 4p ad
 named Grove, Hollow, Copse and Resource Market; dropped the unsupported "1 Clay (x2 spaces)"
 claim on the main board.
 
-**Cost:** ~5.5K tokens on the static (cached) prefix. System prompt ~13.4K → ~18.6K.
+**Cost (measured from the built prompt):** the rules block adds **5,672 tokens** to the
+static, cacheable prefix. System prompt **13,363 → 19,036 tokens**. Figures come from
+comparing `PROMPTS.baseline[4]` and `PROMPTS.current[4]` in `api/strategy/index.js`.
 
 **Notable find:** the Traveling Players action space **does not exist in 3-player games**.
 Cards keyed to it are near-dead at 3p, but the strategy guide presents Traveling Players as
@@ -95,9 +97,17 @@ needs validating.
   capacity, a timing?). This is the metric that matters — the picks themselves are more
   subjective.
 
+**Baseline variant.** `api/strategy/index.js` accepts `promptVariant: 'baseline'` in the
+request body, reconstructing the pre-Stage-1 prompt — strategy guide and card index, no
+rules reference. Same deployment, same model, same fixtures, so the A/B isolates the rules
+block. Production defaults to `'current'` and is unaffected.
+
+`STRATEGY_RATE_LIMIT_MAX` overrides the 5-per-10-minutes cap for local eval runs. Unset in
+production, where the cap stands.
+
 **Exit criteria:** a single command produces a diffable report across all fixtures, and
-Stage 1's rules doc is confirmed to have reduced mechanical errors against the pre-change
-baseline.
+Stage 1's rules doc is confirmed to have reduced mechanical errors against the baseline
+variant.
 
 **Note:** `test-strategy.html` is the natural place to hang a browser-side version off, but
 the runner should be scriptable so it can be run without a browser.
