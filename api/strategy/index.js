@@ -48,6 +48,14 @@ function isRateLimited(ip) {
     return false;
 }
 
+// --- Rules reference (embedded verbatim) ---
+// Authoritative game mechanics. Must precede the strategy guide in the prompt: the
+// guide assumes the rules as background, and without them the model fills the gaps
+// from pretraining (which blurs Agricola with Caverna and the Family/revised editions).
+const RULES_REFERENCE = fs.readFileSync(
+    path.join(__dirname, '..', 'docs', 'agricola-rules-reference.md'), 'utf8'
+);
+
 // --- Strategy guide (embedded verbatim) ---
 const STRATEGY_GUIDE = fs.readFileSync(
     path.join(__dirname, '..', 'docs', 'agricola-strategy-guide.md'), 'utf8'
@@ -97,7 +105,21 @@ Draft stage awareness:
 - Rounds 3-4 (4-8 drafted cards): Moderate analysis. Identify emerging patterns and note which dimensions are starting to take shape.
 - Rounds 5-7 (8-14 drafted cards): Full analysis. Provide detailed gap assessment and specific synergy recommendations.
 
+GAME RULES (AUTHORITATIVE):
+
+The following is the definitive rules reference for this game, taken from the official
+rulebook. It overrides any conflicting recollection you may have about Agricola. Base every
+mechanical claim you make — costs, yields, capacities, timing, scoring thresholds, what an
+action space does — on this text. If you are about to assert a mechanic that is not stated
+here, do not assert it. Never invent card effects, action spaces, or rules that this
+reference does not describe.
+
+${RULES_REFERENCE}
+
 STRATEGIC FRAMEWORK:
+
+The following is strategic interpretation, not rules. Where it summarizes a mechanic, the
+rules reference above is authoritative.
 
 ${STRATEGY_GUIDE}
 
