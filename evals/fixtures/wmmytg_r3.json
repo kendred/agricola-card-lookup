@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Baseboards",
+    "Throwing Axe",
+    "Food Basket",
+    "Grassland Harrow",
+    "Final Scenario",
+    "Grain Depot",
+    "Grain Bag",
+    "Shepherd's Whistle",
+    "Slurry Spreader",
+    "Riverine Shepherd",
+    "Shifting Cultivator",
+    "Sheep Keeper",
+    "Green Grocer",
+    "Sculptor",
+    "Fodder Planter",
+    "Delayed Wayfarer"
+  ],
+  "draftedNames": [
+    "Claypit Owner",
+    "Barn Shed",
+    "Animal Husbandry Worker",
+    "Mud Patch"
+  ],
+  "othersDrafted": [],
+  "round": 3,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "wmmytg_r3",
+    "sourceDraft": "hist_8222497692369_wmmytg",
+    "archivedAt": 1777502307630,
+    "handNumber": 3,
+    "handSize": 16,
+    "expectedHandSize": 16,
+    "userPicks": [
+      "Fodder Planter",
+      "Baseboards"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

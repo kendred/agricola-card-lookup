@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Upscale Lifestyle",
+    "Crack Weeder",
+    "Store of Experience",
+    "Christianity",
+    "Festival Planning",
+    "Recycled Brick",
+    "Pigswill",
+    "Nail Basket",
+    "Thunderbolt",
+    "Wood Harvester",
+    "Pig Breeder",
+    "Farmyard Worker",
+    "Field Caretaker",
+    "Sheep Keeper",
+    "Home Brewer",
+    "Pattern Maker",
+    "Braid Maker",
+    "Godmother"
+  ],
+  "draftedNames": [
+    "Barrow Pusher",
+    "Seed Almanac"
+  ],
+  "othersDrafted": [],
+  "round": 2,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "166zgs_r2",
+    "sourceDraft": "hist_8221718375859_166zgs",
+    "archivedAt": 1778281624140,
+    "handNumber": 2,
+    "handSize": 18,
+    "expectedHandSize": 18,
+    "userPicks": [
+      "Field Caretaker",
+      "Festival Planning"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

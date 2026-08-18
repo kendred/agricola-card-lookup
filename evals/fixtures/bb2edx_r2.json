@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Double-Turn Plow",
+    "Potter's Yard",
+    "Lantern House",
+    "Dwelling Mound",
+    "Mineral Feeder",
+    "Steam Plow",
+    "Breed Registry",
+    "Rolling Pin",
+    "Melon Patch",
+    "Trimmer",
+    "Field Caretaker",
+    "Stock Protector",
+    "Potato Harvester",
+    "Agricultural Labourer",
+    "Bonehead",
+    "Stone Custodian",
+    "Master Fencer",
+    "Prodigy"
+  ],
+  "draftedNames": [
+    "Winter Caretaker",
+    "Education Bonus"
+  ],
+  "othersDrafted": [],
+  "round": 2,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "bb2edx_r2",
+    "sourceDraft": "hist_8218181703539_bb2edx",
+    "archivedAt": 1781818296460,
+    "handNumber": 2,
+    "handSize": 18,
+    "expectedHandSize": 18,
+    "userPicks": [
+      "Bonehead",
+      "Melon Patch"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

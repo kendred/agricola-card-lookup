@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Milk Jug",
+    "Crack Weeder",
+    "Excursion to the Quarry",
+    "Hard Porcelain",
+    "Brotherly Love",
+    "Muck Rake",
+    "Churchyard",
+    "Adoptive Parents",
+    "Illusionist",
+    "Large-Scale Farmer",
+    "Cattle Feeder",
+    "Small Animal Breeder",
+    "Stablehand",
+    "Market Master"
+  ],
+  "draftedNames": [
+    "Chimney Sweep",
+    "Cesspit",
+    "Gardening Head Official",
+    "Stone House Reconstruction",
+    "Field Cultivator",
+    "Hod"
+  ],
+  "othersDrafted": [],
+  "round": 4,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "pq9fn4_r4",
+    "sourceDraft": "hist_8216446981893_pq9fn4",
+    "archivedAt": 1783553018106,
+    "handNumber": 4,
+    "handSize": 14,
+    "expectedHandSize": 14,
+    "userPicks": [
+      "Market Master",
+      "Excursion to the Quarry"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

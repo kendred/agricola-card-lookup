@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Feeding Dish",
+    "Clearing Spade",
+    "Hawktower",
+    "Pottery Yard",
+    "Hard Porcelain",
+    "Roll-Over Plow",
+    "Dwelling Plan",
+    "Treegardener",
+    "Clay Hut Builder",
+    "Bohemian",
+    "Mineralogist",
+    "Hardworking Man",
+    "Domestician Expert",
+    "Pickler"
+  ],
+  "draftedNames": [
+    "Field Watchman",
+    "Carrot Museum",
+    "Seed Trader",
+    "Dolly's Mother",
+    "Housemaster",
+    "Seaweed Fertilizer"
+  ],
+  "othersDrafted": [],
+  "round": 4,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "pjt09m_r4",
+    "sourceDraft": "hist_8213694648668_pjt09m",
+    "archivedAt": 1786305351331,
+    "handNumber": 4,
+    "handSize": 14,
+    "expectedHandSize": 14,
+    "userPicks": [
+      "Pickler",
+      "Hawktower"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "handNames": [
+    "Canvas Sack",
+    "Mandoline",
+    "Foreign Aid",
+    "New Market",
+    "Wall Builder",
+    "Riparian Builder",
+    "Animal Dealer",
+    "Nutrition Expert",
+    "Soldier",
+    "Roll-Over Plow"
+  ],
+  "draftedNames": [
+    "Barrow Pusher",
+    "Hutch",
+    "Field Cultivator",
+    "Lettuce Patch",
+    "Priest",
+    "Harvest House",
+    "Seed Servant",
+    "Earth Oven",
+    "Hollow Warden",
+    "Seed Pellets",
+    "Green Grocer",
+    "Renovation Materials"
+  ],
+  "othersDrafted": [
+    "Club House",
+    "Crack Weeder",
+    "Mason",
+    "Stable Master",
+    "Manger",
+    "Club House",
+    "Crack Weeder",
+    "Mason",
+    "Stable Master",
+    "Delayed Wayfarer",
+    "Three-Field Rotation",
+    "Dolly's Mother",
+    "Patch Caregiver",
+    "Clay Warden",
+    "Forest School",
+    "Blueprint",
+    "Home Brewer",
+    "Pipe Smoker"
+  ],
+  "round": 7,
+  "playerCount": 3,
+  "_meta": {
+    "fixtureId": "meebpm_r7",
+    "sourceDraft": "hist_8216469805130_meebpm",
+    "archivedAt": 1783530194869,
+    "handNumber": 1,
+    "handSize": 10,
+    "expectedHandSize": 8,
+    "userPicks": [
+      "Nutrition Expert",
+      "Roll-Over Plow"
+    ],
+    "returningRound": true,
+    "approximateOpponents": true,
+    "ambiguousAttribution": [],
+    "valid": false
+  }
+}

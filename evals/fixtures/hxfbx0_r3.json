@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Carpenter's Axe",
+    "Debt Security",
+    "Shepherd's Crook",
+    "Grassland Harrow",
+    "Food Chest",
+    "Chicken Coop",
+    "Land Consolidation",
+    "Muck Rake",
+    "Patch Caregiver",
+    "Stable Sergeant",
+    "Stock Protector",
+    "Potato Harvester",
+    "Cowherd",
+    "Stable Master",
+    "Plow Maker",
+    "Pickler"
+  ],
+  "draftedNames": [
+    "Shed Builder",
+    "Beer Stall",
+    "Midnight Fencer",
+    "Shepherd's Whistle"
+  ],
+  "othersDrafted": [],
+  "round": 3,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "hxfbx0_r3",
+    "sourceDraft": "hist_8213144043589_hxfbx0",
+    "archivedAt": 1786855956410,
+    "handNumber": 3,
+    "handSize": 16,
+    "expectedHandSize": 16,
+    "userPicks": [
+      "Plow Maker",
+      "Carpenter's Axe"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

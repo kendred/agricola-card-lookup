@@ -1,0 +1,58 @@
+{
+  "handNames": [
+    "Potter's Yard",
+    "Lantern House",
+    "Dwelling Mound",
+    "Mineral Feeder",
+    "Rolling Pin",
+    "Trimmer",
+    "Stock Protector",
+    "Potato Harvester",
+    "Master Fencer",
+    "Prodigy"
+  ],
+  "draftedNames": [
+    "Winter Caretaker",
+    "Education Bonus",
+    "Bonehead",
+    "Melon Patch",
+    "Porter",
+    "Sleight of Hand",
+    "Brushwood Collector",
+    "Half-Timbered House",
+    "Tinsmith Master",
+    "Writing Boards"
+  ],
+  "othersDrafted": [
+    "Beer Keg",
+    "Seed Almanac",
+    "Artichoke Field",
+    "Estate Worker",
+    "Animal Activist",
+    "Mountain Plowman",
+    "Double-Turn Plow",
+    "Steam Plow",
+    "Breed Registry",
+    "Field Caretaker",
+    "Agricultural Labourer",
+    "Stone Custodian"
+  ],
+  "round": 6,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "bb2edx_r6",
+    "sourceDraft": "hist_8218181703539_bb2edx",
+    "archivedAt": 1781818296460,
+    "handNumber": 2,
+    "handSize": 10,
+    "expectedHandSize": 10,
+    "userPicks": [
+      "Stock Protector",
+      "Mineral Feeder"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

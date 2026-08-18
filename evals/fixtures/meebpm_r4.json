@@ -1,0 +1,54 @@
+{
+  "handNames": [
+    "Canvas Sack",
+    "Mandoline",
+    "Foreign Aid",
+    "New Market",
+    "Earth Oven",
+    "Wall Builder",
+    "Riparian Builder",
+    "Animal Dealer",
+    "Nutrition Expert",
+    "Soldier",
+    "Seed Servant",
+    "Roll-Over Plow"
+  ],
+  "draftedNames": [
+    "Barrow Pusher",
+    "Hutch",
+    "Field Cultivator",
+    "Lettuce Patch",
+    "Priest",
+    "Harvest House"
+  ],
+  "othersDrafted": [
+    "Club House",
+    "Crack Weeder",
+    "Mason",
+    "Stable Master",
+    "Manger",
+    "Club House",
+    "Crack Weeder",
+    "Mason",
+    "Stable Master",
+    "Delayed Wayfarer"
+  ],
+  "round": 4,
+  "playerCount": 3,
+  "_meta": {
+    "fixtureId": "meebpm_r4",
+    "sourceDraft": "hist_8216469805130_meebpm",
+    "archivedAt": 1783530194869,
+    "handNumber": 1,
+    "handSize": 12,
+    "expectedHandSize": 14,
+    "userPicks": [
+      "Seed Servant",
+      "Earth Oven"
+    ],
+    "returningRound": true,
+    "approximateOpponents": true,
+    "ambiguousAttribution": [],
+    "valid": false
+  }
+}

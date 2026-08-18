@@ -1,0 +1,64 @@
+{
+  "handNames": [
+    "Debt Security",
+    "Blade Shears",
+    "Retraining",
+    "Straw Manure",
+    "Farmyard Worker",
+    "German Heath Keeper",
+    "Casual Worker",
+    "Carter"
+  ],
+  "draftedNames": [
+    "Kindling Gatherer",
+    "Shifting Cultivation",
+    "Bonehead",
+    "Mole Plow",
+    "Conservator",
+    "Family Friendly Home",
+    "Adoptive Parents",
+    "Fodder Beets",
+    "Carpenter",
+    "Child's Toy",
+    "Pig Owner",
+    "Thick Forest"
+  ],
+  "othersDrafted": [
+    "Handcart",
+    "Studio",
+    "Alchemists Lab",
+    "Bed Maker",
+    "Scholar",
+    "Agricultural Labourer",
+    "Final Scenario",
+    "Excursion to the Quarry",
+    "Barn Cats",
+    "Wood Carrier",
+    "Freemason",
+    "Wares Salesman",
+    "Corn Scoop",
+    "Mantlepiece",
+    "Market Stall",
+    "Scythe Worker",
+    "Firewood Collector",
+    "Seducer"
+  ],
+  "round": 7,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "m987xg_r7",
+    "sourceDraft": "hist_8214550904117_m987xg",
+    "archivedAt": 1785449095882,
+    "handNumber": 3,
+    "handSize": 8,
+    "expectedHandSize": 8,
+    "userPicks": [
+      "German Heath Keeper",
+      "Straw Manure"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

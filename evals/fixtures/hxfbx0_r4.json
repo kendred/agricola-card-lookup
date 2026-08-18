@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Forest Lake Hut",
+    "Barley Mill",
+    "Lasso",
+    "Pottery Yard",
+    "Maintenance Premium",
+    "Boar Spear",
+    "Farmers Market",
+    "Shoreforester",
+    "Roof Ballaster",
+    "Illusionist",
+    "Workshop Assistant",
+    "Cattle Buyer",
+    "Pipe Smoker",
+    "Reseller"
+  ],
+  "draftedNames": [
+    "Shed Builder",
+    "Beer Stall",
+    "Midnight Fencer",
+    "Shepherd's Whistle",
+    "Plow Maker",
+    "Carpenter's Axe"
+  ],
+  "othersDrafted": [],
+  "round": 4,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "hxfbx0_r4",
+    "sourceDraft": "hist_8213144043589_hxfbx0",
+    "archivedAt": 1786855956410,
+    "handNumber": 4,
+    "handSize": 14,
+    "expectedHandSize": 14,
+    "userPicks": [
+      "Pipe Smoker",
+      "Maintenance Premium"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

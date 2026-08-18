@@ -1,0 +1,64 @@
+{
+  "handNames": [
+    "Stable Yard",
+    "Corn Schnapps Distillery",
+    "Stone Weir",
+    "Land Consolidation",
+    "Culinary Artist",
+    "Nutrition Expert",
+    "Tutor",
+    "Earthenware Potter"
+  ],
+  "draftedNames": [
+    "Cottar",
+    "Wheel Plow",
+    "Shoreforester",
+    "Feed Fence",
+    "Paper Maker",
+    "Ale-Benches",
+    "Farm Hand",
+    "Special Food",
+    "Market Crier",
+    "Beer Table",
+    "Pasture Master",
+    "Child's Toy"
+  ],
+  "othersDrafted": [
+    "New Purchase",
+    "Luxurious Hostel",
+    "Raised Bed",
+    "Manservant",
+    "Patch Caregiver",
+    "Sheep Keeper",
+    "Half-Timbered House",
+    "Farm Store",
+    "Grain Sieve",
+    "Brushwood Collector",
+    "Salter",
+    "Potato Planter",
+    "Stone Tongs",
+    "Misanthropy",
+    "Rock Garden",
+    "Small Trader",
+    "Carpenter",
+    "Autumn Mother"
+  ],
+  "round": 7,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "9pkrks_r7",
+    "sourceDraft": "hist_8220427257336_9pkrks",
+    "archivedAt": 1779572742663,
+    "handNumber": 3,
+    "handSize": 8,
+    "expectedHandSize": 8,
+    "userPicks": [
+      "Tutor",
+      "Stable Yard"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "handNames": [
+    "Debt Security",
+    "Grassland Harrow",
+    "Food Chest",
+    "Muck Rake",
+    "Patch Caregiver",
+    "Stock Protector",
+    "Cowherd",
+    "Stable Master"
+  ],
+  "draftedNames": [
+    "Shed Builder",
+    "Beer Stall",
+    "Midnight Fencer",
+    "Shepherd's Whistle",
+    "Plow Maker",
+    "Carpenter's Axe",
+    "Pipe Smoker",
+    "Maintenance Premium",
+    "Plowman",
+    "Schnapps Distillery",
+    "Publican",
+    "Sheep Well"
+  ],
+  "othersDrafted": [
+    "Loom",
+    "Animal Bedding",
+    "Upholstery",
+    "Village Peasant",
+    "Hide Farmer",
+    "Wares Salesman",
+    "Cottager",
+    "Seed Servant",
+    "Prophet",
+    "Claw Knife",
+    "Mineral Feeder",
+    "Plant Fertilizer",
+    "Shepherd's Crook",
+    "Chicken Coop",
+    "Land Consolidation",
+    "Stable Sergeant",
+    "Potato Harvester",
+    "Pickler"
+  ],
+  "round": 7,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "hxfbx0_r7",
+    "sourceDraft": "hist_8213144043589_hxfbx0",
+    "archivedAt": 1786855956410,
+    "handNumber": 3,
+    "handSize": 8,
+    "expectedHandSize": 8,
+    "userPicks": [
+      "Patch Caregiver",
+      "Muck Rake"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "handNames": [
+    "Potter's Yard",
+    "Grassland Harrow",
+    "Renovation Materials",
+    "Scythe",
+    "Pan Baker",
+    "Consultant",
+    "Sowing Master",
+    "Clay Firer"
+  ],
+  "draftedNames": [
+    "Kindling Gatherer",
+    "Baseboards",
+    "Scythe Worker",
+    "Lynchet",
+    "Scholar",
+    "Muddy Waters",
+    "Overachiever",
+    "Hauberg",
+    "Hedge Keeper",
+    "Changeover",
+    "Cube Cutter",
+    "Pole Barns"
+  ],
+  "othersDrafted": [
+    "Food Basket",
+    "Fruit Ladder",
+    "Field Caretaker",
+    "Site Manager",
+    "Dairy Crier",
+    "Bumper Crop",
+    "Mud Patch",
+    "Overhaul",
+    "Steam Machine",
+    "Game Provider",
+    "Den Builder",
+    "Millwright",
+    "Reclamation Plow",
+    "Chicken Coop",
+    "Cubbyhole",
+    "Swagman",
+    "Potato Digger",
+    "Cattle Whisperer"
+  ],
+  "round": 7,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "d90hkw_r7",
+    "sourceDraft": "hist_8219474780197_d90hkw",
+    "archivedAt": 1780525219802,
+    "handNumber": 3,
+    "handSize": 8,
+    "expectedHandSize": 8,
+    "userPicks": [
+      "Clay Firer",
+      "Potter's Yard"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

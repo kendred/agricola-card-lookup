@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Facades Carving",
+    "Seed Pellets",
+    "Butter Churn",
+    "Three-Field Rotation",
+    "Mill Wheel",
+    "Fishing Net",
+    "Lettuce Patch",
+    "Grain Sieve",
+    "Dolly's Mother",
+    "Roughcaster",
+    "Hollow Warden",
+    "Rustic",
+    "Patch Caregiver",
+    "Clay Warden",
+    "Little Stick Knitter",
+    "Field Cultivator",
+    "Master Renovator",
+    "Whisky Distiller"
+  ],
+  "draftedNames": [
+    "Barrow Pusher",
+    "Hutch"
+  ],
+  "othersDrafted": [],
+  "round": 2,
+  "playerCount": 3,
+  "_meta": {
+    "fixtureId": "meebpm_r2",
+    "sourceDraft": "hist_8216469805130_meebpm",
+    "archivedAt": 1783530194869,
+    "handNumber": 2,
+    "handSize": 18,
+    "expectedHandSize": 18,
+    "userPicks": [
+      "Field Cultivator",
+      "Lettuce Patch"
+    ],
+    "returningRound": false,
+    "approximateOpponents": true,
+    "ambiguousAttribution": [],
+    "valid": false
+  }
+}

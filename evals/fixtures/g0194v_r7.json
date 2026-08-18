@@ -1,0 +1,64 @@
+{
+  "handNames": [
+    "Pond Hut",
+    "Asparagus Gift",
+    "Grain Sieve",
+    "Trident",
+    "Lutenist",
+    "Paper Maker",
+    "Beer Tent Operator",
+    "Roof Examiner"
+  ],
+  "draftedNames": [
+    "Vegetable Vendor",
+    "Canvas Sack",
+    "Wood Barterer",
+    "Fodder Beets",
+    "Animal Tamer",
+    "Storeroom",
+    "Tutor",
+    "Tea House",
+    "Tree Farm Joiner",
+    "Wholesale Market",
+    "Hoof Caregiver",
+    "Working Gloves"
+  ],
+  "othersDrafted": [
+    "Comb and Cutter",
+    "Farm Hand",
+    "Veggie Lover",
+    "Lazybones",
+    "Bumper Crop",
+    "Petrified Wood",
+    "Nest Site",
+    "Acorns Basket",
+    "Iron Oven",
+    "Potato Harvester",
+    "Hewer",
+    "Master Tanner",
+    "Handplow",
+    "Greening Plan",
+    "Stone House Reconstruction",
+    "Home Brewer",
+    "Den Builder",
+    "Reseller"
+  ],
+  "round": 7,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "g0194v_r7",
+    "sourceDraft": "hist_8215388524325_g0194v",
+    "archivedAt": 1784611475674,
+    "handNumber": 3,
+    "handSize": 8,
+    "expectedHandSize": 8,
+    "userPicks": [
+      "Paper Maker",
+      "Pond Hut"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

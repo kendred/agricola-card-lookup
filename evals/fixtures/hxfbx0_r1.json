@@ -1,0 +1,44 @@
+{
+  "handNames": [
+    "Loom",
+    "Store of Experience",
+    "Studio Boat",
+    "Beer Stall",
+    "Schnapps Distillery",
+    "Blade Shears",
+    "Animal Bedding",
+    "Upholstery",
+    "Field Spade",
+    "Harpooner",
+    "Geologist",
+    "Lunchtime Beer",
+    "Village Peasant",
+    "Puppeteer",
+    "Hide Farmer",
+    "Stable Milker",
+    "Plowman",
+    "Shed Builder",
+    "Wares Salesman",
+    "Uncaring Parents"
+  ],
+  "draftedNames": [],
+  "othersDrafted": [],
+  "round": 1,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "hxfbx0_r1",
+    "sourceDraft": "hist_8213144043589_hxfbx0",
+    "archivedAt": 1786855956410,
+    "handNumber": 1,
+    "handSize": 20,
+    "expectedHandSize": 20,
+    "userPicks": [
+      "Shed Builder",
+      "Beer Stall"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Handplow",
+    "Pond Hut",
+    "Asparagus Gift",
+    "Greening Plan",
+    "Storeroom",
+    "Grain Sieve",
+    "Trident",
+    "Stone House Reconstruction",
+    "Lutenist",
+    "Animal Tamer",
+    "Paper Maker",
+    "Home Brewer",
+    "Den Builder",
+    "Beer Tent Operator",
+    "Roof Examiner",
+    "Reseller"
+  ],
+  "draftedNames": [
+    "Vegetable Vendor",
+    "Canvas Sack",
+    "Wood Barterer",
+    "Fodder Beets"
+  ],
+  "othersDrafted": [],
+  "round": 3,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "g0194v_r3",
+    "sourceDraft": "hist_8215388524325_g0194v",
+    "archivedAt": 1784611475674,
+    "handNumber": 3,
+    "handSize": 16,
+    "expectedHandSize": 16,
+    "userPicks": [
+      "Animal Tamer",
+      "Storeroom"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

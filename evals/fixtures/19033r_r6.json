@@ -1,0 +1,58 @@
+{
+  "handNames": [
+    "Drift-Net Boat",
+    "Carpenter's Yard",
+    "Pellet Press",
+    "Child's Toy",
+    "Bartering Hut",
+    "Village Peasant",
+    "Nutrition Expert",
+    "House Steward",
+    "Usufructuary",
+    "Stockman"
+  ],
+  "draftedNames": [
+    "Assistant Tiller",
+    "Feed Pellets",
+    "Collector",
+    "Profiteering",
+    "Established Person",
+    "Artisan District",
+    "Site Manager",
+    "Mining Hammer",
+    "Priest",
+    "Hauberg"
+  ],
+  "othersDrafted": [
+    "Basket Chair",
+    "Turnwrest Plow",
+    "Waterlily Pond",
+    "Patron",
+    "Sheep Keeper",
+    "Animal Husbandry Worker",
+    "Forest School",
+    "Ceilings",
+    "Lawn Fertilzer",
+    "Treegardener",
+    "Pet Broker",
+    "Home Brewer"
+  ],
+  "round": 6,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "19033r_r6",
+    "sourceDraft": "hist_8214613003992_19033r",
+    "archivedAt": 1785386996007,
+    "handNumber": 2,
+    "handSize": 10,
+    "expectedHandSize": 10,
+    "userPicks": [
+      "Nutrition Expert",
+      "Child's Toy"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

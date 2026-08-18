@@ -42,7 +42,9 @@ Configured in `.claude/launch.json`. Alternative: `python3 .claude/serve.py`.
 | `api/draft/index.js` | Draft cloud sync, backed by Azure Table Storage (v3-style handler) |
 | `api/submit-card/index.js` | Creates `card-submission` GitHub issues (v3-style handler) |
 | `data/agricola-cards.json` | Master card database (820 cards). **Duplicated byte-identical at `api/data/`.** |
+| `docs/agricola-rules-reference.md` | Authoritative game mechanics, from `f5-agricola-rulebook.pdf`. Embedded in AI system prompt **above** the strategy guide. **Duplicated byte-identical at `api/docs/`.** |
 | `docs/agricola-strategy-guide.md` | Strategy framework embedded in AI system prompt. **Duplicated byte-identical at `api/docs/`.** |
+| `docs/strategy-quality-plan.md` | Staged plan for improving strategy-advisor quality. Not embedded in any prompt. |
 | `staticwebapp.config.json` | SWA auth providers, route roles, navigation fallback |
 | `scripts/merge_rankings.py` | Merges refreshed ranking exports into the card DB |
 
@@ -73,8 +75,9 @@ The Functions runtime can't read outside `api/`, so two files exist in both plac
 |---|---|
 | `data/agricola-cards.json` | `api/data/agricola-cards.json` |
 | `docs/agricola-strategy-guide.md` | `api/docs/agricola-strategy-guide.md` |
+| `docs/agricola-rules-reference.md` | `api/docs/agricola-rules-reference.md` |
 
-Verify with `diff -q` on both pairs before committing.
+Verify with `diff -q` on all three pairs before committing.
 
 ### CSS
 - No framework — all custom CSS
@@ -150,7 +153,9 @@ New cards arrive as **open GitHub issues labeled `card-submission`**, titled `[C
 - **Strategy tags**: 11 archetypes (Day Laborer, Fishing, Big House, Small House, Stone House, Grain, Sow, Major/Minor, Lesson, Stable, Traveling Players), defined in `js/tag-definitions.js`. (Animal was retired as a draftable tag — animals are a farm backbone, not a tag-based engine.)
 
 ## AI Strategy System
-- System prompt includes: role definition, JSON response schema, strategy guide, and a compact index of all 820 cards
+- System prompt includes: role definition, JSON response schema, **rules reference (authoritative mechanics)**, strategy guide (labelled as interpretation), and a compact index of all 820 cards
+- **Rules before strategy.** `agricola-rules-reference.md` must stay above `agricola-strategy-guide.md` in the prompt. The guide assumes the mechanics as background; without the rules the model fills the gap from pretraining, which blurs Agricola with Caverna and the Family/revised editions. See `docs/strategy-quality-plan.md` for the full diagnosis and remaining stages.
+- **Action-space names follow the cards, not the rulebook.** The card DB uses the newer names (`Farmland`, `Grain Seeds`, `Lessons`, `Grain Utilization`, `Quarry`); the rulebook PDF uses the older ones (`Plow 1 Field`, `Take 1 Grain`, `1 Occupation`, `Sow and/or Bake bread`, `1 Stone`). §8 of the rules reference carries the mapping table and the rest of the doc uses card-text names, with rulebook names as parenthetical aliases. **Any new mechanics text must use card-text names** — a name the cards don't print is worse than no name, because the model treats it as a separate space.
 - Response includes: `reasoning` (chain-of-thought), `archetypes`, `overall_analysis`, `dimensions` (with justifications), `risks`, `suggestions` (2 occs + 2 minors)
 - Draft stage awareness: rounds 1-2 brief, 3-4 moderate, 5-7 full analysis
 
@@ -171,7 +176,7 @@ No automated tests. Manual verification via browser. `test-strategy.html` is a t
 
 Cheap pre-commit checks worth running:
 ```bash
-node --check api/strategy/index.js && diff -q data/agricola-cards.json api/data/agricola-cards.json && diff -q docs/agricola-strategy-guide.md api/docs/agricola-strategy-guide.md
+node --check api/strategy/index.js && diff -q data/agricola-cards.json api/data/agricola-cards.json && diff -q docs/agricola-strategy-guide.md api/docs/agricola-strategy-guide.md && diff -q docs/agricola-rules-reference.md api/docs/agricola-rules-reference.md
 ```
 
 ## Session Checkpoint

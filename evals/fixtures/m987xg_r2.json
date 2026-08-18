@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Ale-Benches",
+    "Claw Knife",
+    "Final Scenario",
+    "Excursion to the Quarry",
+    "Thick Forest",
+    "Mole Plow",
+    "Stable Yard",
+    "Civic Facade",
+    "Barn Cats",
+    "Wood Carrier",
+    "Pig Owner",
+    "Patch Caretaker",
+    "Homekeeper",
+    "Stall Holder",
+    "Freemason",
+    "Bonehead",
+    "Gardening Head Official",
+    "Wares Salesman"
+  ],
+  "draftedNames": [
+    "Kindling Gatherer",
+    "Shifting Cultivation"
+  ],
+  "othersDrafted": [],
+  "round": 2,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "m987xg_r2",
+    "sourceDraft": "hist_8214550904117_m987xg",
+    "archivedAt": 1785449095882,
+    "handNumber": 2,
+    "handSize": 18,
+    "expectedHandSize": 18,
+    "userPicks": [
+      "Bonehead",
+      "Mole Plow"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

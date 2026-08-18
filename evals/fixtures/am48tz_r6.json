@@ -1,0 +1,58 @@
+{
+  "handNames": [
+    "Telegram",
+    "Future Building Site",
+    "Plant Fertilizer",
+    "Beer Tap",
+    "Renovation Materials",
+    "Publican",
+    "Small Animal Breeder",
+    "Fisherman's Friend",
+    "Seed Researcher",
+    "Kelp Gatherer"
+  ],
+  "draftedNames": [
+    "Animal Husbandry Worker",
+    "Breed Registry",
+    "Cultivator",
+    "Artisan District",
+    "Task Artisan",
+    "Ceilings",
+    "Veggie Lover",
+    "Feed Pellets",
+    "Stable Cleaner",
+    "Private Forest"
+  ],
+  "othersDrafted": [
+    "Renovation Company",
+    "Straw-Thatched Roof",
+    "Town Hall",
+    "Collier",
+    "Farm Hand",
+    "Collector",
+    "Toolbox",
+    "Sundial",
+    "Thunderbolt",
+    "Priest",
+    "Shed Builder",
+    "Dung Collector"
+  ],
+  "round": 6,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "am48tz_r6",
+    "sourceDraft": "hist_8221457687498_am48tz",
+    "archivedAt": 1778542312501,
+    "handNumber": 2,
+    "handSize": 10,
+    "expectedHandSize": 10,
+    "userPicks": [
+      "Seed Researcher",
+      "Beer Tap"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

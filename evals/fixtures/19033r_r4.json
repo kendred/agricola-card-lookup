@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Fire Protection Pond",
+    "Milking Parlor",
+    "Lumber Mill",
+    "Mining Hammer",
+    "Tasting",
+    "Piggy Bank",
+    "Water Gully",
+    "Lutenist",
+    "Roof Ballaster",
+    "Forest Guardian",
+    "Storehouse Keeper",
+    "Beer Tent Operator",
+    "Site Manager",
+    "Pen Builder"
+  ],
+  "draftedNames": [
+    "Assistant Tiller",
+    "Feed Pellets",
+    "Collector",
+    "Profiteering",
+    "Established Person",
+    "Artisan District"
+  ],
+  "othersDrafted": [],
+  "round": 4,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "19033r_r4",
+    "sourceDraft": "hist_8214613003992_19033r",
+    "archivedAt": 1785386996007,
+    "handNumber": 4,
+    "handSize": 14,
+    "expectedHandSize": 14,
+    "userPicks": [
+      "Site Manager",
+      "Mining Hammer"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

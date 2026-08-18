@@ -1,0 +1,58 @@
+{
+  "handNames": [
+    "Large Greenhouse",
+    "Sculpture Course",
+    "Huntsman's Hat",
+    "Stone Cart",
+    "Pole Barns",
+    "Small Trader",
+    "Riverine Shepherd",
+    "Market Crier",
+    "Cattle Buyer",
+    "Cube Cutter"
+  ],
+  "draftedNames": [
+    "Kindling Gatherer",
+    "Baseboards",
+    "Scythe Worker",
+    "Lynchet",
+    "Scholar",
+    "Muddy Waters",
+    "Overachiever",
+    "Hauberg",
+    "Hedge Keeper",
+    "Changeover"
+  ],
+  "othersDrafted": [
+    "Food Basket",
+    "Fruit Ladder",
+    "Field Caretaker",
+    "Site Manager",
+    "Dairy Crier",
+    "Bumper Crop",
+    "Mud Patch",
+    "Overhaul",
+    "Steam Machine",
+    "Game Provider",
+    "Den Builder",
+    "Millwright"
+  ],
+  "round": 6,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "d90hkw_r6",
+    "sourceDraft": "hist_8219474780197_d90hkw",
+    "archivedAt": 1780525219802,
+    "handNumber": 2,
+    "handSize": 10,
+    "expectedHandSize": 10,
+    "userPicks": [
+      "Cube Cutter",
+      "Pole Barns"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

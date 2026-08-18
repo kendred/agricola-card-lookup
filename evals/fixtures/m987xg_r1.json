@@ -1,0 +1,44 @@
+{
+  "handNames": [
+    "Shifting Cultivation",
+    "Farmyard Manure",
+    "Handcart",
+    "Mandoline",
+    "Studio",
+    "Archway",
+    "Wood Saw",
+    "Child's Toy",
+    "Paintbrush",
+    "Alchemists Lab",
+    "Bed Maker",
+    "Oven Firing Boy",
+    "Carpenter",
+    "Cattle Feeder",
+    "Scholar",
+    "Agricultural Labourer",
+    "Sculptor",
+    "Midwife",
+    "Kindling Gatherer",
+    "Mountain Plowman"
+  ],
+  "draftedNames": [],
+  "othersDrafted": [],
+  "round": 1,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "m987xg_r1",
+    "sourceDraft": "hist_8214550904117_m987xg",
+    "archivedAt": 1785449095882,
+    "handNumber": 1,
+    "handSize": 20,
+    "expectedHandSize": 20,
+    "userPicks": [
+      "Kindling Gatherer",
+      "Shifting Cultivation"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

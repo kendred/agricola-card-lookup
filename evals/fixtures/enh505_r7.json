@@ -1,0 +1,64 @@
+{
+  "handNames": [
+    "Paper Knife",
+    "Forest Inn",
+    "Ravenous Hunger",
+    "Churchyard",
+    "Drudgery Reeve",
+    "Inner Districts Director",
+    "Bellfounder",
+    "Transactor"
+  ],
+  "draftedNames": [
+    "Chimney Sweep",
+    "Harvest House",
+    "Priest",
+    "Canvas Sack",
+    "Lord of the Manor",
+    "Ox Goad",
+    "Reseller",
+    "Muddy Waters",
+    "Winter Caretaker",
+    "Tea Time",
+    "Freemason",
+    "Shelter"
+  ],
+  "othersDrafted": [
+    "Ash Trees",
+    "Animal Catcher",
+    "Plow Hero",
+    "Ebonist",
+    "Wooden Whey Bucket",
+    "Upholstery",
+    "Schnapps Distillery",
+    "Fatstock Stretcher",
+    "Shepherd's Whistle",
+    "Scythe Worker",
+    "Pet Grower",
+    "Plowman",
+    "Claypipe",
+    "Stockyard",
+    "Retraining",
+    "Chief Forester",
+    "District Manager",
+    "Casual Worker"
+  ],
+  "round": 7,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "enh505_r7",
+    "sourceDraft": "hist_8213608846867_enh505",
+    "archivedAt": 1786391153132,
+    "handNumber": 3,
+    "handSize": 8,
+    "expectedHandSize": 8,
+    "userPicks": [
+      "Transactor",
+      "Paper Knife"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Digging Spade",
+    "Eternal Rye Cultivation",
+    "Stone Cart",
+    "Carpenter's Yard",
+    "Iron Hoe",
+    "Storehouse Steward",
+    "Nutrition Expert",
+    "Winter Caretaker",
+    "Sheep Provider",
+    "Delayed Wayfarer",
+    "Motivator",
+    "Wood Palisades",
+    "Bumper Crop",
+    "Imitator"
+  ],
+  "draftedNames": [
+    "Barrow Pusher",
+    "Seed Almanac",
+    "Field Caretaker",
+    "Festival Planning",
+    "Basket Weaver",
+    "Barn Cats"
+  ],
+  "othersDrafted": [],
+  "round": 4,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "166zgs_r4",
+    "sourceDraft": "hist_8221718375859_166zgs",
+    "archivedAt": 1778281624140,
+    "handNumber": 4,
+    "handSize": 14,
+    "expectedHandSize": 14,
+    "userPicks": [
+      "Winter Caretaker",
+      "Bumper Crop"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

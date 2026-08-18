@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Wool Blankets",
+    "Farmyard Manure",
+    "Mining Hammer",
+    "Hauberg",
+    "Straw-Thatched Roof",
+    "Writing Desk",
+    "Storeroom",
+    "Pet Broker",
+    "Housemaster",
+    "Cattle Feeder",
+    "Baker",
+    "Sculptor",
+    "Overachiever",
+    "Old Miser"
+  ],
+  "draftedNames": [
+    "Kindling Gatherer",
+    "Baseboards",
+    "Scythe Worker",
+    "Lynchet",
+    "Scholar",
+    "Muddy Waters"
+  ],
+  "othersDrafted": [],
+  "round": 4,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "d90hkw_r4",
+    "sourceDraft": "hist_8219474780197_d90hkw",
+    "archivedAt": 1780525219802,
+    "handNumber": 4,
+    "handSize": 14,
+    "expectedHandSize": 14,
+    "userPicks": [
+      "Overachiever",
+      "Hauberg"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

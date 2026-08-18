@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Ale-Benches",
+    "Stone Tongs",
+    "Stable Yard",
+    "Corn Schnapps Distillery",
+    "Misanthropy",
+    "Stone Weir",
+    "Land Consolidation",
+    "Rock Garden",
+    "Small Trader",
+    "Culinary Artist",
+    "Paper Maker",
+    "Carpenter",
+    "Nutrition Expert",
+    "Tutor",
+    "Autumn Mother",
+    "Earthenware Potter"
+  ],
+  "draftedNames": [
+    "Cottar",
+    "Wheel Plow",
+    "Shoreforester",
+    "Feed Fence"
+  ],
+  "othersDrafted": [],
+  "round": 3,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "9pkrks_r3",
+    "sourceDraft": "hist_8220427257336_9pkrks",
+    "archivedAt": 1779572742663,
+    "handNumber": 3,
+    "handSize": 16,
+    "expectedHandSize": 16,
+    "userPicks": [
+      "Paper Maker",
+      "Ale-Benches"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

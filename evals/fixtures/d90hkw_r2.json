@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Mud Patch",
+    "Large Greenhouse",
+    "Sculpture Course",
+    "Overhaul",
+    "Steam Machine",
+    "Huntsman's Hat",
+    "Stone Cart",
+    "Lynchet",
+    "Pole Barns",
+    "Small Trader",
+    "Scythe Worker",
+    "Riverine Shepherd",
+    "Game Provider",
+    "Market Crier",
+    "Cattle Buyer",
+    "Den Builder",
+    "Cube Cutter",
+    "Millwright"
+  ],
+  "draftedNames": [
+    "Kindling Gatherer",
+    "Baseboards"
+  ],
+  "othersDrafted": [],
+  "round": 2,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "d90hkw_r2",
+    "sourceDraft": "hist_8219474780197_d90hkw",
+    "archivedAt": 1780525219802,
+    "handNumber": 2,
+    "handSize": 18,
+    "expectedHandSize": 18,
+    "userPicks": [
+      "Scythe Worker",
+      "Lynchet"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

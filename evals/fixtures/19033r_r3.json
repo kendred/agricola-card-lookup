@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Potato Ridger",
+    "Seed Pellets",
+    "Crack Weeder",
+    "Brewing Water",
+    "Artisan District",
+    "Forest Well",
+    "Bookmark",
+    "Iron Oven",
+    "Manservant",
+    "Seducer",
+    "Established Person",
+    "Freemason",
+    "Private Teacher",
+    "Food Merchant",
+    "Roof Examiner",
+    "Transactor"
+  ],
+  "draftedNames": [
+    "Assistant Tiller",
+    "Feed Pellets",
+    "Collector",
+    "Profiteering"
+  ],
+  "othersDrafted": [],
+  "round": 3,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "19033r_r3",
+    "sourceDraft": "hist_8214613003992_19033r",
+    "archivedAt": 1785386996007,
+    "handNumber": 3,
+    "handSize": 16,
+    "expectedHandSize": 16,
+    "userPicks": [
+      "Established Person",
+      "Artisan District"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

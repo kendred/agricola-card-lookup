@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Drinking Trough",
+    "Debt Security",
+    "Abort Oriel",
+    "Brotherly Love",
+    "Wholesale Market",
+    "Supply Boat",
+    "Herbal Garden",
+    "Sleight of Hand",
+    "Animal Reeve",
+    "Stone Buyer",
+    "Forest Owner",
+    "Porter",
+    "Wealthy Man",
+    "Reader",
+    "Land Surveyor",
+    "Miller"
+  ],
+  "draftedNames": [
+    "Winter Caretaker",
+    "Education Bonus",
+    "Bonehead",
+    "Melon Patch"
+  ],
+  "othersDrafted": [],
+  "round": 3,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "bb2edx_r3",
+    "sourceDraft": "hist_8218181703539_bb2edx",
+    "archivedAt": 1781818296460,
+    "handNumber": 3,
+    "handSize": 16,
+    "expectedHandSize": 16,
+    "userPicks": [
+      "Porter",
+      "Sleight of Hand"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

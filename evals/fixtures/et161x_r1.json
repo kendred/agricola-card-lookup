@@ -1,0 +1,44 @@
+{
+  "handNames": [
+    "Forest Inn",
+    "Forest Stone",
+    "Beanfield",
+    "Horse-Drawn Boat",
+    "Bookshelf",
+    "Fatstock Stretcher",
+    "Lynchet",
+    "Whale Oil",
+    "Boar Spear",
+    "Profiteering",
+    "Wood Cutter",
+    "Night-School Student",
+    "Haydryer",
+    "Clay Kneader",
+    "Ranch Provost",
+    "Ebonist",
+    "Transactor",
+    "Museum Caretaker",
+    "Master Tanner",
+    "Cabbage Buyer"
+  ],
+  "draftedNames": [],
+  "othersDrafted": [],
+  "round": 1,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "et161x_r1",
+    "sourceDraft": "hist_8218926925938_et161x",
+    "archivedAt": 1781073074061,
+    "handNumber": 1,
+    "handSize": 20,
+    "expectedHandSize": 20,
+    "userPicks": [
+      "Haydryer",
+      "Bookshelf"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

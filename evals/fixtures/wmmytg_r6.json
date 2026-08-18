@@ -1,0 +1,58 @@
+{
+  "handNames": [
+    "Woodcraft",
+    "Pioneering Spirit",
+    "Brotherly Love",
+    "Ox Skull",
+    "Stone Weir",
+    "Cookery Outfitter",
+    "Riparian Builder",
+    "Kelp Gatherer",
+    "Animal Tamer's Apprentice",
+    "Pen Builder"
+  ],
+  "draftedNames": [
+    "Claypit Owner",
+    "Barn Shed",
+    "Animal Husbandry Worker",
+    "Mud Patch",
+    "Fodder Planter",
+    "Baseboards",
+    "Vegetable Vendor",
+    "Food Chest",
+    "Omnifarmer",
+    "Basket Chair"
+  ],
+  "othersDrafted": [
+    "Muddy Puddles",
+    "Stone House Reconstruction",
+    "Twibil",
+    "Shovel Bearer",
+    "Haydryer",
+    "Patron",
+    "Hook Knife",
+    "Flail",
+    "Fodder Beets",
+    "Thresher",
+    "Sheep Provider",
+    "Dung Collector"
+  ],
+  "round": 6,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "wmmytg_r6",
+    "sourceDraft": "hist_8222497692369_wmmytg",
+    "archivedAt": 1777502307630,
+    "handNumber": 2,
+    "handSize": 10,
+    "expectedHandSize": 10,
+    "userPicks": [
+      "Pen Builder",
+      "Stone Weir"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

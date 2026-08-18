@@ -1,0 +1,64 @@
+{
+  "handNames": [
+    "Hard Porcelain",
+    "Milking Place",
+    "Paintbrush",
+    "Shepherd's Whistle",
+    "Publican",
+    "Conjurer",
+    "Reader",
+    "Tinsmith Master"
+  ],
+  "draftedNames": [
+    "Barrow Pusher",
+    "Seed Almanac",
+    "Field Caretaker",
+    "Festival Planning",
+    "Basket Weaver",
+    "Barn Cats",
+    "Winter Caretaker",
+    "Bumper Crop",
+    "Fellow Grazer",
+    "Stone House Reconstruction",
+    "Godmother",
+    "Store of Experience"
+  ],
+  "othersDrafted": [
+    "Milking Stool",
+    "Raised Bed",
+    "Sleight of Hand",
+    "Plow Hero",
+    "Pipe Smoker",
+    "Prophet",
+    "Pigswill",
+    "Nail Basket",
+    "Thunderbolt",
+    "Sheep Keeper",
+    "Home Brewer",
+    "Braid Maker",
+    "Threshing Board",
+    "Calcium Fertilizers",
+    "Gift Basket",
+    "Lodger",
+    "Stock Protector",
+    "Bellfounder"
+  ],
+  "round": 7,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "166zgs_r7",
+    "sourceDraft": "hist_8221718375859_166zgs",
+    "archivedAt": 1778281624140,
+    "handNumber": 3,
+    "handSize": 8,
+    "expectedHandSize": 8,
+    "userPicks": [
+      "Tinsmith Master",
+      "Hard Porcelain"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

@@ -5,3 +5,11 @@ node_modules/
 PROGRESS.md
 TODO.md
 STREAMING_PLAN.md
+
+# Raw Azure table dumps — contain user/partition identifiers; fixtures are the artifact
+evals/raw-drafts.json
+# Azure Functions local settings — holds connection strings
+api/local.settings.json
+# Eval run outputs — regenerable, and they accumulate
+evals/reports/
+evals/*.log

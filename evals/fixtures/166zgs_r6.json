@@ -1,0 +1,58 @@
+{
+  "handNames": [
+    "Upscale Lifestyle",
+    "Crack Weeder",
+    "Store of Experience",
+    "Christianity",
+    "Recycled Brick",
+    "Wood Harvester",
+    "Pig Breeder",
+    "Farmyard Worker",
+    "Pattern Maker",
+    "Godmother"
+  ],
+  "draftedNames": [
+    "Barrow Pusher",
+    "Seed Almanac",
+    "Field Caretaker",
+    "Festival Planning",
+    "Basket Weaver",
+    "Barn Cats",
+    "Winter Caretaker",
+    "Bumper Crop",
+    "Fellow Grazer",
+    "Stone House Reconstruction"
+  ],
+  "othersDrafted": [
+    "Milking Stool",
+    "Raised Bed",
+    "Sleight of Hand",
+    "Plow Hero",
+    "Pipe Smoker",
+    "Prophet",
+    "Pigswill",
+    "Nail Basket",
+    "Thunderbolt",
+    "Sheep Keeper",
+    "Home Brewer",
+    "Braid Maker"
+  ],
+  "round": 6,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "166zgs_r6",
+    "sourceDraft": "hist_8221718375859_166zgs",
+    "archivedAt": 1778281624140,
+    "handNumber": 2,
+    "handSize": 10,
+    "expectedHandSize": 10,
+    "userPicks": [
+      "Godmother",
+      "Store of Experience"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

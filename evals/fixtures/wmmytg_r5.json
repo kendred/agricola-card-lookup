@@ -1,0 +1,52 @@
+{
+  "handNames": [
+    "Drinking Trough",
+    "Debt Security",
+    "Large Greenhouse",
+    "Growing Farm",
+    "Small Basket",
+    "Small Trader",
+    "Basket Chair",
+    "Building Expert",
+    "Trimmer",
+    "Sheep Whisperer",
+    "Wealthy Man",
+    "Omnifarmer"
+  ],
+  "draftedNames": [
+    "Claypit Owner",
+    "Barn Shed",
+    "Animal Husbandry Worker",
+    "Mud Patch",
+    "Fodder Planter",
+    "Baseboards",
+    "Vegetable Vendor",
+    "Food Chest"
+  ],
+  "othersDrafted": [
+    "Muddy Puddles",
+    "Stone House Reconstruction",
+    "Twibil",
+    "Shovel Bearer",
+    "Haydryer",
+    "Patron"
+  ],
+  "round": 5,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "wmmytg_r5",
+    "sourceDraft": "hist_8222497692369_wmmytg",
+    "archivedAt": 1777502307630,
+    "handNumber": 1,
+    "handSize": 12,
+    "expectedHandSize": 12,
+    "userPicks": [
+      "Omnifarmer",
+      "Basket Chair"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

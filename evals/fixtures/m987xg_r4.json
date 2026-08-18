@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Hook Knife",
+    "Ravenous Hunger",
+    "Garden Claw",
+    "Wholesale Market",
+    "Small Greenhouse",
+    "Heirloom",
+    "Fodder Beets",
+    "Adoptive Parents",
+    "Sweep",
+    "Green Grocer",
+    "Mud Wallower",
+    "Beer Tent Operator",
+    "Usufructuary",
+    "Uncaring Parents"
+  ],
+  "draftedNames": [
+    "Kindling Gatherer",
+    "Shifting Cultivation",
+    "Bonehead",
+    "Mole Plow",
+    "Conservator",
+    "Family Friendly Home"
+  ],
+  "othersDrafted": [],
+  "round": 4,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "m987xg_r4",
+    "sourceDraft": "hist_8214550904117_m987xg",
+    "archivedAt": 1785449095882,
+    "handNumber": 4,
+    "handSize": 14,
+    "expectedHandSize": 14,
+    "userPicks": [
+      "Adoptive Parents",
+      "Fodder Beets"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

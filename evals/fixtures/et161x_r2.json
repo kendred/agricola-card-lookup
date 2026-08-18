@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Carpenter's Axe",
+    "Large Greenhouse",
+    "Mining Hammer",
+    "Cookery Lesson",
+    "Bed in the Grain Field",
+    "Stone Clearing",
+    "Pole Barns",
+    "Misanthropy",
+    "Lutenist",
+    "Geologist",
+    "Green Grocer",
+    "Home Brewer",
+    "Bellfounder",
+    "Clay Deliveryman",
+    "Champion Breeder",
+    "Vegetable Vendor",
+    "Visionary",
+    "Market Booth"
+  ],
+  "draftedNames": [
+    "Haydryer",
+    "Bookshelf"
+  ],
+  "othersDrafted": [],
+  "round": 2,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "et161x_r2",
+    "sourceDraft": "hist_8218926925938_et161x",
+    "archivedAt": 1781073074061,
+    "handNumber": 2,
+    "handSize": 18,
+    "expectedHandSize": 18,
+    "userPicks": [
+      "Champion Breeder",
+      "Carpenter's Axe"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "handNames": [
+    "Corn Scoop",
+    "Future Building Site",
+    "Reed Belt",
+    "Gritter",
+    "Groom",
+    "Mayor Candidate",
+    "Old Miser",
+    "Motivator"
+  ],
+  "draftedNames": [
+    "Field Watchman",
+    "Carrot Museum",
+    "Seed Trader",
+    "Dolly's Mother",
+    "Housemaster",
+    "Seaweed Fertilizer",
+    "Pickler",
+    "Hawktower",
+    "Hill Cultivator",
+    "Potters Market",
+    "Home Brewer",
+    "Final Scenario"
+  ],
+  "othersDrafted": [
+    "Wood Rake",
+    "Potter Ceramics",
+    "Shepherd's Whistle",
+    "Seasonal Worker",
+    "Trap Builder",
+    "Dentist",
+    "Brewing Water",
+    "Mole Plow",
+    "Studio Boat",
+    "Carpenter",
+    "Clay Firer",
+    "Plow Maker",
+    "Feedyard",
+    "Game Trade",
+    "Land Register",
+    "Consultant",
+    "Clay Carrier",
+    "Plowman"
+  ],
+  "round": 7,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "pjt09m_r7",
+    "sourceDraft": "hist_8213694648668_pjt09m",
+    "archivedAt": 1786305351331,
+    "handNumber": 3,
+    "handSize": 8,
+    "expectedHandSize": 8,
+    "userPicks": [
+      "Groom",
+      "Corn Scoop"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

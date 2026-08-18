@@ -1,0 +1,58 @@
+{
+  "handNames": [
+    "Large Greenhouse",
+    "New Market",
+    "Skimmer Plow",
+    "Pumpernickel",
+    "Established Person",
+    "Hoof Caregiver",
+    "Fish Farmer",
+    "Food Merchant",
+    "Entrepreneur",
+    "Working Gloves"
+  ],
+  "draftedNames": [
+    "Vegetable Vendor",
+    "Canvas Sack",
+    "Wood Barterer",
+    "Fodder Beets",
+    "Animal Tamer",
+    "Storeroom",
+    "Tutor",
+    "Tea House",
+    "Tree Farm Joiner",
+    "Wholesale Market"
+  ],
+  "othersDrafted": [
+    "Comb and Cutter",
+    "Farm Hand",
+    "Veggie Lover",
+    "Lazybones",
+    "Bumper Crop",
+    "Petrified Wood",
+    "Nest Site",
+    "Acorns Basket",
+    "Iron Oven",
+    "Potato Harvester",
+    "Hewer",
+    "Master Tanner"
+  ],
+  "round": 6,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "g0194v_r6",
+    "sourceDraft": "hist_8215388524325_g0194v",
+    "archivedAt": 1784611475674,
+    "handNumber": 2,
+    "handSize": 10,
+    "expectedHandSize": 10,
+    "userPicks": [
+      "Hoof Caregiver",
+      "Working Gloves"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

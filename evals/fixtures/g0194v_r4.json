@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Potter's Yard",
+    "Cookery Lesson",
+    "Mantlepiece",
+    "Stable Yard",
+    "Horse-Drawn Boat",
+    "Tea House",
+    "Almsbag",
+    "Joiner of the Sea",
+    "Patch Caretaker",
+    "Seatmate",
+    "Tutor",
+    "Wealthy Man",
+    "Uncaring Parents",
+    "Whisky Distiller"
+  ],
+  "draftedNames": [
+    "Vegetable Vendor",
+    "Canvas Sack",
+    "Wood Barterer",
+    "Fodder Beets",
+    "Animal Tamer",
+    "Storeroom"
+  ],
+  "othersDrafted": [],
+  "round": 4,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "g0194v_r4",
+    "sourceDraft": "hist_8215388524325_g0194v",
+    "archivedAt": 1784611475674,
+    "handNumber": 4,
+    "handSize": 14,
+    "expectedHandSize": 14,
+    "userPicks": [
+      "Tutor",
+      "Tea House"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

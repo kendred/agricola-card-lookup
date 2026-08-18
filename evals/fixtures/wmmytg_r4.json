@@ -1,0 +1,45 @@
+{
+  "handNames": [
+    "Young Animal Market",
+    "Feedyard",
+    "Forest Inn",
+    "Food Chest",
+    "Reed Belt",
+    "Gypsy's Crock",
+    "Roman Pot",
+    "Mushroom Collector",
+    "Woolgrower",
+    "Stall Holder",
+    "Roof Examiner",
+    "Spice Trader",
+    "Tax Collector",
+    "Vegetable Vendor"
+  ],
+  "draftedNames": [
+    "Claypit Owner",
+    "Barn Shed",
+    "Animal Husbandry Worker",
+    "Mud Patch",
+    "Fodder Planter",
+    "Baseboards"
+  ],
+  "othersDrafted": [],
+  "round": 4,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "wmmytg_r4",
+    "sourceDraft": "hist_8222497692369_wmmytg",
+    "archivedAt": 1777502307630,
+    "handNumber": 4,
+    "handSize": 14,
+    "expectedHandSize": 14,
+    "userPicks": [
+      "Vegetable Vendor",
+      "Food Chest"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "handNames": [
+    "Brewing Water",
+    "Reed Belt",
+    "Garden Claw",
+    "Muck Rake",
+    "Stone House Reconstruction",
+    "Farmers Market",
+    "Pan Baker",
+    "Riverine Shepherd",
+    "Fellow Grazer",
+    "Manservant",
+    "Food Merchant",
+    "Oyster Eater"
+  ],
+  "draftedNames": [
+    "Barrow Pusher",
+    "Seed Almanac",
+    "Field Caretaker",
+    "Festival Planning",
+    "Basket Weaver",
+    "Barn Cats",
+    "Winter Caretaker",
+    "Bumper Crop"
+  ],
+  "othersDrafted": [
+    "Milking Stool",
+    "Raised Bed",
+    "Sleight of Hand",
+    "Plow Hero",
+    "Pipe Smoker",
+    "Prophet"
+  ],
+  "round": 5,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "166zgs_r5",
+    "sourceDraft": "hist_8221718375859_166zgs",
+    "archivedAt": 1778281624140,
+    "handNumber": 1,
+    "handSize": 12,
+    "expectedHandSize": 12,
+    "userPicks": [
+      "Fellow Grazer",
+      "Stone House Reconstruction"
+    ],
+    "returningRound": true,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}

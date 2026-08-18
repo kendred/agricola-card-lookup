@@ -1,0 +1,44 @@
+{
+  "handNames": [
+    "Baseboards",
+    "Food Basket",
+    "Forestry Studies",
+    "Moonshine",
+    "Mill Wheel",
+    "Early Cattle",
+    "New Market",
+    "Changeover",
+    "Fruit Ladder",
+    "Clay Puncher",
+    "Hedge Keeper",
+    "Field Caretaker",
+    "Stock Protector",
+    "Thresher",
+    "Beer Tent Operator",
+    "Site Manager",
+    "Kindling Gatherer",
+    "Dairy Crier",
+    "Elder",
+    "Bumper Crop"
+  ],
+  "draftedNames": [],
+  "othersDrafted": [],
+  "round": 1,
+  "playerCount": 4,
+  "_meta": {
+    "fixtureId": "d90hkw_r1",
+    "sourceDraft": "hist_8219474780197_d90hkw",
+    "archivedAt": 1780525219802,
+    "handNumber": 1,
+    "handSize": 20,
+    "expectedHandSize": 20,
+    "userPicks": [
+      "Kindling Gatherer",
+      "Baseboards"
+    ],
+    "returningRound": false,
+    "approximateOpponents": false,
+    "ambiguousAttribution": [],
+    "valid": true
+  }
+}
