@@ -2905,7 +2905,7 @@ function DraftApp() {
                                                     onRemoveCard={handleRemoveCard}
                                                     onSelectCard={(!markingPhase && handIsFull) ? handleSelectMinor : null}
                                                     selectedCardName={!markingPhase ? selectedMinor : null}
-                                                    showRemove={!isReturningRound && !handIsFull}
+                                                    showRemove={!isReturningRound}
                                                     fadedCardNames={isReturningRound && !markingPhase ? othersDrafted : null}
                                                     onToggleFaded={markingPhase ? handleToggleMarking : null}
                                                     highlightedCardNames={markingPhase ? [...markedRemaining] : null}
@@ -2923,7 +2923,7 @@ function DraftApp() {
                                                     onRemoveCard={handleRemoveCard}
                                                     onSelectCard={(!markingPhase && handIsFull) ? handleSelectOccupation : null}
                                                     selectedCardName={!markingPhase ? selectedOccupation : null}
-                                                    showRemove={!isReturningRound && !handIsFull}
+                                                    showRemove={!isReturningRound}
                                                     fadedCardNames={isReturningRound && !markingPhase ? othersDrafted : null}
                                                     onToggleFaded={markingPhase ? handleToggleMarking : null}
                                                     highlightedCardNames={markingPhase ? [...markedRemaining] : null}
