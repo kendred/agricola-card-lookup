@@ -26,6 +26,56 @@
   "othersDrafted": [],
   "round": 2,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Drinking Trough",
+      "Debt Security",
+      "Large Greenhouse",
+      "Growing Farm",
+      "Muddy Puddles",
+      "Small Basket",
+      "Stone House Reconstruction",
+      "Twibil",
+      "Barn Shed",
+      "Small Trader",
+      "Shovel Bearer",
+      "Basket Chair",
+      "Building Expert",
+      "Haydryer",
+      "Trimmer",
+      "Sheep Whisperer",
+      "Patron",
+      "Wealthy Man",
+      "Omnifarmer",
+      "Claypit Owner"
+    ],
+    "2": [
+      "Mud Patch",
+      "Hook Knife",
+      "Flail",
+      "Woodcraft",
+      "Pioneering Spirit",
+      "Brotherly Love",
+      "Ox Skull",
+      "Fodder Beets",
+      "Stone Weir",
+      "Cookery Outfitter",
+      "Riparian Builder",
+      "Thresher",
+      "Sheep Provider",
+      "Animal Husbandry Worker",
+      "Kelp Gatherer",
+      "Animal Tamer's Apprentice",
+      "Pen Builder",
+      "Dung Collector"
+    ]
+  },
+  "draftedByRound": {
+    "1": {
+      "occupation": "Claypit Owner",
+      "minor": "Barn Shed"
+    }
+  },
   "_meta": {
     "fixtureId": "wmmytg_r2",
     "sourceDraft": "hist_8222497692369_wmmytg",

@@ -25,6 +25,31 @@
   "othersDrafted": [],
   "round": 1,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Drinking Trough",
+      "Debt Security",
+      "Large Greenhouse",
+      "Growing Farm",
+      "Muddy Puddles",
+      "Small Basket",
+      "Stone House Reconstruction",
+      "Twibil",
+      "Barn Shed",
+      "Small Trader",
+      "Shovel Bearer",
+      "Basket Chair",
+      "Building Expert",
+      "Haydryer",
+      "Trimmer",
+      "Sheep Whisperer",
+      "Patron",
+      "Wealthy Man",
+      "Omnifarmer",
+      "Claypit Owner"
+    ]
+  },
+  "draftedByRound": {},
   "_meta": {
     "fixtureId": "wmmytg_r1",
     "sourceDraft": "hist_8222497692369_wmmytg",

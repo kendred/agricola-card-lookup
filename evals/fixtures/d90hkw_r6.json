@@ -39,6 +39,132 @@
   ],
   "round": 6,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Baseboards",
+      "Food Basket",
+      "Forestry Studies",
+      "Moonshine",
+      "Mill Wheel",
+      "Early Cattle",
+      "New Market",
+      "Changeover",
+      "Fruit Ladder",
+      "Clay Puncher",
+      "Hedge Keeper",
+      "Field Caretaker",
+      "Stock Protector",
+      "Thresher",
+      "Beer Tent Operator",
+      "Site Manager",
+      "Kindling Gatherer",
+      "Dairy Crier",
+      "Elder",
+      "Bumper Crop"
+    ],
+    "2": [
+      "Mud Patch",
+      "Large Greenhouse",
+      "Sculpture Course",
+      "Overhaul",
+      "Steam Machine",
+      "Huntsman's Hat",
+      "Stone Cart",
+      "Lynchet",
+      "Pole Barns",
+      "Small Trader",
+      "Scythe Worker",
+      "Riverine Shepherd",
+      "Game Provider",
+      "Market Crier",
+      "Cattle Buyer",
+      "Den Builder",
+      "Cube Cutter",
+      "Millwright"
+    ],
+    "3": [
+      "Reclamation Plow",
+      "Potter's Yard",
+      "Grassland Harrow",
+      "Chicken Coop",
+      "Renovation Materials",
+      "Muddy Waters",
+      "Cubbyhole",
+      "Scythe",
+      "Pan Baker",
+      "Swagman",
+      "Consultant",
+      "Scholar",
+      "Potato Digger",
+      "Cattle Whisperer",
+      "Sowing Master",
+      "Clay Firer"
+    ],
+    "4": [
+      "Wool Blankets",
+      "Farmyard Manure",
+      "Mining Hammer",
+      "Hauberg",
+      "Straw-Thatched Roof",
+      "Writing Desk",
+      "Storeroom",
+      "Pet Broker",
+      "Housemaster",
+      "Cattle Feeder",
+      "Baker",
+      "Sculptor",
+      "Overachiever",
+      "Old Miser"
+    ],
+    "5": [
+      "Forestry Studies",
+      "Moonshine",
+      "Mill Wheel",
+      "Early Cattle",
+      "New Market",
+      "Changeover",
+      "Clay Puncher",
+      "Hedge Keeper",
+      "Stock Protector",
+      "Thresher",
+      "Beer Tent Operator",
+      "Elder"
+    ],
+    "6": [
+      "Large Greenhouse",
+      "Sculpture Course",
+      "Huntsman's Hat",
+      "Stone Cart",
+      "Pole Barns",
+      "Small Trader",
+      "Riverine Shepherd",
+      "Market Crier",
+      "Cattle Buyer",
+      "Cube Cutter"
+    ]
+  },
+  "draftedByRound": {
+    "1": {
+      "occupation": "Kindling Gatherer",
+      "minor": "Baseboards"
+    },
+    "2": {
+      "occupation": "Scythe Worker",
+      "minor": "Lynchet"
+    },
+    "3": {
+      "occupation": "Scholar",
+      "minor": "Muddy Waters"
+    },
+    "4": {
+      "occupation": "Overachiever",
+      "minor": "Hauberg"
+    },
+    "5": {
+      "occupation": "Hedge Keeper",
+      "minor": "Changeover"
+    }
+  },
   "_meta": {
     "fixtureId": "d90hkw_r6",
     "sourceDraft": "hist_8219474780197_d90hkw",

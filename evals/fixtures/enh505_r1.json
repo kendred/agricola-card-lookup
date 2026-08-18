@@ -25,6 +25,31 @@
   "othersDrafted": [],
   "round": 1,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Town Hall",
+      "Ash Trees",
+      "Winter Caretaker",
+      "Animal Catcher",
+      "Plow Hero",
+      "Interior Decorator",
+      "Chimney Sweep",
+      "Ebonist",
+      "Clay Firer",
+      "Parvenu",
+      "Mountain Plowman",
+      "Prodigy",
+      "Basket",
+      "Harvest House",
+      "Gift Basket",
+      "Stable Yard",
+      "Wooden Whey Bucket",
+      "Luxurious Hostel",
+      "Upholstery",
+      "Tea Time"
+    ]
+  },
+  "draftedByRound": {},
   "_meta": {
     "fixtureId": "enh505_r1",
     "sourceDraft": "hist_8213608846867_enh505",

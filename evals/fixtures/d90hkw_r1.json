@@ -25,6 +25,31 @@
   "othersDrafted": [],
   "round": 1,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Baseboards",
+      "Food Basket",
+      "Forestry Studies",
+      "Moonshine",
+      "Mill Wheel",
+      "Early Cattle",
+      "New Market",
+      "Changeover",
+      "Fruit Ladder",
+      "Clay Puncher",
+      "Hedge Keeper",
+      "Field Caretaker",
+      "Stock Protector",
+      "Thresher",
+      "Beer Tent Operator",
+      "Site Manager",
+      "Kindling Gatherer",
+      "Dairy Crier",
+      "Elder",
+      "Bumper Crop"
+    ]
+  },
+  "draftedByRound": {},
   "_meta": {
     "fixtureId": "d90hkw_r1",
     "sourceDraft": "hist_8219474780197_d90hkw",

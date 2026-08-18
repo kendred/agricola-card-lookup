@@ -26,6 +26,78 @@
   "othersDrafted": [],
   "round": 3,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Comb and Cutter",
+      "Angler",
+      "Clutterer",
+      "Farm Hand",
+      "Tree Farm Joiner",
+      "Cowherd",
+      "German Heath Keeper",
+      "Sheep Agent",
+      "Veggie Lover",
+      "Vegetable Vendor",
+      "Lazybones",
+      "Bumper Crop",
+      "Telegram",
+      "Potato Ridger",
+      "Clay Embankment",
+      "Storage Barn",
+      "Thick Forest",
+      "Canvas Sack",
+      "Wholesale Market",
+      "Petrified Wood"
+    ],
+    "2": [
+      "Nest Site",
+      "Large Greenhouse",
+      "Acorns Basket",
+      "New Market",
+      "Skimmer Plow",
+      "Fodder Beets",
+      "Iron Oven",
+      "Pumpernickel",
+      "Established Person",
+      "Potato Harvester",
+      "Hoof Caregiver",
+      "Fish Farmer",
+      "Food Merchant",
+      "Wood Barterer",
+      "Hewer",
+      "Entrepreneur",
+      "Master Tanner",
+      "Working Gloves"
+    ],
+    "3": [
+      "Handplow",
+      "Pond Hut",
+      "Asparagus Gift",
+      "Greening Plan",
+      "Storeroom",
+      "Grain Sieve",
+      "Trident",
+      "Stone House Reconstruction",
+      "Lutenist",
+      "Animal Tamer",
+      "Paper Maker",
+      "Home Brewer",
+      "Den Builder",
+      "Beer Tent Operator",
+      "Roof Examiner",
+      "Reseller"
+    ]
+  },
+  "draftedByRound": {
+    "1": {
+      "occupation": "Vegetable Vendor",
+      "minor": "Canvas Sack"
+    },
+    "2": {
+      "occupation": "Wood Barterer",
+      "minor": "Fodder Beets"
+    }
+  },
   "_meta": {
     "fixtureId": "g0194v_r3",
     "sourceDraft": "hist_8215388524325_g0194v",

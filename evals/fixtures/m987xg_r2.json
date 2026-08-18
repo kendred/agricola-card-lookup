@@ -26,6 +26,56 @@
   "othersDrafted": [],
   "round": 2,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Shifting Cultivation",
+      "Farmyard Manure",
+      "Handcart",
+      "Mandoline",
+      "Studio",
+      "Archway",
+      "Wood Saw",
+      "Child's Toy",
+      "Paintbrush",
+      "Alchemists Lab",
+      "Bed Maker",
+      "Oven Firing Boy",
+      "Carpenter",
+      "Cattle Feeder",
+      "Scholar",
+      "Agricultural Labourer",
+      "Sculptor",
+      "Midwife",
+      "Kindling Gatherer",
+      "Mountain Plowman"
+    ],
+    "2": [
+      "Ale-Benches",
+      "Claw Knife",
+      "Final Scenario",
+      "Excursion to the Quarry",
+      "Thick Forest",
+      "Mole Plow",
+      "Stable Yard",
+      "Civic Facade",
+      "Barn Cats",
+      "Wood Carrier",
+      "Pig Owner",
+      "Patch Caretaker",
+      "Homekeeper",
+      "Stall Holder",
+      "Freemason",
+      "Bonehead",
+      "Gardening Head Official",
+      "Wares Salesman"
+    ]
+  },
+  "draftedByRound": {
+    "1": {
+      "occupation": "Kindling Gatherer",
+      "minor": "Shifting Cultivation"
+    }
+  },
   "_meta": {
     "fixtureId": "m987xg_r2",
     "sourceDraft": "hist_8214550904117_m987xg",

@@ -45,6 +45,146 @@
   ],
   "round": 7,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Debt Security",
+      "Hauberg",
+      "Basket Chair",
+      "Turnwrest Plow",
+      "Truffle Slicer",
+      "New Market",
+      "Feed Pellets",
+      "Waterlily Pond",
+      "Field Spade",
+      "Priest",
+      "Patron",
+      "Tinsmith Master",
+      "Sheep Keeper",
+      "Cattle Feeder",
+      "Assistant Tiller",
+      "Clay Kneader",
+      "Plow Maker",
+      "Animal Husbandry Worker",
+      "Old Miser",
+      "Market Booth"
+    ],
+    "2": [
+      "Forest School",
+      "Drift-Net Boat",
+      "Ceilings",
+      "Lawn Fertilzer",
+      "Carpenter's Yard",
+      "Pellet Press",
+      "Child's Toy",
+      "Profiteering",
+      "Bartering Hut",
+      "Treegardener",
+      "Village Peasant",
+      "Nutrition Expert",
+      "House Steward",
+      "Pet Broker",
+      "Collector",
+      "Home Brewer",
+      "Usufructuary",
+      "Stockman"
+    ],
+    "3": [
+      "Potato Ridger",
+      "Seed Pellets",
+      "Crack Weeder",
+      "Brewing Water",
+      "Artisan District",
+      "Forest Well",
+      "Bookmark",
+      "Iron Oven",
+      "Manservant",
+      "Seducer",
+      "Established Person",
+      "Freemason",
+      "Private Teacher",
+      "Food Merchant",
+      "Roof Examiner",
+      "Transactor"
+    ],
+    "4": [
+      "Fire Protection Pond",
+      "Milking Parlor",
+      "Lumber Mill",
+      "Mining Hammer",
+      "Tasting",
+      "Piggy Bank",
+      "Water Gully",
+      "Lutenist",
+      "Roof Ballaster",
+      "Forest Guardian",
+      "Storehouse Keeper",
+      "Beer Tent Operator",
+      "Site Manager",
+      "Pen Builder"
+    ],
+    "5": [
+      "Debt Security",
+      "Hauberg",
+      "Truffle Slicer",
+      "New Market",
+      "Field Spade",
+      "Priest",
+      "Tinsmith Master",
+      "Cattle Feeder",
+      "Clay Kneader",
+      "Plow Maker",
+      "Old Miser",
+      "Market Booth"
+    ],
+    "6": [
+      "Drift-Net Boat",
+      "Carpenter's Yard",
+      "Pellet Press",
+      "Child's Toy",
+      "Bartering Hut",
+      "Village Peasant",
+      "Nutrition Expert",
+      "House Steward",
+      "Usufructuary",
+      "Stockman"
+    ],
+    "7": [
+      "Potato Ridger",
+      "Crack Weeder",
+      "Brewing Water",
+      "Forest Well",
+      "Manservant",
+      "Freemason",
+      "Food Merchant",
+      "Transactor"
+    ]
+  },
+  "draftedByRound": {
+    "1": {
+      "occupation": "Assistant Tiller",
+      "minor": "Feed Pellets"
+    },
+    "2": {
+      "occupation": "Collector",
+      "minor": "Profiteering"
+    },
+    "3": {
+      "occupation": "Established Person",
+      "minor": "Artisan District"
+    },
+    "4": {
+      "occupation": "Site Manager",
+      "minor": "Mining Hammer"
+    },
+    "5": {
+      "occupation": "Priest",
+      "minor": "Hauberg"
+    },
+    "6": {
+      "occupation": "Nutrition Expert",
+      "minor": "Child's Toy"
+    }
+  },
   "_meta": {
     "fixtureId": "19033r_r7",
     "sourceDraft": "hist_8214613003992_19033r",

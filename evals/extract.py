@@ -214,6 +214,19 @@ def build_fixtures(row):
         if not get_hand(state, rnd):
             continue
         hand = available_hand(state, rnd, player_count, losses)
+        # Hand history as the client would have had it at this point: every hand
+        # seen so far, and every pick made before this round. Lets the server
+        # resolve tag-survival odds for returning hands instead of suppressing them.
+        seen_hands = {}
+        drafted_by_round = {}
+        for prior in range(1, rnd + 1):
+            if get_hand(state, prior):
+                seen_hands[str(prior)] = available_hand(state, prior, player_count, losses)
+            if prior < rnd:
+                picks = (state.get("draftedCards") or {}).get(str(prior)) or {}
+                if picks:
+                    drafted_by_round[str(prior)] = picks
+
         fixtures.append({
             # ── exact /api/strategy request body ──
             "handNames": hand,
@@ -221,6 +234,8 @@ def build_fixtures(row):
             "othersDrafted": others_drafted_as_of(state, rnd, player_count, losses),
             "round": rnd,
             "playerCount": player_count,
+            "seenHands": seen_hands,
+            "draftedByRound": drafted_by_round,
             # ── metadata, stripped before POSTing ──
             "_meta": {
                 "fixtureId": f"{row['id'][-6:]}_r{rnd}",

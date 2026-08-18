@@ -25,6 +25,31 @@
   "othersDrafted": [],
   "round": 1,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Comb and Cutter",
+      "Angler",
+      "Clutterer",
+      "Farm Hand",
+      "Tree Farm Joiner",
+      "Cowherd",
+      "German Heath Keeper",
+      "Sheep Agent",
+      "Veggie Lover",
+      "Vegetable Vendor",
+      "Lazybones",
+      "Bumper Crop",
+      "Telegram",
+      "Potato Ridger",
+      "Clay Embankment",
+      "Storage Barn",
+      "Thick Forest",
+      "Canvas Sack",
+      "Wholesale Market",
+      "Petrified Wood"
+    ]
+  },
+  "draftedByRound": {},
   "_meta": {
     "fixtureId": "g0194v_r1",
     "sourceDraft": "hist_8215388524325_g0194v",

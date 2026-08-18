@@ -26,6 +26,98 @@
   "othersDrafted": [],
   "round": 4,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Loom",
+      "Store of Experience",
+      "Studio Boat",
+      "Beer Stall",
+      "Schnapps Distillery",
+      "Blade Shears",
+      "Animal Bedding",
+      "Upholstery",
+      "Field Spade",
+      "Harpooner",
+      "Geologist",
+      "Lunchtime Beer",
+      "Village Peasant",
+      "Puppeteer",
+      "Hide Farmer",
+      "Stable Milker",
+      "Plowman",
+      "Shed Builder",
+      "Wares Salesman",
+      "Uncaring Parents"
+    ],
+    "2": [
+      "Shepherd's Whistle",
+      "Publican",
+      "Ropemaker",
+      "Mineralogist",
+      "Cottager",
+      "Clay Kneader",
+      "Clay Carrier",
+      "Seed Servant",
+      "Prophet",
+      "Midnight Fencer",
+      "Baking Sheet",
+      "Claw Knife",
+      "Mandoline",
+      "Mineral Feeder",
+      "Plant Fertilizer",
+      "Sheep Well",
+      "Pellet Press",
+      "Cookery Extension"
+    ],
+    "3": [
+      "Carpenter's Axe",
+      "Debt Security",
+      "Shepherd's Crook",
+      "Grassland Harrow",
+      "Food Chest",
+      "Chicken Coop",
+      "Land Consolidation",
+      "Muck Rake",
+      "Patch Caregiver",
+      "Stable Sergeant",
+      "Stock Protector",
+      "Potato Harvester",
+      "Cowherd",
+      "Stable Master",
+      "Plow Maker",
+      "Pickler"
+    ],
+    "4": [
+      "Forest Lake Hut",
+      "Barley Mill",
+      "Lasso",
+      "Pottery Yard",
+      "Maintenance Premium",
+      "Boar Spear",
+      "Farmers Market",
+      "Shoreforester",
+      "Roof Ballaster",
+      "Illusionist",
+      "Workshop Assistant",
+      "Cattle Buyer",
+      "Pipe Smoker",
+      "Reseller"
+    ]
+  },
+  "draftedByRound": {
+    "1": {
+      "occupation": "Shed Builder",
+      "minor": "Beer Stall"
+    },
+    "2": {
+      "occupation": "Midnight Fencer",
+      "minor": "Shepherd's Whistle"
+    },
+    "3": {
+      "occupation": "Plow Maker",
+      "minor": "Carpenter's Axe"
+    }
+  },
   "_meta": {
     "fixtureId": "hxfbx0_r4",
     "sourceDraft": "hist_8213144043589_hxfbx0",

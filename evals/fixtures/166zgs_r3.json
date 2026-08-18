@@ -26,6 +26,78 @@
   "othersDrafted": [],
   "round": 3,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Brewing Water",
+      "Reed Belt",
+      "Garden Claw",
+      "Muck Rake",
+      "Milking Stool",
+      "Stone House Reconstruction",
+      "Seed Almanac",
+      "Raised Bed",
+      "Sleight of Hand",
+      "Farmers Market",
+      "Barrow Pusher",
+      "Pan Baker",
+      "Riverine Shepherd",
+      "Fellow Grazer",
+      "Manservant",
+      "Plow Hero",
+      "Food Merchant",
+      "Oyster Eater",
+      "Pipe Smoker",
+      "Prophet"
+    ],
+    "2": [
+      "Upscale Lifestyle",
+      "Crack Weeder",
+      "Store of Experience",
+      "Christianity",
+      "Festival Planning",
+      "Recycled Brick",
+      "Pigswill",
+      "Nail Basket",
+      "Thunderbolt",
+      "Wood Harvester",
+      "Pig Breeder",
+      "Farmyard Worker",
+      "Field Caretaker",
+      "Sheep Keeper",
+      "Home Brewer",
+      "Pattern Maker",
+      "Braid Maker",
+      "Godmother"
+    ],
+    "3": [
+      "Threshing Board",
+      "Calcium Fertilizers",
+      "Gift Basket",
+      "Hard Porcelain",
+      "Milking Place",
+      "Paintbrush",
+      "Barn Cats",
+      "Shepherd's Whistle",
+      "Lodger",
+      "Publican",
+      "Conjurer",
+      "Stock Protector",
+      "Basket Weaver",
+      "Bellfounder",
+      "Reader",
+      "Tinsmith Master"
+    ]
+  },
+  "draftedByRound": {
+    "1": {
+      "occupation": "Barrow Pusher",
+      "minor": "Seed Almanac"
+    },
+    "2": {
+      "occupation": "Field Caretaker",
+      "minor": "Festival Planning"
+    }
+  },
   "_meta": {
     "fixtureId": "166zgs_r3",
     "sourceDraft": "hist_8221718375859_166zgs",

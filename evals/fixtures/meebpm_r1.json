@@ -25,6 +25,31 @@
   "othersDrafted": [],
   "round": 1,
   "playerCount": 3,
+  "seenHands": {
+    "1": [
+      "Manger",
+      "Club House",
+      "Crack Weeder",
+      "Canvas Sack",
+      "Mandoline",
+      "Hutch",
+      "Foreign Aid",
+      "New Market",
+      "Earth Oven",
+      "Barrow Pusher",
+      "Wall Builder",
+      "Riparian Builder",
+      "Animal Dealer",
+      "Nutrition Expert",
+      "Soldier",
+      "Mason",
+      "Stable Master",
+      "Seed Servant",
+      "Delayed Wayfarer",
+      "Roll-Over Plow"
+    ]
+  },
+  "draftedByRound": {},
   "_meta": {
     "fixtureId": "meebpm_r1",
     "sourceDraft": "hist_8216469805130_meebpm",

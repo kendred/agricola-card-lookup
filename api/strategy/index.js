@@ -34,6 +34,25 @@ function buildCompactIndex(playerCount) {
 const COMPACT_INDEX_4P = buildCompactIndex(4);
 const COMPACT_INDEX_3P = buildCompactIndex(3);
 
+// --- Analytical draft statistics ---
+// Same module the browser uses (js/draft-stats.js), duplicated into api/lib/ because
+// the Functions runtime cannot read outside api/. Computing server-side rather than
+// trusting a client-supplied blob means eval fixtures and real requests take the
+// identical path.
+const draftStats = require('../lib/draft-stats.js');
+draftStats.init(CARDS.filter(c => !c.banned));
+
+// Cards of each type dealt per round; mirrors HAND_SIZE_BY_ROUND in draft.html.
+const HAND_SIZE_BY_ROUND = { 1: 10, 2: 9, 3: 8, 4: 7, 5: 6, 6: 5, 7: 4 };
+
+// Which physical hand appears in each round. Hand N is always first seen in
+// round N, which is what makes HAND_SIZE_BY_ROUND[handNumber] the size that hand
+// was originally dealt at.
+const ROTATION = {
+    3: { 1: 1, 2: 2, 3: 3, 4: 1, 5: 2, 6: 3, 7: 1 },
+    4: { 1: 1, 2: 2, 3: 3, 4: 4, 5: 1, 6: 2, 7: 3 },
+};
+
 // --- Rate limiting (in-memory, resets on cold start) ---
 const rateLimitMap = new Map();
 // Overridable so eval runs can drive the endpoint hard locally. Unset in
@@ -187,8 +206,88 @@ function enrichOpponentCards(names, playerCount) {
         });
 }
 
+// --- Computed hand analysis ---
+// Everything here is exact given the card database, so the model should read it
+// rather than estimate it. The one modelled assumption is called out inline.
+function buildAnalysisBlock(body, playerCount, round) {
+    const handCards = (body.handNames || []).map(n => CARD_MAP[n]).filter(Boolean);
+    if (!handCards.length) return '';
+
+    // handSize is this round's deal; originalHandSize is the deal size of the round
+    // this hand was FIRST seen in. On a returning hand those differ, and using the
+    // current size for both grades a picked-over hand against a fresh-deal baseline.
+    const handSize = HAND_SIZE_BY_ROUND[round] || 4;
+    const handNumber = (ROTATION[playerCount] || ROTATION[4])[round] || round;
+    const originalHandSize = HAND_SIZE_BY_ROUND[handNumber] || handSize;
+
+    // Tag survival for a returning hand is resolved from the cards actually seen
+    // before. Without that history the known-hand path finds no surviving tagged
+    // card and reports 0%, which is confidently wrong rather than merely absent.
+    const haveHistory = !!(body.seenHands && Object.keys(body.seenHands).length);
+
+    let analysis;
+    try {
+        analysis = draftStats.analyzeHand(
+            handCards,
+            handSize,
+            playerCount,
+            round,
+            body.seenHands || null,
+            body.draftedByRound || null,
+            originalHandSize
+        );
+    } catch (err) {
+        return '';
+    }
+    if (!analysis) return '';
+
+    const lines = [];
+    lines.push('COMPUTED HAND ANALYSIS (calculated exactly from the card database — treat these');
+    lines.push('as given. Do not re-derive them, estimate them, or contradict them.)');
+    lines.push('');
+
+    if (analysis.percentile != null) {
+        const p = analysis.percentile;
+        const suffix = (p % 100 >= 11 && p % 100 <= 13) ? 'th'
+            : ({ 1: 'st', 2: 'nd', 3: 'rd' }[p % 10] || 'th');
+        lines.push(`Hand strength: grade ${analysis.grade && analysis.grade.grade}, `
+            + `${p}${suffix} percentile against hands dealt the same way at this stage.`);
+    }
+
+    // cardQualities is keyed by card name, not an array.
+    const quality = Object.entries(analysis.cardQualities || {})
+        .filter(([, q]) => q && (q.quality === 'strong' || q.quality === 'weak'));
+    if (quality.length) {
+        const better = quality.filter(([, q]) => q.quality === 'strong').map(([name]) => name);
+        const worse = quality.filter(([, q]) => q.quality === 'weak').map(([name]) => name);
+        if (better.length) lines.push(`Stronger than expected for their slot: ${better.join(', ')}.`);
+        if (worse.length) lines.push(`Weaker than expected for their slot: ${worse.join(', ')}.`);
+    }
+
+    const tagStats = haveHistory ? (analysis.tagStats || {}) : {};
+    const tags = Object.keys(tagStats);
+    if (tags.length) {
+        lines.push('');
+        lines.push('Chance of drafting ADDITIONAL cards of each tag present in this hand, across all');
+        lines.push('remaining rounds. NOTE: this assumes opponents draft strictly by card rank, which');
+        lines.push('is a simplifying model, not observed behaviour — treat these as indicative.');
+        for (const tag of tags) {
+            const dist = tagStats[tag].distribution || [];
+            const atLeastOne = dist.length > 1
+                ? (1 - dist[0]) : 0;
+            lines.push(`  ${tag}: ${tagStats[tag].count} in hand now, `
+                + `P(at least 1 more) = ${(atLeastOne * 100).toFixed(0)}%`);
+        }
+    }
+
+    return lines.join('\n') + '\n\n';
+}
+
 // --- Build user message from draft state ---
-function buildUserMessage(body) {
+// `variant` is threaded through because the computed-analysis block lives in the
+// USER message, not the system prompt. Without this, promptVariant:'baseline'
+// would still receive the Stage 4 stats and the A/B would not isolate anything.
+function buildUserMessage(body, variant) {
     const round = body.round || 1;
     const playerCount = body.playerCount === 3 ? 3 : 4;
     const handCards = enrichCards(body.handNames || [], playerCount);
@@ -206,6 +305,9 @@ function buildUserMessage(body) {
     if (othersDrafted.length > 0) {
         const enrichedOpponents = enrichOpponentCards(othersDrafted, playerCount);
         msg += `CARDS TAKEN BY OPPONENTS (with type, rank, and strategy tags):\n${JSON.stringify(enrichedOpponents, null, 1)}\n\n`;
+    }
+    if (variant !== 'baseline') {
+        msg += buildAnalysisBlock(body, playerCount, round);
     }
     msg += 'Analyze my draft state and suggest the best picks from my current hand.';
     return msg;
@@ -316,7 +418,7 @@ app.http('strategy', {
         // Build OpenAI request
         const playerCount = body.playerCount === 3 ? 3 : 4;
         const promptVariant = body.promptVariant === 'baseline' ? 'baseline' : 'current';
-        const userMessage = buildUserMessage(body);
+        const userMessage = buildUserMessage(body, promptVariant);
         const apiVersion = '2025-04-01-preview';
         const openAIUrl = `${endpoint.replace(/\/$/, '')}/openai/deployments/${deployment}/chat/completions?api-version=${apiVersion}`;
 
@@ -461,4 +563,4 @@ app.http('strategy', {
 
 // Exposed for the eval harness: lets a prompt-variant check verify what is
 // actually being sent without issuing a billed request.
-module.exports = { PROMPTS };
+module.exports = { PROMPTS, buildUserMessage };

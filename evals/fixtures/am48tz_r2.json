@@ -26,6 +26,56 @@
   "othersDrafted": [],
   "round": 2,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Renovation Company",
+      "Trellises",
+      "Mantlepiece",
+      "Straw-Thatched Roof",
+      "Private Forest",
+      "Town Hall",
+      "Grain Bag",
+      "Breed Registry",
+      "Field Clay",
+      "Wood Cutter",
+      "Bohemian",
+      "Collier",
+      "Farm Hand",
+      "Collector",
+      "Sower",
+      "Stable Cleaner",
+      "Animal Husbandry Worker",
+      "Bargain Hunter",
+      "Lunchtime Beer",
+      "Cabbage Buyer"
+    ],
+    "2": [
+      "Telegram",
+      "Toolbox",
+      "Future Building Site",
+      "Plant Fertilizer",
+      "Artisan District",
+      "Beer Tap",
+      "Sundial",
+      "Renovation Materials",
+      "Thunderbolt",
+      "Priest",
+      "Publican",
+      "Small Animal Breeder",
+      "Fisherman's Friend",
+      "Seed Researcher",
+      "Cultivator",
+      "Shed Builder",
+      "Kelp Gatherer",
+      "Dung Collector"
+    ]
+  },
+  "draftedByRound": {
+    "1": {
+      "occupation": "Animal Husbandry Worker",
+      "minor": "Breed Registry"
+    }
+  },
   "_meta": {
     "fixtureId": "am48tz_r2",
     "sourceDraft": "hist_8221457687498_am48tz",

@@ -25,6 +25,31 @@
   "othersDrafted": [],
   "round": 1,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Shifting Cultivation",
+      "Farmyard Manure",
+      "Handcart",
+      "Mandoline",
+      "Studio",
+      "Archway",
+      "Wood Saw",
+      "Child's Toy",
+      "Paintbrush",
+      "Alchemists Lab",
+      "Bed Maker",
+      "Oven Firing Boy",
+      "Carpenter",
+      "Cattle Feeder",
+      "Scholar",
+      "Agricultural Labourer",
+      "Sculptor",
+      "Midwife",
+      "Kindling Gatherer",
+      "Mountain Plowman"
+    ]
+  },
+  "draftedByRound": {},
   "_meta": {
     "fixtureId": "m987xg_r1",
     "sourceDraft": "hist_8214550904117_m987xg",

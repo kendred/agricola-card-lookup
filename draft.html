@@ -2554,7 +2554,8 @@ function DraftApp() {
                 othersDrafted,
                 currentRound,
                 playerCount,
-                onProgress
+                onProgress,
+                { seenHands: hands, draftedByRound: draftedCards }
             );
             setStrategyResult(result);
             setStreamingPhase('done');

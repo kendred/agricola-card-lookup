@@ -39,6 +39,132 @@
   ],
   "round": 6,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Digging Spade",
+      "Potters Market",
+      "Stable Yard",
+      "Wood Rake",
+      "Potter Ceramics",
+      "Carrot Museum",
+      "Sheep Rug",
+      "Simple Oven",
+      "Field Spade",
+      "Shepherd's Whistle",
+      "Seasonal Worker",
+      "Field Watchman",
+      "Plow Hero",
+      "Trap Builder",
+      "Transactor",
+      "Dentist",
+      "Recluse",
+      "Hill Cultivator",
+      "Wares Salesman",
+      "Parvenu"
+    ],
+    "2": [
+      "Farmyard Manure",
+      "Young Animal Market",
+      "Final Scenario",
+      "Forestry Studies",
+      "Brewing Water",
+      "Mole Plow",
+      "Dwelling Mound",
+      "Studio Boat",
+      "Dolly's Mother",
+      "Slurry Spreader",
+      "Clay Puncher",
+      "Carpenter",
+      "Home Brewer",
+      "Seed Trader",
+      "Retail Dealer",
+      "Clay Firer",
+      "Plow Maker",
+      "Elder Baker"
+    ],
+    "3": [
+      "Corn Scoop",
+      "Feedyard",
+      "Future Building Site",
+      "Reed Belt",
+      "Seaweed Fertilizer",
+      "Gritter",
+      "Game Trade",
+      "Land Register",
+      "Consultant",
+      "Housemaster",
+      "Groom",
+      "Clay Carrier",
+      "Plowman",
+      "Mayor Candidate",
+      "Old Miser",
+      "Motivator"
+    ],
+    "4": [
+      "Feeding Dish",
+      "Clearing Spade",
+      "Hawktower",
+      "Pottery Yard",
+      "Hard Porcelain",
+      "Roll-Over Plow",
+      "Dwelling Plan",
+      "Treegardener",
+      "Clay Hut Builder",
+      "Bohemian",
+      "Mineralogist",
+      "Hardworking Man",
+      "Domestician Expert",
+      "Pickler"
+    ],
+    "5": [
+      "Digging Spade",
+      "Potters Market",
+      "Stable Yard",
+      "Sheep Rug",
+      "Simple Oven",
+      "Field Spade",
+      "Plow Hero",
+      "Transactor",
+      "Recluse",
+      "Hill Cultivator",
+      "Wares Salesman",
+      "Parvenu"
+    ],
+    "6": [
+      "Farmyard Manure",
+      "Young Animal Market",
+      "Final Scenario",
+      "Forestry Studies",
+      "Dwelling Mound",
+      "Slurry Spreader",
+      "Clay Puncher",
+      "Home Brewer",
+      "Retail Dealer",
+      "Elder Baker"
+    ]
+  },
+  "draftedByRound": {
+    "1": {
+      "occupation": "Field Watchman",
+      "minor": "Carrot Museum"
+    },
+    "2": {
+      "occupation": "Seed Trader",
+      "minor": "Dolly's Mother"
+    },
+    "3": {
+      "occupation": "Housemaster",
+      "minor": "Seaweed Fertilizer"
+    },
+    "4": {
+      "occupation": "Pickler",
+      "minor": "Hawktower"
+    },
+    "5": {
+      "occupation": "Hill Cultivator",
+      "minor": "Potters Market"
+    }
+  },
   "_meta": {
     "fixtureId": "pjt09m_r6",
     "sourceDraft": "hist_8213694648668_pjt09m",

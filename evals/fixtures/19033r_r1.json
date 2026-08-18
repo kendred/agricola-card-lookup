@@ -25,6 +25,31 @@
   "othersDrafted": [],
   "round": 1,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Debt Security",
+      "Hauberg",
+      "Basket Chair",
+      "Turnwrest Plow",
+      "Truffle Slicer",
+      "New Market",
+      "Feed Pellets",
+      "Waterlily Pond",
+      "Field Spade",
+      "Priest",
+      "Patron",
+      "Tinsmith Master",
+      "Sheep Keeper",
+      "Cattle Feeder",
+      "Assistant Tiller",
+      "Clay Kneader",
+      "Plow Maker",
+      "Animal Husbandry Worker",
+      "Old Miser",
+      "Market Booth"
+    ]
+  },
+  "draftedByRound": {},
   "_meta": {
     "fixtureId": "19033r_r1",
     "sourceDraft": "hist_8214613003992_19033r",

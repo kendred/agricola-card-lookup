@@ -26,6 +26,98 @@
   "othersDrafted": [],
   "round": 4,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Town Hall",
+      "Ash Trees",
+      "Winter Caretaker",
+      "Animal Catcher",
+      "Plow Hero",
+      "Interior Decorator",
+      "Chimney Sweep",
+      "Ebonist",
+      "Clay Firer",
+      "Parvenu",
+      "Mountain Plowman",
+      "Prodigy",
+      "Basket",
+      "Harvest House",
+      "Gift Basket",
+      "Stable Yard",
+      "Wooden Whey Bucket",
+      "Luxurious Hostel",
+      "Upholstery",
+      "Tea Time"
+    ],
+    "2": [
+      "Shelter",
+      "Mill Wheel",
+      "Dwelling Mound",
+      "Canvas Sack",
+      "Farm Building",
+      "Schnapps Distillery",
+      "Fatstock Stretcher",
+      "Brick Hammer",
+      "Shepherd's Whistle",
+      "Slurry Spreader",
+      "Scythe Worker",
+      "Priest",
+      "Silokeeper",
+      "Butler",
+      "Freemason",
+      "Forest Owner",
+      "Pet Grower",
+      "Plowman"
+    ],
+    "3": [
+      "Paper Knife",
+      "Claypipe",
+      "Stockyard",
+      "Forest Inn",
+      "Ravenous Hunger",
+      "Retraining",
+      "Churchyard",
+      "Ox Goad",
+      "Chief Forester",
+      "Drudgery Reeve",
+      "District Manager",
+      "Inner Districts Director",
+      "Lord of the Manor",
+      "Bellfounder",
+      "Casual Worker",
+      "Transactor"
+    ],
+    "4": [
+      "Wool Blankets",
+      "Pond Hut",
+      "Corn Scoop",
+      "Gardener's Knife",
+      "Club House",
+      "Firewood",
+      "Muddy Waters",
+      "Wood Worker",
+      "Green Grocer",
+      "Parrot Breeder",
+      "Hoof Caregiver",
+      "Material Deliveryman",
+      "Reseller",
+      "Delivery Nurse"
+    ]
+  },
+  "draftedByRound": {
+    "1": {
+      "occupation": "Chimney Sweep",
+      "minor": "Harvest House"
+    },
+    "2": {
+      "occupation": "Priest",
+      "minor": "Canvas Sack"
+    },
+    "3": {
+      "occupation": "Lord of the Manor",
+      "minor": "Ox Goad"
+    }
+  },
   "_meta": {
     "fixtureId": "enh505_r4",
     "sourceDraft": "hist_8213608846867_enh505",

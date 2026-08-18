@@ -33,6 +33,116 @@
   ],
   "round": 5,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Facades Carving",
+      "Beer Keg",
+      "Feedyard",
+      "Writing Boards",
+      "Granary",
+      "Stone Clearing",
+      "Education Bonus",
+      "Seed Almanac",
+      "Barn Cats",
+      "Artichoke Field",
+      "Roughcaster",
+      "Tinsmith Master",
+      "Estate Worker",
+      "Salter",
+      "Winter Caretaker",
+      "Animal Activist",
+      "Tree Cutter",
+      "Land Heir",
+      "Mountain Plowman",
+      "Master Renovator"
+    ],
+    "2": [
+      "Double-Turn Plow",
+      "Potter's Yard",
+      "Lantern House",
+      "Dwelling Mound",
+      "Mineral Feeder",
+      "Steam Plow",
+      "Breed Registry",
+      "Rolling Pin",
+      "Melon Patch",
+      "Trimmer",
+      "Field Caretaker",
+      "Stock Protector",
+      "Potato Harvester",
+      "Agricultural Labourer",
+      "Bonehead",
+      "Stone Custodian",
+      "Master Fencer",
+      "Prodigy"
+    ],
+    "3": [
+      "Drinking Trough",
+      "Debt Security",
+      "Abort Oriel",
+      "Brotherly Love",
+      "Wholesale Market",
+      "Supply Boat",
+      "Herbal Garden",
+      "Sleight of Hand",
+      "Animal Reeve",
+      "Stone Buyer",
+      "Forest Owner",
+      "Porter",
+      "Wealthy Man",
+      "Reader",
+      "Land Surveyor",
+      "Miller"
+    ],
+    "4": [
+      "Garden Hoe",
+      "Grange",
+      "Store of Experience",
+      "Acorns Basket",
+      "Half-Timbered House",
+      "Huntsman's Hat",
+      "Misanthropy",
+      "Wall Builder",
+      "Brushwood Collector",
+      "Illusionist",
+      "Soldier",
+      "Pattern Maker",
+      "Outrider",
+      "Clay Carrier"
+    ],
+    "5": [
+      "Facades Carving",
+      "Feedyard",
+      "Writing Boards",
+      "Granary",
+      "Stone Clearing",
+      "Barn Cats",
+      "Roughcaster",
+      "Tinsmith Master",
+      "Salter",
+      "Tree Cutter",
+      "Land Heir",
+      "Master Renovator"
+    ]
+  },
+  "draftedByRound": {
+    "1": {
+      "occupation": "Winter Caretaker",
+      "minor": "Education Bonus"
+    },
+    "2": {
+      "occupation": "Bonehead",
+      "minor": "Melon Patch"
+    },
+    "3": {
+      "occupation": "Porter",
+      "minor": "Sleight of Hand"
+    },
+    "4": {
+      "occupation": "Brushwood Collector",
+      "minor": "Half-Timbered House"
+    }
+  },
   "_meta": {
     "fixtureId": "bb2edx_r5",
     "sourceDraft": "hist_8218181703539_bb2edx",

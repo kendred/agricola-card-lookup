@@ -26,6 +26,98 @@
   "othersDrafted": [],
   "round": 4,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Forest Inn",
+      "Forest Stone",
+      "Beanfield",
+      "Horse-Drawn Boat",
+      "Bookshelf",
+      "Fatstock Stretcher",
+      "Lynchet",
+      "Whale Oil",
+      "Boar Spear",
+      "Profiteering",
+      "Wood Cutter",
+      "Night-School Student",
+      "Haydryer",
+      "Clay Kneader",
+      "Ranch Provost",
+      "Ebonist",
+      "Transactor",
+      "Museum Caretaker",
+      "Master Tanner",
+      "Cabbage Buyer"
+    ],
+    "2": [
+      "Carpenter's Axe",
+      "Large Greenhouse",
+      "Mining Hammer",
+      "Cookery Lesson",
+      "Bed in the Grain Field",
+      "Stone Clearing",
+      "Pole Barns",
+      "Misanthropy",
+      "Lutenist",
+      "Geologist",
+      "Green Grocer",
+      "Home Brewer",
+      "Bellfounder",
+      "Clay Deliveryman",
+      "Champion Breeder",
+      "Vegetable Vendor",
+      "Visionary",
+      "Market Booth"
+    ],
+    "3": [
+      "Clearing Spade",
+      "Lumber Mill",
+      "Upscale Lifestyle",
+      "Hook Knife",
+      "Mill Wheel",
+      "Woodcraft",
+      "Fodder Chamber",
+      "Earth Oven",
+      "Drudgery Reeve",
+      "Woolgrower",
+      "Schnapps Distiller",
+      "Thresher",
+      "Building Tycoon",
+      "Domestician Expert",
+      "Braid Maker",
+      "Bargain Hunter"
+    ],
+    "4": [
+      "Corn Scoop",
+      "Stable Tree",
+      "Forestry Studies",
+      "Butter Churn",
+      "Remodeling",
+      "Blade Shears",
+      "Storeroom",
+      "Riverine Shepherd",
+      "Joiner of the Sea",
+      "Plow Driver",
+      "Consultant",
+      "Tinsmith Master",
+      "Village Peasant",
+      "Resource Recycler"
+    ]
+  },
+  "draftedByRound": {
+    "1": {
+      "occupation": "Haydryer",
+      "minor": "Bookshelf"
+    },
+    "2": {
+      "occupation": "Champion Breeder",
+      "minor": "Carpenter's Axe"
+    },
+    "3": {
+      "occupation": "Drudgery Reeve",
+      "minor": "Earth Oven"
+    }
+  },
   "_meta": {
     "fixtureId": "et161x_r4",
     "sourceDraft": "hist_8218926925938_et161x",

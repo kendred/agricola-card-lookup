@@ -33,6 +33,116 @@
   ],
   "round": 5,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Comb and Cutter",
+      "Angler",
+      "Clutterer",
+      "Farm Hand",
+      "Tree Farm Joiner",
+      "Cowherd",
+      "German Heath Keeper",
+      "Sheep Agent",
+      "Veggie Lover",
+      "Vegetable Vendor",
+      "Lazybones",
+      "Bumper Crop",
+      "Telegram",
+      "Potato Ridger",
+      "Clay Embankment",
+      "Storage Barn",
+      "Thick Forest",
+      "Canvas Sack",
+      "Wholesale Market",
+      "Petrified Wood"
+    ],
+    "2": [
+      "Nest Site",
+      "Large Greenhouse",
+      "Acorns Basket",
+      "New Market",
+      "Skimmer Plow",
+      "Fodder Beets",
+      "Iron Oven",
+      "Pumpernickel",
+      "Established Person",
+      "Potato Harvester",
+      "Hoof Caregiver",
+      "Fish Farmer",
+      "Food Merchant",
+      "Wood Barterer",
+      "Hewer",
+      "Entrepreneur",
+      "Master Tanner",
+      "Working Gloves"
+    ],
+    "3": [
+      "Handplow",
+      "Pond Hut",
+      "Asparagus Gift",
+      "Greening Plan",
+      "Storeroom",
+      "Grain Sieve",
+      "Trident",
+      "Stone House Reconstruction",
+      "Lutenist",
+      "Animal Tamer",
+      "Paper Maker",
+      "Home Brewer",
+      "Den Builder",
+      "Beer Tent Operator",
+      "Roof Examiner",
+      "Reseller"
+    ],
+    "4": [
+      "Potter's Yard",
+      "Cookery Lesson",
+      "Mantlepiece",
+      "Stable Yard",
+      "Horse-Drawn Boat",
+      "Tea House",
+      "Almsbag",
+      "Joiner of the Sea",
+      "Patch Caretaker",
+      "Seatmate",
+      "Tutor",
+      "Wealthy Man",
+      "Uncaring Parents",
+      "Whisky Distiller"
+    ],
+    "5": [
+      "Angler",
+      "Clutterer",
+      "Tree Farm Joiner",
+      "Cowherd",
+      "German Heath Keeper",
+      "Sheep Agent",
+      "Telegram",
+      "Potato Ridger",
+      "Clay Embankment",
+      "Storage Barn",
+      "Thick Forest",
+      "Wholesale Market"
+    ]
+  },
+  "draftedByRound": {
+    "1": {
+      "occupation": "Vegetable Vendor",
+      "minor": "Canvas Sack"
+    },
+    "2": {
+      "occupation": "Wood Barterer",
+      "minor": "Fodder Beets"
+    },
+    "3": {
+      "occupation": "Animal Tamer",
+      "minor": "Storeroom"
+    },
+    "4": {
+      "occupation": "Tutor",
+      "minor": "Tea House"
+    }
+  },
   "_meta": {
     "fixtureId": "g0194v_r5",
     "sourceDraft": "hist_8215388524325_g0194v",

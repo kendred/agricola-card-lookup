@@ -26,6 +26,56 @@
   "othersDrafted": [],
   "round": 2,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Debt Security",
+      "Hauberg",
+      "Basket Chair",
+      "Turnwrest Plow",
+      "Truffle Slicer",
+      "New Market",
+      "Feed Pellets",
+      "Waterlily Pond",
+      "Field Spade",
+      "Priest",
+      "Patron",
+      "Tinsmith Master",
+      "Sheep Keeper",
+      "Cattle Feeder",
+      "Assistant Tiller",
+      "Clay Kneader",
+      "Plow Maker",
+      "Animal Husbandry Worker",
+      "Old Miser",
+      "Market Booth"
+    ],
+    "2": [
+      "Forest School",
+      "Drift-Net Boat",
+      "Ceilings",
+      "Lawn Fertilzer",
+      "Carpenter's Yard",
+      "Pellet Press",
+      "Child's Toy",
+      "Profiteering",
+      "Bartering Hut",
+      "Treegardener",
+      "Village Peasant",
+      "Nutrition Expert",
+      "House Steward",
+      "Pet Broker",
+      "Collector",
+      "Home Brewer",
+      "Usufructuary",
+      "Stockman"
+    ]
+  },
+  "draftedByRound": {
+    "1": {
+      "occupation": "Assistant Tiller",
+      "minor": "Feed Pellets"
+    }
+  },
   "_meta": {
     "fixtureId": "19033r_r2",
     "sourceDraft": "hist_8214613003992_19033r",

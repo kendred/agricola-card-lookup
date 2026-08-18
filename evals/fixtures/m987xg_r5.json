@@ -33,6 +33,116 @@
   ],
   "round": 5,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Shifting Cultivation",
+      "Farmyard Manure",
+      "Handcart",
+      "Mandoline",
+      "Studio",
+      "Archway",
+      "Wood Saw",
+      "Child's Toy",
+      "Paintbrush",
+      "Alchemists Lab",
+      "Bed Maker",
+      "Oven Firing Boy",
+      "Carpenter",
+      "Cattle Feeder",
+      "Scholar",
+      "Agricultural Labourer",
+      "Sculptor",
+      "Midwife",
+      "Kindling Gatherer",
+      "Mountain Plowman"
+    ],
+    "2": [
+      "Ale-Benches",
+      "Claw Knife",
+      "Final Scenario",
+      "Excursion to the Quarry",
+      "Thick Forest",
+      "Mole Plow",
+      "Stable Yard",
+      "Civic Facade",
+      "Barn Cats",
+      "Wood Carrier",
+      "Pig Owner",
+      "Patch Caretaker",
+      "Homekeeper",
+      "Stall Holder",
+      "Freemason",
+      "Bonehead",
+      "Gardening Head Official",
+      "Wares Salesman"
+    ],
+    "3": [
+      "Family Friendly Home",
+      "Debt Security",
+      "Corn Scoop",
+      "Mantlepiece",
+      "Market Stall",
+      "Blade Shears",
+      "Retraining",
+      "Straw Manure",
+      "Scythe Worker",
+      "Firewood Collector",
+      "Conservator",
+      "Seducer",
+      "Farmyard Worker",
+      "German Heath Keeper",
+      "Casual Worker",
+      "Carter"
+    ],
+    "4": [
+      "Hook Knife",
+      "Ravenous Hunger",
+      "Garden Claw",
+      "Wholesale Market",
+      "Small Greenhouse",
+      "Heirloom",
+      "Fodder Beets",
+      "Adoptive Parents",
+      "Sweep",
+      "Green Grocer",
+      "Mud Wallower",
+      "Beer Tent Operator",
+      "Usufructuary",
+      "Uncaring Parents"
+    ],
+    "5": [
+      "Farmyard Manure",
+      "Mandoline",
+      "Archway",
+      "Wood Saw",
+      "Child's Toy",
+      "Paintbrush",
+      "Oven Firing Boy",
+      "Carpenter",
+      "Cattle Feeder",
+      "Sculptor",
+      "Midwife",
+      "Mountain Plowman"
+    ]
+  },
+  "draftedByRound": {
+    "1": {
+      "occupation": "Kindling Gatherer",
+      "minor": "Shifting Cultivation"
+    },
+    "2": {
+      "occupation": "Bonehead",
+      "minor": "Mole Plow"
+    },
+    "3": {
+      "occupation": "Conservator",
+      "minor": "Family Friendly Home"
+    },
+    "4": {
+      "occupation": "Adoptive Parents",
+      "minor": "Fodder Beets"
+    }
+  },
   "_meta": {
     "fixtureId": "m987xg_r5",
     "sourceDraft": "hist_8214550904117_m987xg",

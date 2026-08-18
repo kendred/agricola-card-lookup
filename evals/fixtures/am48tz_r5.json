@@ -33,6 +33,116 @@
   ],
   "round": 5,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Renovation Company",
+      "Trellises",
+      "Mantlepiece",
+      "Straw-Thatched Roof",
+      "Private Forest",
+      "Town Hall",
+      "Grain Bag",
+      "Breed Registry",
+      "Field Clay",
+      "Wood Cutter",
+      "Bohemian",
+      "Collier",
+      "Farm Hand",
+      "Collector",
+      "Sower",
+      "Stable Cleaner",
+      "Animal Husbandry Worker",
+      "Bargain Hunter",
+      "Lunchtime Beer",
+      "Cabbage Buyer"
+    ],
+    "2": [
+      "Telegram",
+      "Toolbox",
+      "Future Building Site",
+      "Plant Fertilizer",
+      "Artisan District",
+      "Beer Tap",
+      "Sundial",
+      "Renovation Materials",
+      "Thunderbolt",
+      "Priest",
+      "Publican",
+      "Small Animal Breeder",
+      "Fisherman's Friend",
+      "Seed Researcher",
+      "Cultivator",
+      "Shed Builder",
+      "Kelp Gatherer",
+      "Dung Collector"
+    ],
+    "3": [
+      "Double-Turn Plow",
+      "Ale-Benches",
+      "Junk Room",
+      "Ceilings",
+      "Drill Harrow",
+      "Work Permit",
+      "Sheep Rug",
+      "Pumpernickel",
+      "Task Artisan",
+      "Patch Caregiver",
+      "Inner Districts Director",
+      "Craftsmanship Promoter",
+      "Mayor Candidate",
+      "Flax Farmer",
+      "Roastmaster",
+      "Animal Tamer's Apprentice"
+    ],
+    "4": [
+      "Vegetable Slicer",
+      "Dwelling Mound",
+      "Truffle Slicer",
+      "Changeover",
+      "Feed Pellets",
+      "Wood Saw",
+      "Beaver Colony",
+      "Roughcaster",
+      "Buyer",
+      "Cowherd",
+      "Interior Decorator",
+      "Renovation Preparer",
+      "Veggie Lover",
+      "Margrave"
+    ],
+    "5": [
+      "Trellises",
+      "Mantlepiece",
+      "Private Forest",
+      "Grain Bag",
+      "Field Clay",
+      "Wood Cutter",
+      "Bohemian",
+      "Sower",
+      "Stable Cleaner",
+      "Bargain Hunter",
+      "Lunchtime Beer",
+      "Cabbage Buyer"
+    ]
+  },
+  "draftedByRound": {
+    "1": {
+      "occupation": "Animal Husbandry Worker",
+      "minor": "Breed Registry"
+    },
+    "2": {
+      "occupation": "Cultivator",
+      "minor": "Artisan District"
+    },
+    "3": {
+      "occupation": "Task Artisan",
+      "minor": "Ceilings"
+    },
+    "4": {
+      "occupation": "Veggie Lover",
+      "minor": "Feed Pellets"
+    }
+  },
   "_meta": {
     "fixtureId": "am48tz_r5",
     "sourceDraft": "hist_8221457687498_am48tz",

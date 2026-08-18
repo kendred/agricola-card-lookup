@@ -25,6 +25,31 @@
   "othersDrafted": [],
   "round": 1,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Forest Inn",
+      "Forest Stone",
+      "Beanfield",
+      "Horse-Drawn Boat",
+      "Bookshelf",
+      "Fatstock Stretcher",
+      "Lynchet",
+      "Whale Oil",
+      "Boar Spear",
+      "Profiteering",
+      "Wood Cutter",
+      "Night-School Student",
+      "Haydryer",
+      "Clay Kneader",
+      "Ranch Provost",
+      "Ebonist",
+      "Transactor",
+      "Museum Caretaker",
+      "Master Tanner",
+      "Cabbage Buyer"
+    ]
+  },
+  "draftedByRound": {},
   "_meta": {
     "fixtureId": "et161x_r1",
     "sourceDraft": "hist_8218926925938_et161x",

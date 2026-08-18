@@ -45,6 +45,146 @@
   ],
   "round": 7,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Loom",
+      "Store of Experience",
+      "Studio Boat",
+      "Beer Stall",
+      "Schnapps Distillery",
+      "Blade Shears",
+      "Animal Bedding",
+      "Upholstery",
+      "Field Spade",
+      "Harpooner",
+      "Geologist",
+      "Lunchtime Beer",
+      "Village Peasant",
+      "Puppeteer",
+      "Hide Farmer",
+      "Stable Milker",
+      "Plowman",
+      "Shed Builder",
+      "Wares Salesman",
+      "Uncaring Parents"
+    ],
+    "2": [
+      "Shepherd's Whistle",
+      "Publican",
+      "Ropemaker",
+      "Mineralogist",
+      "Cottager",
+      "Clay Kneader",
+      "Clay Carrier",
+      "Seed Servant",
+      "Prophet",
+      "Midnight Fencer",
+      "Baking Sheet",
+      "Claw Knife",
+      "Mandoline",
+      "Mineral Feeder",
+      "Plant Fertilizer",
+      "Sheep Well",
+      "Pellet Press",
+      "Cookery Extension"
+    ],
+    "3": [
+      "Carpenter's Axe",
+      "Debt Security",
+      "Shepherd's Crook",
+      "Grassland Harrow",
+      "Food Chest",
+      "Chicken Coop",
+      "Land Consolidation",
+      "Muck Rake",
+      "Patch Caregiver",
+      "Stable Sergeant",
+      "Stock Protector",
+      "Potato Harvester",
+      "Cowherd",
+      "Stable Master",
+      "Plow Maker",
+      "Pickler"
+    ],
+    "4": [
+      "Forest Lake Hut",
+      "Barley Mill",
+      "Lasso",
+      "Pottery Yard",
+      "Maintenance Premium",
+      "Boar Spear",
+      "Farmers Market",
+      "Shoreforester",
+      "Roof Ballaster",
+      "Illusionist",
+      "Workshop Assistant",
+      "Cattle Buyer",
+      "Pipe Smoker",
+      "Reseller"
+    ],
+    "5": [
+      "Store of Experience",
+      "Studio Boat",
+      "Schnapps Distillery",
+      "Blade Shears",
+      "Field Spade",
+      "Harpooner",
+      "Geologist",
+      "Lunchtime Beer",
+      "Puppeteer",
+      "Stable Milker",
+      "Plowman",
+      "Uncaring Parents"
+    ],
+    "6": [
+      "Publican",
+      "Ropemaker",
+      "Mineralogist",
+      "Clay Kneader",
+      "Clay Carrier",
+      "Baking Sheet",
+      "Mandoline",
+      "Sheep Well",
+      "Pellet Press",
+      "Cookery Extension"
+    ],
+    "7": [
+      "Debt Security",
+      "Grassland Harrow",
+      "Food Chest",
+      "Muck Rake",
+      "Patch Caregiver",
+      "Stock Protector",
+      "Cowherd",
+      "Stable Master"
+    ]
+  },
+  "draftedByRound": {
+    "1": {
+      "occupation": "Shed Builder",
+      "minor": "Beer Stall"
+    },
+    "2": {
+      "occupation": "Midnight Fencer",
+      "minor": "Shepherd's Whistle"
+    },
+    "3": {
+      "occupation": "Plow Maker",
+      "minor": "Carpenter's Axe"
+    },
+    "4": {
+      "occupation": "Pipe Smoker",
+      "minor": "Maintenance Premium"
+    },
+    "5": {
+      "occupation": "Plowman",
+      "minor": "Schnapps Distillery"
+    },
+    "6": {
+      "occupation": "Publican",
+      "minor": "Sheep Well"
+    }
+  },
   "_meta": {
     "fixtureId": "hxfbx0_r7",
     "sourceDraft": "hist_8213144043589_hxfbx0",

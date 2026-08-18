@@ -25,6 +25,31 @@
   "othersDrafted": [],
   "round": 1,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Loom",
+      "Store of Experience",
+      "Studio Boat",
+      "Beer Stall",
+      "Schnapps Distillery",
+      "Blade Shears",
+      "Animal Bedding",
+      "Upholstery",
+      "Field Spade",
+      "Harpooner",
+      "Geologist",
+      "Lunchtime Beer",
+      "Village Peasant",
+      "Puppeteer",
+      "Hide Farmer",
+      "Stable Milker",
+      "Plowman",
+      "Shed Builder",
+      "Wares Salesman",
+      "Uncaring Parents"
+    ]
+  },
+  "draftedByRound": {},
   "_meta": {
     "fixtureId": "hxfbx0_r1",
     "sourceDraft": "hist_8213144043589_hxfbx0",

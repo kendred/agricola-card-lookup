@@ -33,6 +33,116 @@
   ],
   "round": 5,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Three-Field Rotation",
+      "Beer Stall",
+      "Corn Schnapps Distillery",
+      "Lawn Fertilzer",
+      "Wooden Whey Bucket",
+      "Cesspit",
+      "Civic Facade",
+      "Lynchet",
+      "Grain Sieve",
+      "Animal Bedding",
+      "Homekeeper",
+      "Case Builder",
+      "Estate Worker",
+      "Constable",
+      "Fish Farmer",
+      "Chimney Sweep",
+      "Stockman",
+      "Site Manager",
+      "Prodigy",
+      "Sweep"
+    ],
+    "2": [
+      "Asparagus Gift",
+      "Chick Stable",
+      "Maintenance Premium",
+      "Recycled Brick",
+      "Stone House Reconstruction",
+      "Piggy Bank",
+      "Bookmark",
+      "Raised Bed",
+      "Iron Oven",
+      "Riparian Builder",
+      "Consultant",
+      "Emissary",
+      "Gardening Head Official",
+      "Party Organizer",
+      "Tree Inspector",
+      "Grain Thief",
+      "Diligent Farmer",
+      "Mountain Plowman"
+    ],
+    "3": [
+      "Vegetable Slicer",
+      "Claypipe",
+      "Hod",
+      "Canoe",
+      "Pitchfork",
+      "Stable Yard",
+      "Mattock",
+      "Slurry Spreader",
+      "Mushroom Collector",
+      "Storehouse Steward",
+      "Animal Dealer",
+      "Nutrition Expert",
+      "Pattern Maker",
+      "Seed Researcher",
+      "Field Cultivator",
+      "Mineral"
+    ],
+    "4": [
+      "Milk Jug",
+      "Crack Weeder",
+      "Excursion to the Quarry",
+      "Hard Porcelain",
+      "Brotherly Love",
+      "Muck Rake",
+      "Churchyard",
+      "Adoptive Parents",
+      "Illusionist",
+      "Large-Scale Farmer",
+      "Cattle Feeder",
+      "Small Animal Breeder",
+      "Stablehand",
+      "Market Master"
+    ],
+    "5": [
+      "Three-Field Rotation",
+      "Corn Schnapps Distillery",
+      "Lawn Fertilzer",
+      "Civic Facade",
+      "Grain Sieve",
+      "Animal Bedding",
+      "Homekeeper",
+      "Case Builder",
+      "Estate Worker",
+      "Fish Farmer",
+      "Prodigy",
+      "Sweep"
+    ]
+  },
+  "draftedByRound": {
+    "1": {
+      "occupation": "Chimney Sweep",
+      "minor": "Cesspit"
+    },
+    "2": {
+      "occupation": "Gardening Head Official",
+      "minor": "Stone House Reconstruction"
+    },
+    "3": {
+      "occupation": "Field Cultivator",
+      "minor": "Hod"
+    },
+    "4": {
+      "occupation": "Market Master",
+      "minor": "Excursion to the Quarry"
+    }
+  },
   "_meta": {
     "fixtureId": "pq9fn4_r5",
     "sourceDraft": "hist_8216446981893_pq9fn4",

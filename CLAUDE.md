@@ -76,8 +76,13 @@ The Functions runtime can't read outside `api/`, so two files exist in both plac
 | `data/agricola-cards.json` | `api/data/agricola-cards.json` |
 | `docs/agricola-strategy-guide.md` | `api/docs/agricola-strategy-guide.md` |
 | `docs/agricola-rules-reference.md` | `api/docs/agricola-rules-reference.md` |
+| `js/draft-stats.js` | `api/lib/draft-stats.js` |
 
-Verify with `diff -q` on all three pairs before committing.
+Verify with `diff -q` on all four pairs before committing.
+
+`draft-stats.js` ends with a `module.exports` guard so the same file works as a browser
+global and as a Node require. The strategy API computes hand analysis server-side from it,
+so eval fixtures and real requests take the identical path.
 
 ### CSS
 - No framework — all custom CSS

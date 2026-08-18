@@ -33,6 +33,116 @@
   ],
   "round": 5,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Drinking Trough",
+      "Debt Security",
+      "Large Greenhouse",
+      "Growing Farm",
+      "Muddy Puddles",
+      "Small Basket",
+      "Stone House Reconstruction",
+      "Twibil",
+      "Barn Shed",
+      "Small Trader",
+      "Shovel Bearer",
+      "Basket Chair",
+      "Building Expert",
+      "Haydryer",
+      "Trimmer",
+      "Sheep Whisperer",
+      "Patron",
+      "Wealthy Man",
+      "Omnifarmer",
+      "Claypit Owner"
+    ],
+    "2": [
+      "Mud Patch",
+      "Hook Knife",
+      "Flail",
+      "Woodcraft",
+      "Pioneering Spirit",
+      "Brotherly Love",
+      "Ox Skull",
+      "Fodder Beets",
+      "Stone Weir",
+      "Cookery Outfitter",
+      "Riparian Builder",
+      "Thresher",
+      "Sheep Provider",
+      "Animal Husbandry Worker",
+      "Kelp Gatherer",
+      "Animal Tamer's Apprentice",
+      "Pen Builder",
+      "Dung Collector"
+    ],
+    "3": [
+      "Baseboards",
+      "Throwing Axe",
+      "Food Basket",
+      "Grassland Harrow",
+      "Final Scenario",
+      "Grain Depot",
+      "Grain Bag",
+      "Shepherd's Whistle",
+      "Slurry Spreader",
+      "Riverine Shepherd",
+      "Shifting Cultivator",
+      "Sheep Keeper",
+      "Green Grocer",
+      "Sculptor",
+      "Fodder Planter",
+      "Delayed Wayfarer"
+    ],
+    "4": [
+      "Young Animal Market",
+      "Feedyard",
+      "Forest Inn",
+      "Food Chest",
+      "Reed Belt",
+      "Gypsy's Crock",
+      "Roman Pot",
+      "Mushroom Collector",
+      "Woolgrower",
+      "Stall Holder",
+      "Roof Examiner",
+      "Spice Trader",
+      "Tax Collector",
+      "Vegetable Vendor"
+    ],
+    "5": [
+      "Drinking Trough",
+      "Debt Security",
+      "Large Greenhouse",
+      "Growing Farm",
+      "Small Basket",
+      "Small Trader",
+      "Basket Chair",
+      "Building Expert",
+      "Trimmer",
+      "Sheep Whisperer",
+      "Wealthy Man",
+      "Omnifarmer"
+    ]
+  },
+  "draftedByRound": {
+    "1": {
+      "occupation": "Claypit Owner",
+      "minor": "Barn Shed"
+    },
+    "2": {
+      "occupation": "Animal Husbandry Worker",
+      "minor": "Mud Patch"
+    },
+    "3": {
+      "occupation": "Fodder Planter",
+      "minor": "Baseboards"
+    },
+    "4": {
+      "occupation": "Vegetable Vendor",
+      "minor": "Food Chest"
+    }
+  },
   "_meta": {
     "fixtureId": "wmmytg_r5",
     "sourceDraft": "hist_8222497692369_wmmytg",

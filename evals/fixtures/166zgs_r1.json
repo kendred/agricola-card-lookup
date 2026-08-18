@@ -25,6 +25,31 @@
   "othersDrafted": [],
   "round": 1,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Brewing Water",
+      "Reed Belt",
+      "Garden Claw",
+      "Muck Rake",
+      "Milking Stool",
+      "Stone House Reconstruction",
+      "Seed Almanac",
+      "Raised Bed",
+      "Sleight of Hand",
+      "Farmers Market",
+      "Barrow Pusher",
+      "Pan Baker",
+      "Riverine Shepherd",
+      "Fellow Grazer",
+      "Manservant",
+      "Plow Hero",
+      "Food Merchant",
+      "Oyster Eater",
+      "Pipe Smoker",
+      "Prophet"
+    ]
+  },
+  "draftedByRound": {},
   "_meta": {
     "fixtureId": "166zgs_r1",
     "sourceDraft": "hist_8221718375859_166zgs",

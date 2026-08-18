@@ -25,6 +25,31 @@
   "othersDrafted": [],
   "round": 1,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Facades Carving",
+      "Beer Keg",
+      "Feedyard",
+      "Writing Boards",
+      "Granary",
+      "Stone Clearing",
+      "Education Bonus",
+      "Seed Almanac",
+      "Barn Cats",
+      "Artichoke Field",
+      "Roughcaster",
+      "Tinsmith Master",
+      "Estate Worker",
+      "Salter",
+      "Winter Caretaker",
+      "Animal Activist",
+      "Tree Cutter",
+      "Land Heir",
+      "Mountain Plowman",
+      "Master Renovator"
+    ]
+  },
+  "draftedByRound": {},
   "_meta": {
     "fixtureId": "bb2edx_r1",
     "sourceDraft": "hist_8218181703539_bb2edx",

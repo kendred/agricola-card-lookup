@@ -80,7 +80,7 @@ var strategyAdvisor = (function () {
     // onProgress(partialState): optional callback fired whenever the recovery parser
     // produces a richer snapshot than the previous emit. Callers can merge this into
     // UI state for progressive rendering.
-    async function getAdvice(handNames, draftedNames, othersDrafted, currentRound, playerCount, onProgress) {
+    async function getAdvice(handNames, draftedNames, othersDrafted, currentRound, playerCount, onProgress, history) {
         var response = await fetch(STRATEGY_PATH, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -90,6 +90,11 @@ var strategyAdvisor = (function () {
                 othersDrafted: othersDrafted,
                 round: currentRound,
                 playerCount: playerCount === 3 ? 3 : 4,
+                // Hand history lets the server resolve tag-survival odds for returning
+                // hands. Omitted rather than faked when unavailable — see
+                // buildAnalysisBlock in api/strategy/index.js.
+                seenHands: (history && history.seenHands) || undefined,
+                draftedByRound: (history && history.draftedByRound) || undefined,
             }),
         });
 

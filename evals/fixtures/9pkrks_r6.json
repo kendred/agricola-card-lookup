@@ -39,6 +39,132 @@
   ],
   "round": 6,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Wheel Plow",
+      "Forestry Studies",
+      "Mill Wheel",
+      "New Purchase",
+      "Beer Table",
+      "Luxurious Hostel",
+      "Whale Oil",
+      "Raised Bed",
+      "Alchemists Lab",
+      "Lazy Sowman",
+      "Manservant",
+      "Patch Caregiver",
+      "Open Air Farmer",
+      "Sheep Keeper",
+      "Market Crier",
+      "Mud Wallower",
+      "Cottar",
+      "Rock Beater",
+      "Old Miser",
+      "Roll-Over Plow"
+    ],
+    "2": [
+      "Farmyard Manure",
+      "Lasso",
+      "Hook Knife",
+      "Half-Timbered House",
+      "Farm Store",
+      "Feed Fence",
+      "Grain Sieve",
+      "Child's Toy",
+      "Wood Harvester",
+      "Working Gloves",
+      "Joiner of the Sea",
+      "Shoreforester",
+      "Brushwood Collector",
+      "Salter",
+      "Sheep Whisperer",
+      "Pasture Master",
+      "Potato Planter",
+      "Stable Milker"
+    ],
+    "3": [
+      "Ale-Benches",
+      "Stone Tongs",
+      "Stable Yard",
+      "Corn Schnapps Distillery",
+      "Misanthropy",
+      "Stone Weir",
+      "Land Consolidation",
+      "Rock Garden",
+      "Small Trader",
+      "Culinary Artist",
+      "Paper Maker",
+      "Carpenter",
+      "Nutrition Expert",
+      "Tutor",
+      "Autumn Mother",
+      "Earthenware Potter"
+    ],
+    "4": [
+      "Calcium Fertilizers",
+      "Agricultural Fertilizers",
+      "Acorns Basket",
+      "Christianity",
+      "Fishing Net",
+      "Horse-Drawn Boat",
+      "Special Food",
+      "Priest",
+      "Rustic",
+      "Housebook Master",
+      "Farm Hand",
+      "Freemason",
+      "Cattle Buyer",
+      "Grain Thief"
+    ],
+    "5": [
+      "Forestry Studies",
+      "Mill Wheel",
+      "Beer Table",
+      "Whale Oil",
+      "Alchemists Lab",
+      "Lazy Sowman",
+      "Open Air Farmer",
+      "Market Crier",
+      "Mud Wallower",
+      "Rock Beater",
+      "Old Miser",
+      "Roll-Over Plow"
+    ],
+    "6": [
+      "Farmyard Manure",
+      "Lasso",
+      "Hook Knife",
+      "Child's Toy",
+      "Wood Harvester",
+      "Working Gloves",
+      "Joiner of the Sea",
+      "Sheep Whisperer",
+      "Pasture Master",
+      "Stable Milker"
+    ]
+  },
+  "draftedByRound": {
+    "1": {
+      "occupation": "Cottar",
+      "minor": "Wheel Plow"
+    },
+    "2": {
+      "occupation": "Shoreforester",
+      "minor": "Feed Fence"
+    },
+    "3": {
+      "occupation": "Paper Maker",
+      "minor": "Ale-Benches"
+    },
+    "4": {
+      "occupation": "Farm Hand",
+      "minor": "Special Food"
+    },
+    "5": {
+      "occupation": "Market Crier",
+      "minor": "Beer Table"
+    }
+  },
   "_meta": {
     "fixtureId": "9pkrks_r6",
     "sourceDraft": "hist_8220427257336_9pkrks",

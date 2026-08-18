@@ -41,6 +41,114 @@
   ],
   "round": 5,
   "playerCount": 3,
+  "seenHands": {
+    "1": [
+      "Manger",
+      "Club House",
+      "Crack Weeder",
+      "Canvas Sack",
+      "Mandoline",
+      "Hutch",
+      "Foreign Aid",
+      "New Market",
+      "Earth Oven",
+      "Barrow Pusher",
+      "Wall Builder",
+      "Riparian Builder",
+      "Animal Dealer",
+      "Nutrition Expert",
+      "Soldier",
+      "Mason",
+      "Stable Master",
+      "Seed Servant",
+      "Delayed Wayfarer",
+      "Roll-Over Plow"
+    ],
+    "2": [
+      "Facades Carving",
+      "Seed Pellets",
+      "Butter Churn",
+      "Three-Field Rotation",
+      "Mill Wheel",
+      "Fishing Net",
+      "Lettuce Patch",
+      "Grain Sieve",
+      "Dolly's Mother",
+      "Roughcaster",
+      "Hollow Warden",
+      "Rustic",
+      "Patch Caregiver",
+      "Clay Warden",
+      "Little Stick Knitter",
+      "Field Cultivator",
+      "Master Renovator",
+      "Whisky Distiller"
+    ],
+    "3": [
+      "Forest School",
+      "Grassland Harrow",
+      "Strawberry Patch",
+      "Harvest House",
+      "Acorns Basket",
+      "Blueprint",
+      "Renovation Materials",
+      "Misanthropy",
+      "Small Trader",
+      "Knapper",
+      "Priest",
+      "Green Grocer",
+      "Home Brewer",
+      "Animal Feeder",
+      "Pipe Smoker",
+      "Prophet"
+    ],
+    "4": [
+      "Canvas Sack",
+      "Mandoline",
+      "Foreign Aid",
+      "New Market",
+      "Earth Oven",
+      "Wall Builder",
+      "Riparian Builder",
+      "Animal Dealer",
+      "Nutrition Expert",
+      "Soldier",
+      "Seed Servant",
+      "Roll-Over Plow"
+    ],
+    "5": [
+      "Facades Carving",
+      "Seed Pellets",
+      "Butter Churn",
+      "Mill Wheel",
+      "Fishing Net",
+      "Grain Sieve",
+      "Roughcaster",
+      "Hollow Warden",
+      "Rustic",
+      "Little Stick Knitter",
+      "Master Renovator",
+      "Whisky Distiller"
+    ]
+  },
+  "draftedByRound": {
+    "1": {
+      "occupation": "Barrow Pusher",
+      "minor": "Hutch"
+    },
+    "2": {
+      "occupation": "Field Cultivator",
+      "minor": "Lettuce Patch"
+    },
+    "3": {
+      "occupation": "Priest",
+      "minor": "Harvest House"
+    },
+    "4": {
+      "occupation": "Seed Servant",
+      "minor": "Earth Oven"
+    }
+  },
   "_meta": {
     "fixtureId": "meebpm_r5",
     "sourceDraft": "hist_8216469805130_meebpm",

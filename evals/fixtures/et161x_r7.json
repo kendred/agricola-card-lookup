@@ -45,6 +45,146 @@
   ],
   "round": 7,
   "playerCount": 4,
+  "seenHands": {
+    "1": [
+      "Forest Inn",
+      "Forest Stone",
+      "Beanfield",
+      "Horse-Drawn Boat",
+      "Bookshelf",
+      "Fatstock Stretcher",
+      "Lynchet",
+      "Whale Oil",
+      "Boar Spear",
+      "Profiteering",
+      "Wood Cutter",
+      "Night-School Student",
+      "Haydryer",
+      "Clay Kneader",
+      "Ranch Provost",
+      "Ebonist",
+      "Transactor",
+      "Museum Caretaker",
+      "Master Tanner",
+      "Cabbage Buyer"
+    ],
+    "2": [
+      "Carpenter's Axe",
+      "Large Greenhouse",
+      "Mining Hammer",
+      "Cookery Lesson",
+      "Bed in the Grain Field",
+      "Stone Clearing",
+      "Pole Barns",
+      "Misanthropy",
+      "Lutenist",
+      "Geologist",
+      "Green Grocer",
+      "Home Brewer",
+      "Bellfounder",
+      "Clay Deliveryman",
+      "Champion Breeder",
+      "Vegetable Vendor",
+      "Visionary",
+      "Market Booth"
+    ],
+    "3": [
+      "Clearing Spade",
+      "Lumber Mill",
+      "Upscale Lifestyle",
+      "Hook Knife",
+      "Mill Wheel",
+      "Woodcraft",
+      "Fodder Chamber",
+      "Earth Oven",
+      "Drudgery Reeve",
+      "Woolgrower",
+      "Schnapps Distiller",
+      "Thresher",
+      "Building Tycoon",
+      "Domestician Expert",
+      "Braid Maker",
+      "Bargain Hunter"
+    ],
+    "4": [
+      "Corn Scoop",
+      "Stable Tree",
+      "Forestry Studies",
+      "Butter Churn",
+      "Remodeling",
+      "Blade Shears",
+      "Storeroom",
+      "Riverine Shepherd",
+      "Joiner of the Sea",
+      "Plow Driver",
+      "Consultant",
+      "Tinsmith Master",
+      "Village Peasant",
+      "Resource Recycler"
+    ],
+    "5": [
+      "Forest Inn",
+      "Forest Stone",
+      "Beanfield",
+      "Horse-Drawn Boat",
+      "Whale Oil",
+      "Boar Spear",
+      "Wood Cutter",
+      "Night-School Student",
+      "Clay Kneader",
+      "Transactor",
+      "Master Tanner",
+      "Cabbage Buyer"
+    ],
+    "6": [
+      "Large Greenhouse",
+      "Cookery Lesson",
+      "Stone Clearing",
+      "Pole Barns",
+      "Misanthropy",
+      "Lutenist",
+      "Geologist",
+      "Home Brewer",
+      "Clay Deliveryman",
+      "Visionary"
+    ],
+    "7": [
+      "Hook Knife",
+      "Mill Wheel",
+      "Woodcraft",
+      "Fodder Chamber",
+      "Thresher",
+      "Building Tycoon",
+      "Braid Maker",
+      "Bargain Hunter"
+    ]
+  },
+  "draftedByRound": {
+    "1": {
+      "occupation": "Haydryer",
+      "minor": "Bookshelf"
+    },
+    "2": {
+      "occupation": "Champion Breeder",
+      "minor": "Carpenter's Axe"
+    },
+    "3": {
+      "occupation": "Drudgery Reeve",
+      "minor": "Earth Oven"
+    },
+    "4": {
+      "occupation": "Plow Driver",
+      "minor": "Stable Tree"
+    },
+    "5": {
+      "occupation": "Night-School Student",
+      "minor": "Beanfield"
+    },
+    "6": {
+      "occupation": "Clay Deliveryman",
+      "minor": "Misanthropy"
+    }
+  },
   "_meta": {
     "fixtureId": "et161x_r7",
     "sourceDraft": "hist_8218926925938_et161x",
