@@ -10,3 +10,5 @@ STREAMING_PLAN.md
 evals/raw-drafts.json
 # Azure Functions local settings — holds connection strings
 api/local.settings.json
+# Eval run outputs — regenerable, and they accumulate
+evals/reports/
