@@ -155,25 +155,72 @@ advice references specific cards that can actually return. Measured against Stag
 
 ## Stage 5 — Card metadata enrichment (offline)
 
-**Goal:** fix the 71% missing-tag problem and produce structure that makes filtering possible.
+**Goal:** give the model, and the Stage 6 filter, structured facts about cards it currently
+only knows as a name, a rank, and a sentence of prose.
 
-**Why offline:** this is the one place an LLM is genuinely high-leverage, and it costs nothing
-at inference time. Run it once, review it once, commit the result.
+### Correcting the earlier framing
 
-**Work:**
-- Batch job over all 820 cards extracting structured fields from each description: the action
-  space it keys off, what it produces, whether it is strategy-defining or complementary, what
-  it synergizes with, and the existing tag vocabulary.
-- **Treat the output as untrusted, exactly like card intake.** The same OCR-era discipline
-  applies: present results for approve / fix / deny before writing to the data files. Spot-check
-  the top 200 by hand at minimum.
+An earlier version of this plan called the 548-of-773 untagged cards a "missing tag problem"
+to be fixed by backfilling tags. **That was wrong, and backfilling tags onto everything would
+make the data worse, not better.**
+
+The 11 tags name *specific archetype clusters* — cards that make an underused action space
+worth visiting, or that generate extra actions. Most cards do not belong to one, and should
+not. Forest Clearer makes wood accumulation better for every strategy. Lover buys a family
+growth outright. Basket Carrier is a food engine. These are excellent cards with no archetype
+affiliation, and inventing one for them would create false synergy signals — the model would
+start recommending cards *because they share a fabricated tag*, which is worse than it
+recommending them on merit.
+
+**Untagged is a real and correct state**, and Stage 4a already shows why: in one sampled
+draft, ten of eighteen surviving cards in a returning hand carried no tag at all, and the
+computed 0% "chance of another tagged card" was correct rather than a data gap.
+
+So the target is not tag coverage. It is **structured metadata, of which a tag is one
+optional field.**
+
+### What to extract
+
+Per card, from its existing `description`:
+
+- **What it does** — produces a resource, converts a resource, grants an action, changes a
+  cost, scores points, changes a rule.
+- **What it keys off** — the action space or trigger it attaches to, if any (a Round card
+  space, the Harvest, playing an occupation, building a room, sowing). Many cards attach to
+  nothing and are simply always-on.
+- **Commitment level** — strategy-defining (worthless without a supporting engine) versus
+  complementary (improves actions you take regardless). This distinction already carries real
+  weight in the strategy guide and is currently nowhere in the data.
+- **Resources touched** — for cheap filtering on "what fills this gap."
+- **Tag** — only where the card genuinely belongs to an archetype cluster. **Leaving it empty
+  is the expected outcome for most cards** and must not be treated as a failure of the
+  extraction.
+
+A card that is simply strong on its own merits should come out as complementary, with the
+resources it touches, and no tag. That record is complete, not deficient.
+
+### How to run it
+
+- One batch pass over all 820 cards. Offline, one time, committed — it costs nothing at
+  inference.
+- **Treat the output as untrusted, exactly like card intake.** The same discipline applies:
+  present for approve / fix / deny before writing to the data files, and spot-check the top
+  200 by hand. An extraction that quietly mislabels a strategy-defining card as complementary
+  will push the model toward recommending it without its engine.
 - Write to both `data/agricola-cards.json` and `api/data/agricola-cards.json`.
 - `scripts/merge_rankings.py` must still pass afterwards.
+- Skip cards flagged `banned: true` — they are name-only shells with nothing to extract.
 
-**Exit criteria:** every ranked card carries usable structured metadata; tag coverage on the
-top 200 is complete; both copies byte-identical.
+### A quality check worth building in
 
----
+Ask for the extraction twice with different phrasing and compare. Cards where the two passes
+disagree on commitment level or on whether a tag applies are exactly the cards worth human
+review. This turns "review 820 cards" into "review the ~50 the extractor was unsure about."
+
+### Exit criteria
+
+Every non-banned card carries structured metadata. Tag coverage is **not** a target and
+should not be reported as a completion metric. Both copies byte-identical.
 
 ## Stage 6 — Filtered live pool
 
@@ -216,7 +263,7 @@ misses will be common, so the 30K is not always discounted.
 | 2. Eval harness | — | small | none directly; enables everything |
 | 3. Data hygiene | — | small | small |
 | 4. Send computed data | 2 | small | medium |
-| 5. Metadata enrichment | 2, 3 | **large** | medium |
+| 5. Metadata enrichment | 2, 3 | **large** | medium (enables 6) |
 | 6. Filtered live pool | 5 | medium | **large** (on future-hand reasoning) |
 | 7. Index descriptions | 6 | trivial | small, diminishing |
 
