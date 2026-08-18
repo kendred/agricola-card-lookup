@@ -29,6 +29,11 @@ const DEFAULTS = {
   delay: 0,           // ms between requests
   only: null,         // substring filter on fixtureId
   variant: 'current', // 'current' | 'baseline' | 'both'
+  // The endpoint's cap is per-IP over a 10 minute window. At ~50s per call,
+  // throughput is roughly 1.2 requests/minute per worker, so keep
+  // concurrency * 1.2 under the cap (default 5/10min => 100/10min once
+  // STRATEGY_RATE_LIMIT_MAX is raised). 6 workers ~= 7/min.
+  concurrency: 6,
   timeout: 300000,
 };
 
@@ -167,48 +172,63 @@ async function main() {
 
   console.log(`endpoint: ${cfg.endpoint}`);
   console.log(`fixtures: ${entries.length}  variant(s): ${variants.join(', ')}  `
-    + `runs each: ${cfg.runs}  pending: ${jobs.length}`);
+    + `runs each: ${cfg.runs}  pending: ${jobs.length}  concurrency: ${cfg.concurrency}`);
   console.log(`output:   ${outDir}\n`);
   if (!jobs.length) return console.log('nothing to do (all results already on disk)');
 
-  let ok = 0, failed = 0, limited = 0;
-  for (const [n, job] of jobs.entries()) {
-    const fixture = JSON.parse(readFileSync(join(cfg.fixtures, job.entry.file), 'utf8'));
-    const { _meta, ...base } = fixture;
-    const body = { ...base, promptVariant: job.variant };
+  let ok = 0, failed = 0, limited = 0, completed = 0;
+  const started = Date.now();
+  const queue = jobs.slice();
 
-    let result = await callStrategy(cfg.endpoint, body, cfg.timeout);
+  async function worker() {
+    for (;;) {
+      const job = queue.shift();
+      if (!job) return;
 
-    // The endpoint allows 5 requests per 10 minutes per IP. Back off rather
-    // than burning through fixtures on 429s.
-    let backoff = 60000;
-    while (result.rateLimited) {
-      limited++;
-      process.stdout.write(`  rate limited, waiting ${backoff / 1000}s...\n`);
-      await sleep(backoff);
-      backoff = Math.min(backoff * 2, 600000);
-      result = await callStrategy(cfg.endpoint, body, cfg.timeout);
+      const fixture = JSON.parse(readFileSync(join(cfg.fixtures, job.entry.file), 'utf8'));
+      const { _meta, ...base } = fixture;
+      const body = { ...base, promptVariant: job.variant };
+
+      let result = await callStrategy(cfg.endpoint, body, cfg.timeout);
+
+      // Back off rather than burning through fixtures on 429s. Each worker
+      // backs off independently, which naturally thins concurrency until the
+      // window clears instead of stalling the whole pool.
+      let backoff = 60000;
+      while (result.rateLimited) {
+        limited++;
+        process.stdout.write(`  rate limited, worker waiting ${backoff / 1000}s...\n`);
+        await sleep(backoff);
+        backoff = Math.min(backoff * 2, 600000);
+        result = await callStrategy(cfg.endpoint, body, cfg.timeout);
+      }
+
+      writeFileSync(join(outDir, `${job.id}.json`), JSON.stringify({
+        fixtureId: job.entry.fixtureId,
+        run: job.run,
+        variant: job.variant,
+        round: job.entry.round,
+        playerCount: job.entry.playerCount,
+        request: body,
+        expectedUserPicks: _meta.userPicks,
+        result,
+      }, null, 2));
+
+      if (result.ok) ok++; else failed++;
+      completed++;
+      const tag = result.ok ? 'ok ' : 'FAIL';
+      const secs = result.elapsedMs ? `${(result.elapsedMs / 1000).toFixed(1)}s` : '-';
+      const rate = completed / ((Date.now() - started) / 60000);
+      const eta = (jobs.length - completed) / Math.max(rate, 0.01);
+      console.log(`[${completed}/${jobs.length}] ${tag} ${job.id}  ${secs}` +
+        `  ${rate.toFixed(1)}/min  eta ${eta.toFixed(0)}m` +
+        (result.ok ? '' : `  (${result.error})`));
+
+      if (cfg.delay) await sleep(cfg.delay);
     }
-
-    writeFileSync(join(outDir, `${job.id}.json`), JSON.stringify({
-      fixtureId: job.entry.fixtureId,
-      run: job.run,
-      variant: job.variant,
-      round: job.entry.round,
-      playerCount: job.entry.playerCount,
-      request: body,
-      expectedUserPicks: _meta.userPicks,
-      result,
-    }, null, 2));
-
-    if (result.ok) ok++; else failed++;
-    const tag = result.ok ? 'ok ' : 'FAIL';
-    const secs = result.elapsedMs ? `${(result.elapsedMs / 1000).toFixed(1)}s` : '-';
-    console.log(`[${n + 1}/${jobs.length}] ${tag} ${job.id}  ${secs}` +
-      (result.ok ? '' : `  (${result.error})`));
-
-    if (cfg.delay) await sleep(cfg.delay);
   }
+
+  await Promise.all(Array.from({ length: Math.max(1, cfg.concurrency) }, worker));
 
   console.log(`\nok: ${ok}   failed: ${failed}   rate-limit waits: ${limited}`);
   console.log(`results -> ${outDir}`);

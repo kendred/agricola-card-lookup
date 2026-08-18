@@ -10,12 +10,16 @@ const fs = require('fs');
 const CARDS = JSON.parse(
     fs.readFileSync(path.join(__dirname, '..', 'data', 'agricola-cards.json'), 'utf8')
 );
+// Banned cards are name-only shells kept in the database for lookup, with no
+// type, description, or stats. They are not legal in play, so they must never
+// reach the model — an entry with a blank type and no text is worse than absent.
 const CARD_MAP = {};
-CARDS.forEach(card => { CARD_MAP[card.name] = card; });
+CARDS.forEach(card => { if (!card.banned) CARD_MAP[card.name] = card; });
 
 // --- Compact card index for system prompt ---
 function buildCompactIndex(playerCount) {
     return CARDS
+        .filter(c => !c.banned)
         .map(c => {
             if (playerCount === 3) {
                 if (!c.stats_3p) return null;

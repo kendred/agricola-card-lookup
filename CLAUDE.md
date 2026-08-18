@@ -119,6 +119,10 @@ Verify with `diff -q` on all three pairs before committing.
 - Numeric stats are **strings**, not numbers. `rank` is the one number. Parse before comparing.
 - Top-level stats are **4-player**. `stats_3p` mirrors them for 3-player mode; the draft tool swaps which set it reads based on player count. A card may have top-level stats but no `stats_3p`.
 - Newly imported cards have `rank: null` and null for every stat field.
+- **`banned: true`** marks cards that are not legal in play. They are name-only shells — no
+  `type`, `description`, `card_id`, or stats — kept in the database so lookups by name still
+  resolve. They are filtered out of `resolvedCards` in `draft.html` and out of `CARD_MAP` and
+  the compact index in `api/strategy/index.js`, so they never reach a hand or the model.
 
 ## Card Intake (pulling submitted cards from GitHub issues)
 

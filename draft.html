@@ -1828,6 +1828,10 @@ function DraftApp() {
                 // Deduplicate cards by name (keep first/higher-ranked entry)
                 const seen = new Set();
                 const data = rawData.filter(c => {
+                    // Banned cards are name-only shells with no type or text and are
+                    // not legal in play. Drop them at the single load point so they
+                    // cannot reach search, hands, draft stats, or the strategy API.
+                    if (c.banned) return false;
                     if (seen.has(c.name)) return false;
                     seen.add(c.name);
                     return true;

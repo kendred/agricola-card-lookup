@@ -12448,7 +12448,7 @@
     "elo_per_play": "0.42",
     "value": "1.9656",
     "value_when_played": "0.8",
-    "description": "",
+    "description": "When you play this card, you immediately get 2 clay. At any time, but only once per round, you can buy 2 clay for 2 food.",
     "card_id": "",
     "type": "Occupation",
     "cost": "",
@@ -19810,7 +19810,8 @@
       "elo_per_play": "14.88",
       "value": "22.32",
       "value_when_played": "14.9"
-    }
+    },
+    "banned": true
   },
   {
     "name": "Teacher's Desk",
@@ -19838,7 +19839,8 @@
       "elo_per_play": "8.67",
       "value": "13.6119",
       "value_when_played": "8.7"
-    }
+    },
+    "banned": true
   },
   {
     "name": "Tree Guard",
@@ -19866,7 +19868,8 @@
       "elo_per_play": "3.26",
       "value": "4.075",
       "value_when_played": "3.3"
-    }
+    },
+    "banned": true
   },
   {
     "name": "Hayloft Barn",
@@ -19894,7 +19897,8 @@
       "elo_per_play": "4.68",
       "value": "6.4584",
       "value_when_played": "4.7"
-    }
+    },
+    "banned": true
   },
   {
     "name": "Guest Room",
@@ -19922,7 +19926,8 @@
       "elo_per_play": "7.39",
       "value": "12.3413",
       "value_when_played": "7.4"
-    }
+    },
+    "banned": true
   },
   {
     "name": "Chapel",
@@ -19950,7 +19955,8 @@
       "elo_per_play": "2.07",
       "value": "3.6225",
       "value_when_played": "2.1"
-    }
+    },
+    "banned": true
   },
   {
     "name": "Caravan",
@@ -19978,7 +19984,8 @@
       "elo_per_play": "9.08",
       "value": "13.2568",
       "value_when_played": "9.8"
-    }
+    },
+    "banned": true
   },
   {
     "name": "Braggart",
@@ -20006,7 +20013,8 @@
       "elo_per_play": "3.31",
       "value": "4.3692",
       "value_when_played": "3.6"
-    }
+    },
+    "banned": true
   },
   {
     "name": "Shaving Horse",
@@ -20034,7 +20042,8 @@
       "elo_per_play": "-1.21",
       "value": "-1.6093",
       "value_when_played": "-1.2"
-    }
+    },
+    "banned": true
   },
   {
     "name": "Craft Teacher",
@@ -20062,7 +20071,8 @@
       "elo_per_play": "3.55",
       "value": "6.0705",
       "value_when_played": "3.5"
-    }
+    },
+    "banned": true
   },
   {
     "name": "Pulverizer Plow",
@@ -20090,7 +20100,8 @@
       "elo_per_play": "-1.32",
       "value": "-3.8016",
       "value_when_played": "-1.3"
-    }
+    },
+    "banned": true
   },
   {
     "name": "Begging Student",
@@ -20118,7 +20129,8 @@
       "elo_per_play": "1.69",
       "value": "2.1463",
       "value_when_played": "1.9"
-    }
+    },
+    "banned": true
   },
   {
     "name": "Garden Designer",
@@ -20146,7 +20158,8 @@
       "elo_per_play": "6.40",
       "value": "11.904",
       "value_when_played": "10.0"
-    }
+    },
+    "banned": true
   },
   {
     "name": "Carpenter's Bench",
@@ -20174,7 +20187,8 @@
       "elo_per_play": "3.37",
       "value": "5.392",
       "value_when_played": "3.4"
-    }
+    },
+    "banned": true
   },
   {
     "name": "Recruitment",
@@ -20202,7 +20216,8 @@
       "elo_per_play": "2.83",
       "value": "4.528",
       "value_when_played": "3.5"
-    }
+    },
+    "banned": true
   },
   {
     "name": "Carriage Trip",
@@ -20230,7 +20245,8 @@
       "elo_per_play": "1.76",
       "value": "6.4592",
       "value_when_played": "1.8"
-    }
+    },
+    "banned": true
   },
   {
     "name": "Carpenter's Hammer",
@@ -20258,7 +20274,8 @@
       "elo_per_play": "-4.28",
       "value": "-5.8208",
       "value_when_played": "-4.3"
-    }
+    },
+    "banned": true
   },
   {
     "name": "Writing Chamber",
@@ -20286,7 +20303,8 @@
       "elo_per_play": "3.04",
       "value": "7.752",
       "value_when_played": "5.6"
-    }
+    },
+    "banned": true
   },
   {
     "name": "Royal Wood",
@@ -20314,7 +20332,8 @@
       "elo_per_play": "-1.05",
       "value": "-2.247",
       "value_when_played": "-1.2"
-    }
+    },
+    "banned": true
   },
   {
     "name": "Work Certificate",
@@ -20342,7 +20361,8 @@
       "elo_per_play": "-2.56",
       "value": "-5.76",
       "value_when_played": "-5.1"
-    }
+    },
+    "banned": true
   },
   {
     "name": "Cross-Cut Wood",
@@ -20370,7 +20390,8 @@
       "elo_per_play": "17.92",
       "value": "74.9056",
       "value_when_played": "49.3"
-    }
+    },
+    "banned": true
   },
   {
     "name": "Informant",
@@ -20398,7 +20419,8 @@
       "elo_per_play": "1.85",
       "value": "4.625",
       "value_when_played": "2.1"
-    }
+    },
+    "banned": true
   },
   {
     "name": "Freshman",
@@ -20426,7 +20448,8 @@
       "elo_per_play": "-2.06",
       "value": "-3.6874",
       "value_when_played": "-2.2"
-    }
+    },
+    "banned": true
   },
   {
     "name": "Estate Master",
@@ -20454,7 +20477,8 @@
       "elo_per_play": "2.25",
       "value": "4.8375",
       "value_when_played": "2.9"
-    }
+    },
+    "banned": true
   },
   {
     "name": "Trade Teacher",
@@ -20482,7 +20506,8 @@
       "elo_per_play": "-4.79",
       "value": "-4.79",
       "value_when_played": "-5.7"
-    }
+    },
+    "banned": true
   },
   {
     "name": "Nightworker",
@@ -20510,7 +20535,8 @@
       "elo_per_play": "1.69",
       "value": "5.07",
       "value_when_played": "3.4"
-    }
+    },
+    "banned": true
   },
   {
     "name": "Big Country",
@@ -20538,7 +20564,8 @@
       "elo_per_play": "-1.23",
       "value": "-4.92",
       "value_when_played": "-3.7"
-    }
+    },
+    "banned": true
   },
   {
     "name": "Delayed Wayfarer",
