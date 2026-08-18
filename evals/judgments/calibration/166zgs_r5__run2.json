@@ -1,0 +1,33 @@
+{
+ "fixtureId": "166zgs_r5",
+ "run": 2,
+ "round": 5,
+ "variant": "baseline",
+ "violations": [],
+ "usage": {
+  "completion_tokens": 6,
+  "completion_tokens_details": {
+   "accepted_prediction_tokens": 0,
+   "audio_tokens": 0,
+   "reasoning_tokens": 0,
+   "rejected_prediction_tokens": 0
+  },
+  "latency_checkpoint": {
+   "engine_tbt_ms": 8,
+   "engine_ttft_ms": 230,
+   "engine_ttlt_ms": 275,
+   "pre_inference_ms": 164,
+   "service_tbt_ms": 8,
+   "service_ttft_ms": 595,
+   "service_ttlt_ms": 637,
+   "total_duration_ms": 482,
+   "user_visible_ttft_ms": 432
+  },
+  "prompt_tokens": 8169,
+  "prompt_tokens_details": {
+   "audio_tokens": 0,
+   "cached_tokens": 0
+  },
+  "total_tokens": 8175
+ }
+}

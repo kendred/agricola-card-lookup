@@ -1,0 +1,8 @@
+{
+ "fixtureId": "hxfbx0_r7",
+ "run": 2,
+ "round": 7,
+ "variant": "baseline",
+ "violations": [],
+ "error": "rate limited after retries"
+}

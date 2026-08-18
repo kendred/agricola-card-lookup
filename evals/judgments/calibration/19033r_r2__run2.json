@@ -1,0 +1,33 @@
+{
+ "fixtureId": "19033r_r2",
+ "run": 2,
+ "round": 2,
+ "variant": "baseline",
+ "violations": [],
+ "usage": {
+  "completion_tokens": 6,
+  "completion_tokens_details": {
+   "accepted_prediction_tokens": 0,
+   "audio_tokens": 0,
+   "reasoning_tokens": 0,
+   "rejected_prediction_tokens": 0
+  },
+  "latency_checkpoint": {
+   "engine_tbt_ms": 12,
+   "engine_ttft_ms": 224,
+   "engine_ttlt_ms": 294,
+   "pre_inference_ms": 190,
+   "service_tbt_ms": 15,
+   "service_ttft_ms": 734,
+   "service_ttlt_ms": 822,
+   "total_duration_ms": 633,
+   "user_visible_ttft_ms": 544
+  },
+  "prompt_tokens": 7945,
+  "prompt_tokens_details": {
+   "audio_tokens": 0,
+   "cached_tokens": 0
+  },
+  "total_tokens": 7951
+ }
+}

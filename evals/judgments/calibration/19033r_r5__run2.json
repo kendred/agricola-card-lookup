@@ -1,0 +1,8 @@
+{
+ "fixtureId": "19033r_r5",
+ "run": 2,
+ "round": 5,
+ "variant": "baseline",
+ "violations": [],
+ "error": "rate limited after retries"
+}

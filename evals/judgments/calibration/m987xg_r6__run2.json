@@ -1,0 +1,8 @@
+{
+ "fixtureId": "m987xg_r6",
+ "run": 2,
+ "round": 6,
+ "variant": "baseline",
+ "violations": [],
+ "error": "rate limited after retries"
+}

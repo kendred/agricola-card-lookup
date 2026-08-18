@@ -1,0 +1,33 @@
+{
+ "fixtureId": "enh505_r7",
+ "run": 3,
+ "round": 7,
+ "variant": "baseline",
+ "violations": [],
+ "usage": {
+  "completion_tokens": 6,
+  "completion_tokens_details": {
+   "accepted_prediction_tokens": 0,
+   "audio_tokens": 0,
+   "reasoning_tokens": 0,
+   "rejected_prediction_tokens": 0
+  },
+  "latency_checkpoint": {
+   "engine_tbt_ms": 8,
+   "engine_ttft_ms": 112,
+   "engine_ttlt_ms": 161,
+   "pre_inference_ms": 163,
+   "service_tbt_ms": 5,
+   "service_ttft_ms": 504,
+   "service_ttlt_ms": 521,
+   "total_duration_ms": 368,
+   "user_visible_ttft_ms": 341
+  },
+  "prompt_tokens": 8792,
+  "prompt_tokens_details": {
+   "audio_tokens": 0,
+   "cached_tokens": 6144
+  },
+  "total_tokens": 8798
+ }
+}

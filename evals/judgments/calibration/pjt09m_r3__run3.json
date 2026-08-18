@@ -1,0 +1,33 @@
+{
+ "fixtureId": "pjt09m_r3",
+ "run": 3,
+ "round": 3,
+ "variant": "baseline",
+ "violations": [],
+ "usage": {
+  "completion_tokens": 6,
+  "completion_tokens_details": {
+   "accepted_prediction_tokens": 0,
+   "audio_tokens": 0,
+   "reasoning_tokens": 0,
+   "rejected_prediction_tokens": 0
+  },
+  "latency_checkpoint": {
+   "engine_tbt_ms": 7,
+   "engine_ttft_ms": 106,
+   "engine_ttlt_ms": 147,
+   "pre_inference_ms": 215,
+   "service_tbt_ms": 7,
+   "service_ttft_ms": 534,
+   "service_ttlt_ms": 571,
+   "total_duration_ms": 362,
+   "user_visible_ttft_ms": 319
+  },
+  "prompt_tokens": 7875,
+  "prompt_tokens_details": {
+   "audio_tokens": 0,
+   "cached_tokens": 6144
+  },
+  "total_tokens": 7881
+ }
+}

@@ -1,0 +1,33 @@
+{
+ "fixtureId": "pjt09m_r7",
+ "run": 2,
+ "round": 7,
+ "variant": "baseline",
+ "violations": [],
+ "usage": {
+  "completion_tokens": 6,
+  "completion_tokens_details": {
+   "accepted_prediction_tokens": 0,
+   "audio_tokens": 0,
+   "reasoning_tokens": 0,
+   "rejected_prediction_tokens": 0
+  },
+  "latency_checkpoint": {
+   "engine_tbt_ms": 11,
+   "engine_ttft_ms": 123,
+   "engine_ttlt_ms": 190,
+   "pre_inference_ms": 105,
+   "service_tbt_ms": 12,
+   "service_ttft_ms": 361,
+   "service_ttlt_ms": 423,
+   "total_duration_ms": 326,
+   "user_visible_ttft_ms": 257
+  },
+  "prompt_tokens": 8699,
+  "prompt_tokens_details": {
+   "audio_tokens": 0,
+   "cached_tokens": 6144
+  },
+  "total_tokens": 8705
+ }
+}

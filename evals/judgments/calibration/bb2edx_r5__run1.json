@@ -1,0 +1,33 @@
+{
+ "fixtureId": "bb2edx_r5",
+ "run": 1,
+ "round": 5,
+ "variant": "baseline",
+ "violations": [],
+ "usage": {
+  "completion_tokens": 6,
+  "completion_tokens_details": {
+   "accepted_prediction_tokens": 0,
+   "audio_tokens": 0,
+   "reasoning_tokens": 0,
+   "rejected_prediction_tokens": 0
+  },
+  "latency_checkpoint": {
+   "engine_tbt_ms": 8,
+   "engine_ttft_ms": 107,
+   "engine_ttlt_ms": 157,
+   "pre_inference_ms": 273,
+   "service_tbt_ms": 9,
+   "service_ttft_ms": 633,
+   "service_ttlt_ms": 679,
+   "total_duration_ms": 414,
+   "user_visible_ttft_ms": 361
+  },
+  "prompt_tokens": 8170,
+  "prompt_tokens_details": {
+   "audio_tokens": 0,
+   "cached_tokens": 6144
+  },
+  "total_tokens": 8176
+ }
+}

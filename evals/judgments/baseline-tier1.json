@@ -1,0 +1,338 @@
+{
+ "variant": "baseline",
+ "n": 49,
+ "violations": [
+  {
+   "fixture": "pq9fn4_r1",
+   "round": 1,
+   "sev": "minor",
+   "quote": "using its wood to build fields",
+   "rule": "Plowing costs no resources; Plow 1 Field places a tile for an action only"
+  },
+  {
+   "fixture": "et161x_r2",
+   "round": 2,
+   "sev": "minor",
+   "quote": "guarantees a free Growth action at your next harvest",
+   "rule": "Bed in the Grain Field is conditional: 'if you have room for the newborn'"
+  },
+  {
+   "fixture": "166zgs_r3",
+   "round": 3,
+   "sev": "MAJOR",
+   "quote": "turn every future Minor or Major Improvement into free food",
+   "rule": "Basketmaker's Workshop converts up to 1 Reed to 2-3 Food PER HARVEST"
+  },
+  {
+   "fixture": "d90hkw_r3",
+   "round": 3,
+   "sev": "minor",
+   "quote": "no dedicated plow improvement beyond Farm Expansion",
+   "rule": "Farm Expansion is Build Room(s)/Build Stable(s); the plow space is Farmland"
+  },
+  {
+   "fixture": "pq9fn4_r5",
+   "round": 5,
+   "sev": "minor",
+   "quote": "avoid overfill penalties",
+   "rule": "No overfill penalty exists; surplus animals return to the general supply"
+  },
+  {
+   "fixture": "enh505_r5",
+   "round": 5,
+   "sev": "minor",
+   "quote": "spaces like Day Laborer and Empty Stable may be contested",
+   "rule": "'Empty Stable' is not an action space and is not card terminology"
+  },
+  {
+   "fixture": "166zgs_r5",
+   "round": 5,
+   "sev": "minor",
+   "quote": "once you fence 3+ spaces of a field",
+   "rule": "Fellow Grazer scores per PASTURE covering 3+ spaces; fields cannot be fenced"
+  },
+  {
+   "fixture": "166zgs_r5",
+   "round": 5,
+   "sev": "minor",
+   "quote": "depends on having a Baking Hearth",
+   "rule": "No such improvement; baking uses Fireplace, Cooking Hearth, Clay Oven or Stone Oven"
+  },
+  {
+   "fixture": "m987xg_r7",
+   "round": 7,
+   "sev": "MAJOR",
+   "quote": "no playable Joinery, Pottery or Basketmaker's Workshop in your deck",
+   "rule": "Major Improvements are on a shared board available to every player, never in a deck"
+  },
+  {
+   "fixture": "hxfbx0_r7",
+   "round": 7,
+   "sev": "minor",
+   "quote": "pay the 2-food cost on the Major Improvement action for 4 food",
+   "rule": "Food Chest GIVES 2 or 4 food; the Major Improvement space has no food cost"
+  },
+  {
+   "fixture": "bb2edx_r7",
+   "round": 7,
+   "sev": "minor",
+   "quote": "growth enablers to reach your 4-person action bonus",
+   "rule": "No 4-person bonus exists; family members score 3 VP each, flat"
+  }
+ ],
+ "falsePositivesCaught": [
+  "Quarry (card terminology, in rules mapping)",
+  "Resource Market (card terminology)",
+  "Adoptive Parents newborn acting (card explicitly permits)",
+  "Telegram fence/round (accurate paraphrase)",
+  "Stable Master 3 animals unfenced (card says exactly this)",
+  "'bottom row' Majors (Artisan District terminology)"
+ ],
+ "sample": [
+  {
+   "fixtureId": "pq9fn4_r1",
+   "run": 3,
+   "round": 1
+  },
+  {
+   "fixtureId": "g0194v_r1",
+   "run": 2,
+   "round": 1
+  },
+  {
+   "fixtureId": "d90hkw_r1",
+   "run": 3,
+   "round": 1
+  },
+  {
+   "fixtureId": "pjt09m_r1",
+   "run": 2,
+   "round": 1
+  },
+  {
+   "fixtureId": "et161x_r1",
+   "run": 2,
+   "round": 1
+  },
+  {
+   "fixtureId": "enh505_r1",
+   "run": 1,
+   "round": 1
+  },
+  {
+   "fixtureId": "166zgs_r1",
+   "run": 2,
+   "round": 1
+  },
+  {
+   "fixtureId": "et161x_r2",
+   "run": 2,
+   "round": 2
+  },
+  {
+   "fixtureId": "wmmytg_r2",
+   "run": 3,
+   "round": 2
+  },
+  {
+   "fixtureId": "19033r_r2",
+   "run": 2,
+   "round": 2
+  },
+  {
+   "fixtureId": "hxfbx0_r2",
+   "run": 3,
+   "round": 2
+  },
+  {
+   "fixtureId": "166zgs_r2",
+   "run": 3,
+   "round": 2
+  },
+  {
+   "fixtureId": "am48tz_r2",
+   "run": 3,
+   "round": 2
+  },
+  {
+   "fixtureId": "pq9fn4_r2",
+   "run": 2,
+   "round": 2
+  },
+  {
+   "fixtureId": "166zgs_r3",
+   "run": 3,
+   "round": 3
+  },
+  {
+   "fixtureId": "m987xg_r3",
+   "run": 3,
+   "round": 3
+  },
+  {
+   "fixtureId": "pq9fn4_r3",
+   "run": 1,
+   "round": 3
+  },
+  {
+   "fixtureId": "wmmytg_r3",
+   "run": 2,
+   "round": 3
+  },
+  {
+   "fixtureId": "am48tz_r3",
+   "run": 1,
+   "round": 3
+  },
+  {
+   "fixtureId": "pjt09m_r3",
+   "run": 3,
+   "round": 3
+  },
+  {
+   "fixtureId": "d90hkw_r3",
+   "run": 1,
+   "round": 3
+  },
+  {
+   "fixtureId": "166zgs_r4",
+   "run": 2,
+   "round": 4
+  },
+  {
+   "fixtureId": "pjt09m_r4",
+   "run": 1,
+   "round": 4
+  },
+  {
+   "fixtureId": "enh505_r4",
+   "run": 3,
+   "round": 4
+  },
+  {
+   "fixtureId": "bb2edx_r4",
+   "run": 3,
+   "round": 4
+  },
+  {
+   "fixtureId": "et161x_r4",
+   "run": 2,
+   "round": 4
+  },
+  {
+   "fixtureId": "wmmytg_r4",
+   "run": 1,
+   "round": 4
+  },
+  {
+   "fixtureId": "m987xg_r4",
+   "run": 2,
+   "round": 4
+  },
+  {
+   "fixtureId": "9pkrks_r5",
+   "run": 1,
+   "round": 5
+  },
+  {
+   "fixtureId": "pq9fn4_r5",
+   "run": 1,
+   "round": 5
+  },
+  {
+   "fixtureId": "bb2edx_r5",
+   "run": 1,
+   "round": 5
+  },
+  {
+   "fixtureId": "19033r_r5",
+   "run": 2,
+   "round": 5
+  },
+  {
+   "fixtureId": "enh505_r5",
+   "run": 3,
+   "round": 5
+  },
+  {
+   "fixtureId": "pjt09m_r5",
+   "run": 2,
+   "round": 5
+  },
+  {
+   "fixtureId": "166zgs_r5",
+   "run": 2,
+   "round": 5
+  },
+  {
+   "fixtureId": "9pkrks_r6",
+   "run": 3,
+   "round": 6
+  },
+  {
+   "fixtureId": "pjt09m_r6",
+   "run": 1,
+   "round": 6
+  },
+  {
+   "fixtureId": "pq9fn4_r6",
+   "run": 3,
+   "round": 6
+  },
+  {
+   "fixtureId": "et161x_r6",
+   "run": 3,
+   "round": 6
+  },
+  {
+   "fixtureId": "m987xg_r6",
+   "run": 2,
+   "round": 6
+  },
+  {
+   "fixtureId": "g0194v_r6",
+   "run": 1,
+   "round": 6
+  },
+  {
+   "fixtureId": "am48tz_r6",
+   "run": 2,
+   "round": 6
+  },
+  {
+   "fixtureId": "19033r_r7",
+   "run": 2,
+   "round": 7
+  },
+  {
+   "fixtureId": "m987xg_r7",
+   "run": 3,
+   "round": 7
+  },
+  {
+   "fixtureId": "pq9fn4_r7",
+   "run": 3,
+   "round": 7
+  },
+  {
+   "fixtureId": "hxfbx0_r7",
+   "run": 2,
+   "round": 7
+  },
+  {
+   "fixtureId": "enh505_r7",
+   "run": 3,
+   "round": 7
+  },
+  {
+   "fixtureId": "bb2edx_r7",
+   "run": 1,
+   "round": 7
+  },
+  {
+   "fixtureId": "pjt09m_r7",
+   "run": 2,
+   "round": 7
+  }
+ ]
+}

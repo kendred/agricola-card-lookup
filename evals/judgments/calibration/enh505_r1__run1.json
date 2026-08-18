@@ -1,0 +1,8 @@
+{
+ "fixtureId": "enh505_r1",
+ "run": 1,
+ "round": 1,
+ "variant": "baseline",
+ "violations": [],
+ "error": "rate limited after retries"
+}

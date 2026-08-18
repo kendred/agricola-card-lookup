@@ -1,0 +1,8 @@
+{
+ "fixtureId": "d90hkw_r1",
+ "run": 3,
+ "round": 1,
+ "variant": "baseline",
+ "violations": [],
+ "error": "rate limited after retries"
+}

@@ -1,0 +1,8 @@
+{
+ "fixtureId": "pjt09m_r6",
+ "run": 1,
+ "round": 6,
+ "variant": "baseline",
+ "violations": [],
+ "error": "rate limited after retries"
+}

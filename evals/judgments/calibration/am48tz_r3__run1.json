@@ -1,0 +1,33 @@
+{
+ "fixtureId": "am48tz_r3",
+ "run": 1,
+ "round": 3,
+ "variant": "baseline",
+ "violations": [],
+ "usage": {
+  "completion_tokens": 6,
+  "completion_tokens_details": {
+   "accepted_prediction_tokens": 0,
+   "audio_tokens": 0,
+   "reasoning_tokens": 0,
+   "rejected_prediction_tokens": 0
+  },
+  "latency_checkpoint": {
+   "engine_tbt_ms": 8,
+   "engine_ttft_ms": 105,
+   "engine_ttlt_ms": 153,
+   "pre_inference_ms": 158,
+   "service_tbt_ms": 9,
+   "service_ttft_ms": 471,
+   "service_ttlt_ms": 516,
+   "total_duration_ms": 364,
+   "user_visible_ttft_ms": 313
+  },
+  "prompt_tokens": 7952,
+  "prompt_tokens_details": {
+   "audio_tokens": 0,
+   "cached_tokens": 6144
+  },
+  "total_tokens": 7958
+ }
+}
