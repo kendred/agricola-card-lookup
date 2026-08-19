@@ -14,3 +14,5 @@ api/local.settings.json
 evals/reports/
 evals/*.log
 evals/judgments/*-auto/
+# ...but keep the roll-up: regenerating it costs a paid judging run
+!evals/judgments/*-auto/_summary.json
