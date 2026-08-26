@@ -1107,7 +1107,7 @@ h1 {
         <a href="draft.html" class="nav-link">Draft Tool</a>
         <button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle between classic and alternate styles">
             <span class="theme-toggle-icon" aria-hidden="true">◐</span>
-            <span class="theme-toggle-label-alternate">Alternate style</span>
+            <span class="theme-toggle-label-alternate">Document style</span>
             <span class="theme-toggle-label-classic">Classic style</span>
         </button>
     </nav>
@@ -1937,6 +1937,10 @@ function displayCard(card) {
                 <div class="card-result-with-image">
                     <div class="card-image-container">
                         <img src="${imagePath}" alt="${card.name}">
+                    </div>
+                    <div class="alternate-card-copy">
+                        ${prerequisites}
+                        ${descriptionWithTitle}
                     </div>
                     <div class="card-info">
                         <div class="card-header">
