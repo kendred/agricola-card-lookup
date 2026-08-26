@@ -1,0 +1,58 @@
+/* Shared style-switch control. Alternate-theme page styles will live below. */
+.theme-toggle {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 6px;
+    padding: 6px 12px;
+    background: rgba(0, 0, 0, 0.25);
+    color: white;
+    font: inherit;
+    font-size: 0.9em;
+    line-height: 1.2;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.theme-toggle:hover {
+    background: rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.55);
+}
+
+.theme-toggle:focus-visible {
+    outline: 3px solid rgba(255, 255, 255, 0.8);
+    outline-offset: 2px;
+}
+
+.theme-toggle-icon {
+    font-size: 1.1em;
+    line-height: 1;
+}
+
+.theme-toggle-label-classic {
+    display: none;
+}
+
+html[data-theme="alternate"] .theme-toggle-label-alternate {
+    display: none;
+}
+
+html[data-theme="alternate"] .theme-toggle-label-classic {
+    display: inline;
+}
+
+@media (max-width: 520px) {
+    .theme-toggle {
+        padding: 6px 9px;
+    }
+
+    .theme-toggle-icon {
+        display: none;
+    }
+}
+
+/* Alternate rankings and draft-tool styles will be scoped under this selector. */
+html[data-theme="alternate"] {
+}

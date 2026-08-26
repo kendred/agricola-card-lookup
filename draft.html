@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="Icons/Grain.webp">
     <title>Agricola Draft Tool</title>
+    <script src="js/theme.js"></script>
     <link rel="stylesheet" href="css/draft.css?v=4">
+    <link rel="stylesheet" href="css/themes.css">
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <!-- Pinned to v7: Babel 8's preset-react defaults to the automatic JSX runtime,
@@ -2721,6 +2723,11 @@ function DraftApp() {
             <nav className="nav-bar">
                 <a href="index.html" className="nav-link">Card Lookup</a>
                 <a href="draft.html" className="nav-link active">Draft Tool</a>
+                <button type="button" className="theme-toggle" data-theme-toggle aria-label="Toggle between classic and alternate styles">
+                    <span className="theme-toggle-icon" aria-hidden="true">◐</span>
+                    <span className="theme-toggle-label-alternate">Alternate style</span>
+                    <span className="theme-toggle-label-classic">Classic style</span>
+                </button>
             </nav>
 
             <div className="draft-container">
