@@ -20,6 +20,6 @@
     "exclude": ["/css/*", "/js/*", "/data/*", "/card-images/*", "/Icons/*", "/api/*", "/.auth/*"]
   },
   "responseOverrides": {
-    "401": { "statusCode": 401 }
+    "401": { "rewrite": "/401.html", "statusCode": 401 }
   }
 }

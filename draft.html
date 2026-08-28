@@ -2281,6 +2281,21 @@ function DraftApp() {
         setDraftStarted(true);
     };
 
+    // SWA's /.auth/logout endpoint 401s (blank page, ugly URL) when the request
+    // carries no live session — an expired cookie in a long-open tab, a second
+    // click, or the back button. Re-check /.auth/me before navigating there.
+    const handleSignOut = async (e) => {
+        e.preventDefault();
+        let user = null;
+        try { user = await draftSync.getCurrentUser({ force: true }); } catch (err) { user = null; }
+        if (!user) {
+            draftSync.clearUserCache();
+            setCurrentUser(null);
+            return;
+        }
+        window.location.href = draftSync.LOGOUT_URL;
+    };
+
     const handleResetDraft = () => {
         if (draftStarted && !window.confirm('Reset the current draft? All progress will be lost.')) return;
         setCurrentRound(1);
@@ -2755,7 +2770,7 @@ function DraftApp() {
                             {currentUser ? (
                                 <>
                                     <span className="auth-username" title={currentUser.userDetails}>{currentUser.userDetails}</span>
-                                    <a href={draftSync.LOGOUT_URL} className="auth-link">Sign out</a>
+                                    <a href={draftSync.LOGOUT_URL} className="auth-link" onClick={handleSignOut}>Sign out</a>
                                 </>
                             ) : (
                                 <a href={draftSync.LOGIN_URL} className="auth-link">Sign in</a>
