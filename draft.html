@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="Icons/Grain.webp">
-    <title>Agricola Draft Tool</title>
+    <link rel="icon" type="image/svg+xml" href="Icons/document.svg">
+    <title>[GRCS] Planning (Draft)</title>
     <script src="js/theme.js"></script>
     <link rel="stylesheet" href="css/draft.css?v=4">
     <link rel="stylesheet" href="css/themes.css">
@@ -3225,16 +3225,6 @@ function DraftApp() {
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<DraftApp />);
 
-// Set random favicon
-const RESOURCE_ICONS = [
-    'Icons/Grain.webp', 'Icons/Wood.png', 'Icons/Clay.png',
-    'Icons/Reed.webp', 'Icons/Stone.png', 'Icons/Sheep.webp',
-    'Icons/Cow.webp', 'Icons/Pig.webp', 'Icons/Veg.webp',
-    'Icons/Cornucopia.webp'
-];
-const randomIcon = RESOURCE_ICONS[Math.floor(Math.random() * RESOURCE_ICONS.length)];
-const favicon = document.querySelector('link[rel="icon"]');
-favicon.href = randomIcon;
     </script>
 </body>
 </html>
