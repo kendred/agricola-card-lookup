@@ -21,9 +21,34 @@
         return normalizeTheme(document.documentElement.dataset.theme);
     }
 
+    function syncThemeMetadata(theme = getTheme()) {
+        const title = document.querySelector('title[data-classic-title][data-alternate-title]');
+        if (title) {
+            document.title = theme === ALTERNATE_THEME
+                ? title.dataset.alternateTitle
+                : title.dataset.classicTitle;
+        }
+
+        const favicon = document.querySelector('link[rel="icon"][data-alternate-href]');
+        if (favicon) {
+            const href = theme === ALTERNATE_THEME
+                ? favicon.dataset.alternateHref
+                : favicon.dataset.classicHref;
+
+            if (href) favicon.href = href;
+
+            if (theme === ALTERNATE_THEME) {
+                favicon.type = 'image/svg+xml';
+            } else {
+                favicon.removeAttribute('type');
+            }
+        }
+    }
+
     function setTheme(theme, persist = true) {
         const nextTheme = normalizeTheme(theme);
         document.documentElement.dataset.theme = nextTheme;
+        syncThemeMetadata(nextTheme);
 
         if (persist) {
             try {
@@ -63,5 +88,6 @@
         getTheme,
         setTheme,
         toggleTheme,
+        refresh: syncThemeMetadata,
     });
 })();

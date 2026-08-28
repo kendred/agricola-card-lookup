@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/svg+xml" href="Icons/document.svg">
-    <title>[GRCS] Planning (Draft)</title>
+    <link rel="icon" href="Icons/Grain.webp" data-alternate-href="Icons/document.svg">
+    <title data-classic-title="Agricola Draft Tool" data-alternate-title="[GRCS] Planning (Draft)">Agricola Draft Tool</title>
     <script src="js/theme.js"></script>
     <link rel="stylesheet" href="css/draft.css?v=4">
     <link rel="stylesheet" href="css/themes.css">
@@ -2735,7 +2735,8 @@ function DraftApp() {
                 <div className="draft-header">
                     <h1 className="draft-title">
                         <img src={titleIcon} alt="" className="title-icon" />
-                        [GRCS] Planning (Draft)
+                        <span className="theme-heading-classic">Agricola Draft Tool</span>
+                        <span className="theme-heading-alternate">[GRCS] Planning (Draft)</span>
                     </h1>
                     <div className="draft-header-right">
                         {draftStarted && !draftComplete && (
@@ -3224,6 +3225,18 @@ function DraftApp() {
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<DraftApp />);
+
+// Preserve the original randomized favicon in Classic style. Document style
+// uses the fixed document icon declared on the favicon link above.
+const RESOURCE_ICONS = [
+    'Icons/Grain.webp', 'Icons/Wood.png', 'Icons/Clay.png',
+    'Icons/Reed.webp', 'Icons/Stone.png', 'Icons/Sheep.webp',
+    'Icons/Cow.webp', 'Icons/Pig.webp', 'Icons/Veg.webp',
+    'Icons/Cornucopia.webp'
+];
+const classicFavicon = RESOURCE_ICONS[Math.floor(Math.random() * RESOURCE_ICONS.length)];
+document.querySelector('link[rel="icon"]').dataset.classicHref = classicFavicon;
+window.AgricolaTheme.refresh();
 
     </script>
 </body>

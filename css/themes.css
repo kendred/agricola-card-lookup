@@ -35,11 +35,23 @@
     display: none;
 }
 
+.theme-heading-alternate {
+    display: none;
+}
+
 html[data-theme="alternate"] .theme-toggle-label-alternate {
     display: none;
 }
 
 html[data-theme="alternate"] .theme-toggle-label-classic {
+    display: inline;
+}
+
+html[data-theme="alternate"] .theme-heading-classic {
+    display: none;
+}
+
+html[data-theme="alternate"] .theme-heading-alternate {
     display: inline;
 }
 
