@@ -313,6 +313,29 @@ function buildUserMessage(body, variant) {
     return msg;
 }
 
+// --- Recover fields the model nested inside "dimensions" ---
+// The model intermittently fails to close the "dimensions" object before
+// emitting the remaining top-level fields, so "risks" and "suggestions" end up
+// as siblings of "plow". The JSON still parses, so the response reaches the
+// client looking merely incomplete -- a blank dashboard. The content is correct
+// and only misplaced: 11 of 11 incomplete responses across the Aug 19 2026 eval
+// (7 current, 4 baseline) had exactly this shape. Hoist rather than discard.
+// Only these move. Hoisting *any* unrecognised key would promote the model's
+// hallucinated dimensions (observed: "plow?", "raw_materials") to the top level
+// and hide them from the Tier 2 dimension checks, which should still flag them.
+const HOISTABLE_KEYS = ['reasoning', 'archetypes', 'overall_analysis', 'risks', 'suggestions'];
+
+function hoistMisnestedFields(parsed) {
+    const dims = parsed && parsed.dimensions;
+    if (!dims || typeof dims !== 'object' || Array.isArray(dims)) return;
+    for (const key of HOISTABLE_KEYS) {
+        if (!(key in dims)) continue;
+        // Never clobber a value the model did put at the root.
+        if (parsed[key] === undefined) parsed[key] = dims[key];
+        delete dims[key];
+    }
+}
+
 // --- Normalize suggestions to at most 2 occupations + 2 minor improvements ---
 function normalizeSuggestions(parsed, handNames, context) {
     if (!parsed || !Array.isArray(parsed.suggestions)) return;
@@ -507,6 +530,7 @@ app.http('strategy', {
                                     if (m) { try { parsed = JSON.parse(m[1].trim()); } catch { /* pass */ } }
                                 }
                                 if (parsed) {
+                                    hoistMisnestedFields(parsed);
                                     normalizeSuggestions(parsed, reqBody.handNames, context);
                                     send(`event: normalized\ndata: ${JSON.stringify(parsed)}\n\n`);
                                 }
@@ -563,4 +587,4 @@ app.http('strategy', {
 
 // Exposed for the eval harness: lets a prompt-variant check verify what is
 // actually being sent without issuing a billed request.
-module.exports = { PROMPTS, buildUserMessage };
+module.exports = { PROMPTS, buildUserMessage, hoistMisnestedFields };

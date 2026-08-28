@@ -19,6 +19,62 @@ This plan sequences the fixes so each stage is measurable before the next begins
 
 ---
 
+## Next steps (as of Aug 19 2026)
+
+Ordered. The first three are small and unblock everything else.
+
+1. **Tier 2 schema regression — ✅ FIXED (Aug 19 2026), not yet deployed.**
+   *Diagnosis was initially wrong.* The first read blamed the response-format instructions in
+   the system prompt. The actual cause is structural and fully recoverable: the model
+   intermittently **fails to close the `dimensions` object**, so `risks` and `suggestions` are
+   emitted as siblings of `plow` instead of as top-level fields. The JSON still parses, so the
+   server's strict `JSON.parse` succeeds and the response reaches the client looking merely
+   incomplete — a blank dashboard built from content that was actually present all along.
+   11 of 11 incomplete responses across both variants (7 current, 4 baseline) had exactly this
+   shape.
+
+   Fix: `hoistMisnestedFields()` in `api/strategy/index.js`, called on the parsed object before
+   `normalizeSuggestions()`. It moves only the five known root-level schema keys; hoisting
+   *any* unrecognised key would promote the model's hallucinated dimensions (observed:
+   `"plow?"`, `"raw_materials"`) to the top level and hide them from the Tier 2 dimension
+   checks, which should still flag them.
+
+   Replayed over all 588 stored responses: **11 of 11 recovered, 0 healthy responses altered.**
+   Tier 2 clean rate, same captures re-checked with the fix applied:
+
+   | | before | after |
+   |---|---|---|
+   | current | 91% | **94%** |
+   | baseline | 96% | **97%** |
+
+   `schema-complete` findings go 13 → 0, `dimension-rating-valid` 16 → 2, and
+   `suggestion-type-balance` 21 → 7 (a missing `suggestions` array was failing three checks at
+   once). The residual current-vs-baseline gap is ~3pp, of which the 4 `response-usable`
+   findings are the separate stream-degeneration failure below.
+
+   **Not deployed** — pushing to `main` auto-deploys. Awaiting the go-ahead.
+
+2. **Add fetch retry to `evals/judge.mjs`.** One `ConnectTimeoutError` killed a 40-minute
+   judge run at 146/290. It resumed with no re-billing — the `done` set rebuilds from the
+   output directory — but any run over a few hundred responses will hit this again. Mirror
+   the backoff loop `evals/run.mjs` already uses for 429s.
+
+3. **Make violations per _claim_ the primary Tier 1 metric.** Violations per response
+   conflates accuracy with verbosity, and that hid a statistically solid accuracy gain behind
+   a null result (see Stage 1). Report both, gate on the rate. `judge.mjs` already records
+   `claimsChecked`, so this is a reporting change only.
+
+4. **Revert `STRATEGY_RATE_LIMIT_MAX` to 5** on `agricola-api` once no further eval runs are
+   queued. It is currently 100 to let eval traffic through.
+
+5. **Decide Stage 4a's fate** — isolate it with a rules-only third variant, or strip it. See
+   Stage 4.
+
+6. **Stage 5 remains the main thrust.** The 14.1% error floor is the target, and the Stage 1
+   result is evidence that adding more context will not move it.
+
+---
+
 ## Stage 1 — Rules grounding ✅ COMPLETE
 
 **Goal:** stop the model reasoning from rules that aren't this game's rules.
@@ -76,6 +132,34 @@ than rules so the damage is limited, but normalizing it to card-text names is ch
 
 **Exit criteria:** met. `node --check` passes, all three duplicate pairs verified identical,
 card-text space-name coverage 100%.
+
+---
+
+**Measured (Aug 19 2026).** 98 fixtures × 3 runs per variant, `current` vs `baseline`.
+Tier 1 judged by o4-mini against card text; Tier 2 asserted against the card database.
+
+| Metric | Baseline | Current | 95% CI (cluster bootstrap, 98 fixtures) |
+|---|---|---|---|
+| Violations per response | 1.78 | 1.68 | [−0.31, +0.11] — crosses zero |
+| Share of claims that are wrong | 16.3% | 14.1% | [−4.2, −0.2] pp — excludes zero |
+| Claims per response | 10.9 | 11.8 | +8% |
+| Responses with no violation | 16.4% | 22.1% | [−0.8, +12.0] pp |
+
+**Read it carefully.** Accuracy per claim improved and that interval excludes zero, but the
+model also got more talkative, so the per-response total barely moved. Predicted impact was
+*large*; actual is modest. Even the significant result is small — the optimistic end of the
+interval is a 26% relative error reduction, the pessimistic end is nothing.
+
+By round, error rate moved −0.8 to −5.1pp everywhere except **round 1, which got worse
+(+3.4pp)** — the one round specified as brief, and the one where claims per response still
+rose (8.4 → 9.2).
+
+**Keep it.** Directionally positive in six of seven rounds, drove `suggested-card-exists`
+findings from 3 to 0 on Tier 2, and the input is ~99% cache-hit so marginal cost is small.
+
+**The wider lesson:** a 31% increase in input tokens, containing the actual rulebook, bought
+~2pp of accuracy. That is direct evidence for the Stage 5 thesis — context is not the binding
+constraint.
 
 ---
 
@@ -152,6 +236,35 @@ browser. Send it, with full descriptions, labelled high-confidence.
 advice references specific cards that can actually return. Measured against Stage 2 fixtures.
 
 ---
+
+**4a status (Aug 19 2026): shipped, UNVALIDATED, and under suspicion.**
+The A/B ran Stage 1 and Stage 4a bundled, so the measured gain cannot be attributed between
+them. The token split makes 4a the unlikely author: the computed-analysis block is ~200 of
+the ~6,200 tokens added to the prompt. And round 1 — where the block is thinnest and least
+informative — is the only round whose error rate got *worse*. Circumstantial, not proof.
+
+**Decide before building on it.** Either run a rules-only third variant to isolate it (~294
+requests, ~1 hour, ~$7), or strip 4a and re-measure. It carries real maintenance cost: a
+duplicated file pair (`js/draft-stats.js` ↔ `api/lib/draft-stats.js`) and server-side
+computation on every request.
+
+**4b was never built.** The known-returning pool is still client-only.
+
+---
+
+## Stage 4c — Claim budget (added Aug 19 2026)
+
+**Goal:** cut user-visible errors by making *fewer* claims, not only better ones.
+
+Errors per response = claims per response × error rate. Stage 1 moved the error rate ~2pp,
+and that is plausibly near the ceiling of what prompt context can do. The other factor is
+untouched and larger: the model makes 11.8 claims per response, up from 10.9.
+
+Round 1 is the clearest target — it regressed on accuracy while getting more verbose, and it
+is already specified as the brief response, which the model is not honouring.
+
+**Exit criteria:** claims per response falls in rounds 1-2 without the error rate rising.
+Measured on the same fixtures, reported per claim as well as per response.
 
 ## Stage 5 — Card metadata enrichment (offline)
 
@@ -259,10 +372,12 @@ misses will be common, so the 30K is not always discounted.
 
 | Stage | Depends on | Effort | Expected impact on "misunderstands the game" |
 |---|---|---|---|
-| 1. Rules grounding ✅ | — | small | **large** |
+| 1. Rules grounding ✅ | — | small | predicted **large**; **measured modest** (−2.2pp error rate) |
 | 2. Eval harness | — | small | none directly; enables everything |
 | 3. Data hygiene | — | small | small |
-| 4. Send computed data | 2 | small | medium |
+| 4a. Send computed data ✅ | 2 | small | predicted medium; **unmeasured**, possibly zero |
+| 4b. Known-returning pool | 2 | small | not built |
+| 4c. Claim budget | 2 | small | medium (targets the other factor) |
 | 5. Metadata enrichment | 2, 3 | **large** | medium (enables 6) |
 | 6. Filtered live pool | 5 | medium | **large** (on future-hand reasoning) |
 | 7. Index descriptions | 6 | trivial | small, diminishing |
