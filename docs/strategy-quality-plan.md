@@ -23,7 +23,7 @@ This plan sequences the fixes so each stage is measurable before the next begins
 
 Ordered. The first three are small and unblock everything else.
 
-1. **Tier 2 schema regression — ✅ FIXED (Aug 19 2026), not yet deployed.**
+1. **Tier 2 schema regression — ✅ FIXED (Aug 19 2026), deployed Aug 27 2026.**
    *Diagnosis was initially wrong.* The first read blamed the response-format instructions in
    the system prompt. The actual cause is structural and fully recoverable: the model
    intermittently **fails to close the `dimensions` object**, so `risks` and `suggestions` are
@@ -52,7 +52,9 @@ Ordered. The first three are small and unblock everything else.
    once). The residual current-vs-baseline gap is ~3pp, of which the 4 `response-usable`
    findings are the separate stream-degeneration failure below.
 
-   **Not deployed** — pushing to `main` auto-deploys. Awaiting the go-ahead.
+   **Deployed Aug 27 2026** in `fc29b18`. Verified live afterwards: `/api/probe-stream`
+   still emits 1s-spaced keepalives, so the SSE path is unchanged. The next eval run
+   should re-measure Tier 2 against production rather than replayed captures.
 
 2. **Add fetch retry to `evals/judge.mjs`.** One `ConnectTimeoutError` killed a 40-minute
    judge run at 146/290. It resumed with no re-billing — the `done` set rebuilds from the
