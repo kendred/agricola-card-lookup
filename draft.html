@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="Icons/Grain.webp">
-    <title>Agricola Draft Tool</title>
+    <link rel="icon" href="Icons/Grain.webp" data-alternate-href="Icons/document.svg">
+    <title data-classic-title="Agricola Draft Tool" data-alternate-title="[GRCS] Planning (Draft)">Agricola Draft Tool</title>
+    <script src="js/theme.js?v=2"></script>
     <link rel="stylesheet" href="css/draft.css?v=4">
+    <link rel="stylesheet" href="css/themes.css?v=2">
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <!-- Pinned to v7: Babel 8's preset-react defaults to the automatic JSX runtime,
@@ -2736,6 +2738,11 @@ function DraftApp() {
             <nav className="nav-bar">
                 <a href="index.html" className="nav-link">Card Lookup</a>
                 <a href="draft.html" className="nav-link active">Draft Tool</a>
+                <button type="button" className="theme-toggle" data-theme-toggle aria-label="Toggle between classic and alternate styles">
+                    <span className="theme-toggle-icon" aria-hidden="true">◐</span>
+                    <span className="theme-toggle-label-alternate">Document style</span>
+                    <span className="theme-toggle-label-classic">Classic style</span>
+                </button>
             </nav>
 
             <div className="draft-container">
@@ -2743,7 +2750,8 @@ function DraftApp() {
                 <div className="draft-header">
                     <h1 className="draft-title">
                         <img src={titleIcon} alt="" className="title-icon" />
-                        Agricola Draft Tool
+                        <span className="theme-heading-classic">Agricola Draft Tool</span>
+                        <span className="theme-heading-alternate">[GRCS] Planning (Draft)</span>
                     </h1>
                     <div className="draft-header-right">
                         {draftStarted && !draftComplete && (
@@ -3233,16 +3241,18 @@ function DraftApp() {
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<DraftApp />);
 
-// Set random favicon
+// Preserve the original randomized favicon in Classic style. Document style
+// uses the fixed document icon declared on the favicon link above.
 const RESOURCE_ICONS = [
     'Icons/Grain.webp', 'Icons/Wood.png', 'Icons/Clay.png',
     'Icons/Reed.webp', 'Icons/Stone.png', 'Icons/Sheep.webp',
     'Icons/Cow.webp', 'Icons/Pig.webp', 'Icons/Veg.webp',
     'Icons/Cornucopia.webp'
 ];
-const randomIcon = RESOURCE_ICONS[Math.floor(Math.random() * RESOURCE_ICONS.length)];
-const favicon = document.querySelector('link[rel="icon"]');
-favicon.href = randomIcon;
+const classicFavicon = RESOURCE_ICONS[Math.floor(Math.random() * RESOURCE_ICONS.length)];
+document.querySelector('link[rel="icon"]').dataset.classicHref = classicFavicon;
+window.AgricolaTheme.refresh();
+
     </script>
 </body>
 </html>
