@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="Icons/Grain.webp">
+    <link rel="icon" href="Icons/Grain.webp" data-alternate-href="Icons/document.svg">
     <title>Grics Rankings</title>
     <script src="js/theme.js?v=2"></script>
     <style>
@@ -2012,7 +2012,8 @@ const RESOURCE_ICONS = [
 const randomIcon = RESOURCE_ICONS[Math.floor(Math.random() * RESOURCE_ICONS.length)];
 document.getElementById('titleIcon').src = randomIcon;
 const favicon = document.querySelector('link[rel="icon"]');
-favicon.href = randomIcon;
+favicon.dataset.classicHref = randomIcon;
+window.AgricolaTheme.refresh();
 
     </script>
 </body>
