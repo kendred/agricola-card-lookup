@@ -1772,6 +1772,12 @@ function DraftApp() {
     const [extractingDetails, setExtractingDetails] = useState(false);
     const [screenshotError, setScreenshotError] = useState(null);
     const [screenshotResults, setScreenshotResults] = useState(null);
+    // The banner reports one import into one hand. Clear it whenever that hand
+    // goes away, or it lingers over an empty hand claiming cards were added.
+    const clearScreenshotBanner = useCallback(() => {
+        setScreenshotResults(null);
+        setScreenshotError(null);
+    }, []);
 
     // Check OCR endpoint availability on mount
     useEffect(() => {
@@ -1814,6 +1820,10 @@ function DraftApp() {
     const [showHistoryModal, setShowHistoryModal] = useState(false);
     const [historyViewId, setHistoryViewId] = useState(null);
     const archivedRef = useRef(false);
+    // Bumped by resetDraftState(). Async work captures it at kickoff and discards
+    // its results if it no longer matches — otherwise an OCR or advice call that
+    // was running when the draft was reset writes into the next draft.
+    const draftGenerationRef = useRef(0);
     const cloudSaveTimerRef = useRef(null);
     const migrationPushedRef = useRef(false);
 
@@ -2276,8 +2286,13 @@ function DraftApp() {
     }, [currentRound, draftStarted, isReturningRound, currentHandNames.length, hands, draftedCards, rotation]);
 
     // ─── Handlers ──────────────────────────────────────────────────
-    const handleNewDraft = (pc = 4) => {
-        setPlayerCount(pc === 3 ? 3 : 4);
+    // Every piece of draft-scoped state, cleared in one place. Starting a new
+    // draft and resetting the current one must wipe the same things, so they
+    // share this rather than keeping two lists that drift apart.
+    const resetDraftState = useCallback(() => {
+        // Anything still in flight (OCR, a streaming advice call) belongs to the
+        // draft we are leaving; bumping the generation makes it drop its results.
+        draftGenerationRef.current += 1;
         setCurrentRound(1);
         setCurrentHandNames([]);
         setHands({});
@@ -2297,6 +2312,20 @@ function DraftApp() {
         setPlayedCards(new Set());
         setGhostAssignments({});
         autoAdviceTriggeredRef.current = false;
+        clearScreenshotBanner();
+        setMarkedRemaining(new Set());
+        setExpandedSuggestion(null);
+        setPopoverCard(null);
+        setPopoverAnchor(null);
+        setStrategyLoading(false);
+        setStreamingPhase('idle');
+        setScreenshotProcessing(false);
+        setExtractingDetails(false);
+    }, [clearScreenshotBanner]);
+
+    const handleNewDraft = (pc = 4) => {
+        setPlayerCount(pc === 3 ? 3 : 4);
+        resetDraftState();
         setDraftStarted(true);
     };
 
@@ -2317,25 +2346,7 @@ function DraftApp() {
 
     const handleResetDraft = () => {
         if (draftStarted && !window.confirm('Reset the current draft? All progress will be lost.')) return;
-        setCurrentRound(1);
-        setCurrentHandNames([]);
-        setHands({});
-        setDraftedCards({});
-        setSelectedOccupation(null);
-        setSelectedMinor(null);
-        setSortKey('rank');
-        setMarkingPhase(false);
-        setOthersDrafted([]);
-        setTempCards({});
-        setFarmGrid(INITIAL_FARM_GRID());
-        setStrategyNotes('');
-        setManualDimensions(emptyManualDimensions());
-        setStrategyResult(null);
-        setStrategyError(null);
-        setWheelWatch({});
-        setPlayedCards(new Set());
-        setGhostAssignments({});
-        autoAdviceTriggeredRef.current = false;
+        resetDraftState();
         archivedRef.current = false;
         setDraftStarted(false);
         clearSavedState();
@@ -2439,6 +2450,8 @@ function DraftApp() {
     // Screenshot processing handler
     const handleScreenshotProcess = useCallback(async (imageBlob) => {
         if (screenshotProcessing) return;
+        const gen = draftGenerationRef.current;
+        const isStale = () => gen !== draftGenerationRef.current;
         setScreenshotProcessing(true);
         setScreenshotError(null);
         setScreenshotResults(null);
@@ -2449,6 +2462,7 @@ function DraftApp() {
             }
 
             const result = await screenshotOCR.processImage(imageBlob, cards, cardMap, currentHandNames, allUsedCardNames, currentRound);
+            if (isStale()) return;
 
             if (isReturningRound && markingPhase) {
                 // In returning rounds, "duplicates" = cards in hand that screenshot confirmed
@@ -2486,6 +2500,7 @@ function DraftApp() {
             if (result.unmatched.length > 0 && typeof screenshotOCR.extractCardDetails === 'function') {
                 setExtractingDetails(true);
                 screenshotOCR.extractCardDetails(imageBlob, result.unmatched).then(function (detailedCards) {
+                    if (isStale()) return;
                     if (!detailedCards || detailedCards.length === 0) return;
                     const autoAddedNames = [];
                     const skippedSlotsFull = [];
@@ -2527,18 +2542,20 @@ function DraftApp() {
                         } : prev);
                     }
                 }).finally(function () {
+                    if (isStale()) return;
                     setExtractingDetails(false);
                 });
             }
         } catch (err) {
             console.error('Screenshot processing error:', err);
+            if (isStale()) return;
             if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
                 setScreenshotError('Could not reach the server. Check your connection.');
             } else {
                 setScreenshotError(err.message || 'Screenshot processing failed. Please try again.');
             }
         } finally {
-            setScreenshotProcessing(false);
+            if (!isStale()) setScreenshotProcessing(false);
         }
     }, [screenshotProcessing, cards, cardMap, currentHandNames, allUsedCardNames, currentRound, handleAddCards, isReturningRound, markingPhase, markedRemaining, addTempCard]);
 
@@ -2568,12 +2585,16 @@ function DraftApp() {
             : (currentHandNames.length > 0 ? currentHandNames : draftedNames);
         if (handToSend.length === 0) return; // button should be disabled, but guard anyway
 
+        const gen = draftGenerationRef.current;
+        const isStale = () => gen !== draftGenerationRef.current;
+
         setStrategyLoading(true);
         setStrategyError(null);
         setStreamingPhase('thinking');
 
         let streamingStarted = false;
         const onProgress = (partial) => {
+            if (isStale()) return;
             if (!streamingStarted) {
                 streamingStarted = true;
                 setStreamingPhase('streaming');
@@ -2591,10 +2612,12 @@ function DraftApp() {
                 onProgress,
                 { seenHands: hands, draftedByRound: draftedCards }
             );
+            if (isStale()) return;
             setStrategyResult(result);
             setStreamingPhase('done');
         } catch (err) {
             console.error('Strategy advice error:', err);
+            if (isStale()) return;
             if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
                 setStrategyError('Could not reach the server. Check your connection.');
             } else {
@@ -2602,7 +2625,7 @@ function DraftApp() {
             }
             setStreamingPhase('idle');
         } finally {
-            setStrategyLoading(false);
+            if (!isStale()) setStrategyLoading(false);
         }
     }, [strategyLoading, currentHandNames, draftedCards, othersDrafted, currentRound, playerCount]);
 
@@ -2724,8 +2747,9 @@ function DraftApp() {
         setSelectedOccupation(null);
         setSelectedMinor(null);
         setMarkingPhase(false);
+        clearScreenshotBanner();
         setCurrentRound(prev => prev + 1);
-    }, [selectedOccupation, selectedMinor, currentHandNames, currentRound]);
+    }, [selectedOccupation, selectedMinor, currentHandNames, currentRound, clearScreenshotBanner]);
 
     const handleUndo = useCallback(() => {
         if (currentRound <= 1) return;
@@ -2743,8 +2767,9 @@ function DraftApp() {
         setSelectedMinor(null);
         setMarkingPhase(false);
         setMarkedRemaining(new Set());
+        clearScreenshotBanner();
         setCurrentRound(prevRound);
-    }, [currentRound, hands, isReturningRound, currentHandNames]);
+    }, [currentRound, hands, isReturningRound, currentHandNames, clearScreenshotBanner]);
 
     // ─── Render ────────────────────────────────────────────────────
     if (loading) return <div className="loading">Loading card data...</div>;
@@ -2850,7 +2875,7 @@ function DraftApp() {
                                     <ScreenshotResults
                                         results={screenshotResults}
                                         error={screenshotError}
-                                        onDismiss={() => { setScreenshotResults(null); setScreenshotError(null); }}
+                                        onDismiss={clearScreenshotBanner}
                                         onAddTempCard={addTempCard}
                                         extractingDetails={extractingDetails}
                                     />
@@ -2878,7 +2903,7 @@ function DraftApp() {
                                             <ScreenshotResults
                                                 results={screenshotResults}
                                                 error={screenshotError}
-                                                onDismiss={() => { setScreenshotResults(null); setScreenshotError(null); }}
+                                                onDismiss={clearScreenshotBanner}
                                                 onAddTempCard={addTempCard}
                                                 extractingDetails={extractingDetails}
                                             />
