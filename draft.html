@@ -58,8 +58,25 @@ function getRotation(playerCount) {
     };
 }
 
+// ─── Rank helpers ──────────────────────────────────────────────────
+// A card has no rank when it's a temp (user-added) card or a newly imported
+// card the ranking export hasn't covered yet. Temp cards start as `null` and
+// the JSON round-trip through localStorage/cloud keeps them `null`, so every
+// read goes through these two helpers rather than touching `card.rank` raw.
+const UNRANKED_LABEL = 'Unranked';
+function hasRank(card) {
+    return !!card && typeof card.rank === 'number' && isFinite(card.rank);
+}
+function formatRank(card) {
+    return hasRank(card) ? `#${card.rank}` : UNRANKED_LABEL;
+}
+// Unranked cards sort after every ranked card.
+function rankSortValue(card) {
+    return hasRank(card) ? card.rank : Infinity;
+}
+
 const SORT_OPTIONS = [
-    { key: 'rank', label: 'Rank', getValue: c => c.rank, ascending: true },
+    { key: 'rank', label: 'Rank', getValue: c => rankSortValue(c), ascending: true },
     { key: 'adp', label: 'ADP', getValue: c => parseFloat(c.adp) || 999, ascending: true },
     { key: 'elo_per_play', label: 'Elo/Play', getValue: c => parseFloat(c.elo_per_play) || 0, ascending: false },
     { key: 'value', label: 'Draft Value', getValue: c => parseFloat(c.value) || 0, ascending: false },
@@ -254,7 +271,7 @@ function CardSearch({ cards, onAddCard, onAddTempCard, allUsedCardNames, childre
                             onClick={() => selectCard(card)}
                             onMouseEnter={() => setHighlightIndex(i)}
                         >
-                            <span className="suggestion-rank">#{card.rank}</span>
+                            <span className="suggestion-rank">{formatRank(card)}</span>
                             <span className="suggestion-name">{card.name}</span>
                             <span className="suggestion-type">{card.type === 'Occupation' ? 'Occ' : 'Minor'}</span>
                         </div>
@@ -648,7 +665,7 @@ function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSele
                                 {!isTemp && <TagPills tags={card.tags} />}
                                 <div className="card-stat">
                                     <div className="card-stat-label">Rank</div>
-                                    <div>{isTemp ? '—' : `#${card.rank}`}</div>
+                                    <div>{formatRank(card)}</div>
                                 </div>
                                 <div className="card-stat">
                                     <div className="card-stat-label">ADP</div>
@@ -819,7 +836,7 @@ function PriorHands({ hands, draftedCards, cardMap, currentRound, othersDrafted,
                     const passedPool = firstPresent.handArr.filter(n => !allDraftedNames.has(n));
 
                     // Build columns: include user picks (each pass), passed pool, and others-took
-                    const byRank = (a, b) => (cardMap[a]?.rank || 999) - (cardMap[b]?.rank || 999);
+                    const byRank = (a, b) => rankSortValue(cardMap[a]) - rankSortValue(cardMap[b]);
                     const userPicksByType = (type) => passInfos
                         .filter(p => p.present)
                         .map(p => type === 'Occupation' ? p.drafted.occupation : p.drafted.minor)
@@ -1155,15 +1172,15 @@ function YourHand({ draftedCards, cardMap, onCardClick }) {
 
     if (allDrafted.length === 0) return null;
 
-    const draftedOccs = allDrafted.filter(c => c.type === 'Occupation').sort((a, b) => a.rank - b.rank);
-    const draftedMins = allDrafted.filter(c => c.type === 'Minor Improvement').sort((a, b) => a.rank - b.rank);
+    const draftedOccs = allDrafted.filter(c => c.type === 'Occupation').sort((a, b) => rankSortValue(a) - rankSortValue(b));
+    const draftedMins = allDrafted.filter(c => c.type === 'Minor Improvement').sort((a, b) => rankSortValue(a) - rankSortValue(b));
 
     const renderDraftedCard = (card) => (
         <div key={card.name} className={`card-row clickable${card.isTemporary ? ' temp' : ''}`} onClick={(e) => onCardClick && onCardClick(card.name, e)}>
             {card.isTemporary && <span className="temp-badge">NEW</span>}
             <span className="card-name">{card.name}</span>
             {!card.isTemporary && <TagPills tags={card.tags} abbreviated={false} />}
-            <div className="card-stat"><div className="card-stat-label">Rank</div><div>{card.isTemporary ? '—' : `#${card.rank}`}</div></div>
+            <div className="card-stat"><div className="card-stat-label">Rank</div><div>{formatRank(card)}</div></div>
             <div className="card-stat"><div className="card-stat-label">ADP</div><div>{card.isTemporary ? '—' : card.adp}</div></div>
             <div className="card-stat"><div className="card-stat-label">Elo/Play</div><div>{card.isTemporary ? '—' : (card.elo_per_play || '—')}</div></div>
             <div className="card-stat"><div className="card-stat-label">H{card._handNum}</div><div style={{ color: '#8B6914' }}><span className="pick-badge">{card._passNum}</span></div></div>
@@ -1279,7 +1296,7 @@ function CardDetailPopover({ card, anchorRect, onClose, wheelWatchNote, onWheelW
             <button className="popover-close" onClick={onClose}>&times;</button>
             <div className="popover-header">
                 <span className="popover-name">{card.name}</span>
-                <span className="popover-rank">{card.isTemporary ? 'Temp' : `#${card.rank}`}</span>
+                <span className="popover-rank">{formatRank(card)}</span>
             </div>
             <div className="popover-meta">
                 {card.type && <span className="popover-tag">{card.type}</span>}
@@ -1361,8 +1378,8 @@ function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, 
         }
     });
 
-    const occs = allDrafted.filter(c => c.type === 'Occupation').sort((a, b) => a.rank - b.rank);
-    const mins = allDrafted.filter(c => c.type === 'Minor Improvement').sort((a, b) => a.rank - b.rank);
+    const occs = allDrafted.filter(c => c.type === 'Occupation').sort((a, b) => rankSortValue(a) - rankSortValue(b));
+    const mins = allDrafted.filter(c => c.type === 'Minor Improvement').sort((a, b) => rankSortValue(a) - rankSortValue(b));
 
     // Build others' drafted cards with hand info
     const othersDraftedCards = useMemo(() => {
@@ -1392,7 +1409,7 @@ function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, 
                 grouped[card._handNum].push(card);
             }
         });
-        Object.values(grouped).forEach(arr => arr.sort((a, b) => a.rank - b.rank));
+        Object.values(grouped).forEach(arr => arr.sort((a, b) => rankSortValue(a) - rankSortValue(b)));
         return grouped;
     }, [othersDraftedCards]);
 
@@ -1436,7 +1453,7 @@ function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, 
             </span>
             {!card.isTemporary && <TagPills tags={card.tags} abbreviated={false} />}
             <span className="card-stats-inline">
-                <span>#{card.isTemporary ? '—' : card.rank}</span>
+                <span>{formatRank(card)}</span>
             </span>
         </div>
     );
@@ -1458,7 +1475,7 @@ function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, 
             </span>
             {!card.isTemporary && <TagPills tags={card.tags} abbreviated={true} />}
             <span className="card-stats-inline">
-                <span>#{card.isTemporary ? '—' : card.rank}</span>
+                <span>{formatRank(card)}</span>
             </span>
         </div>
     );
@@ -1486,7 +1503,7 @@ function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, 
                     && !otherSlotNames.has(name);
             })
             .map(name => cardMap[name])
-            .sort((a, b) => (a.rank || 999) - (b.rank || 999));
+            .sort((a, b) => rankSortValue(a) - rankSortValue(b));
 
         const typeLabel = slot.type === 'Occupation' ? 'occ' : 'minor';
 
@@ -1507,7 +1524,7 @@ function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, 
                     )}
                     {candidates.map(card => (
                         <div key={card.name} className="ghost-candidate-item" onClick={() => { onAssignGhostPick && onAssignGhostPick(slot.id, card.name); setExpandedSlotId(null); }}>
-                            <span className="ghost-candidate-rank">#{card.rank}</span>
+                            <span className="ghost-candidate-rank">{formatRank(card)}</span>
                             <span className="ghost-candidate-name">{card.name}</span>
                             <TagPills tags={card.tags} abbreviated={true} />
                         </div>
@@ -1530,7 +1547,7 @@ function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, 
                     )}
                     <span className="card-name-inline">{assignedCard.name}</span>
                     <TagPills tags={assignedCard.tags} abbreviated={true} />
-                    <span className="card-stats-inline"><span>#{assignedCard.rank}</span></span>
+                    <span className="card-stats-inline"><span>{formatRank(assignedCard)}</span></span>
                     {!readOnly && (
                         <button className="ghost-reassign-btn" title="Re-assign" onClick={(e) => { e.stopPropagation(); setExpandedSlotId(slot.id); }}>✎</button>
                     )}
@@ -2349,7 +2366,7 @@ function DraftApp() {
         const card = {
             name, type, description: description || '',
             cost: cost || '', prerequisites: prerequisites || '', vps: vps || '',
-            isTemporary: true, rank: Infinity,
+            isTemporary: true, rank: null,
             pwr: '—', adp: '—', elo_per_play: '—',
             play_rate: '—', value: '—', value_when_played: '—',
             tags: [],
@@ -3064,9 +3081,8 @@ function DraftApp() {
                             <div className="stats-rank-columns">
                                 {[{ label: 'Minor Improvements', cards: isReturningRound ? availableMins : minors, expected: handStats.minorExpected },
                                   { label: 'Occupations', cards: isReturningRound ? availableOccs : occupations, expected: handStats.occExpected }].map(group => {
-                                    const isRanked = (c) => typeof c.rank === 'number' && isFinite(c.rank);
-                                    const ranked = group.cards.filter(isRanked).sort((a, b) => a.rank - b.rank);
-                                    const unranked = group.cards.filter(c => !isRanked(c));
+                                    const ranked = group.cards.filter(hasRank).sort((a, b) => rankSortValue(a) - rankSortValue(b));
+                                    const unranked = group.cards.filter(c => !hasRank(c));
                                     if (ranked.length === 0 && unranked.length === 0) return null;
                                     return (
                                         <div key={group.label}>
@@ -3083,7 +3099,7 @@ function DraftApp() {
                                                         return (
                                                             <tr key={card.name}>
                                                                 <td className="stats-card-name">{card.name}</td>
-                                                                <td>#{card.rank}</td>
+                                                                <td>{formatRank(card)}</td>
                                                                 <td>{exp != null ? `#${exp}` : '—'}</td>
                                                                 <td style={{ color, fontWeight: delta != null && Math.abs(delta) > 20 ? 600 : 400 }}>
                                                                     {delta == null ? '—' : `${delta > 0 ? '+' : ''}${Math.round(delta)}`}
@@ -3094,7 +3110,7 @@ function DraftApp() {
                                                     {unranked.map(card => (
                                                         <tr key={card.name}>
                                                             <td className="stats-card-name">{card.name}</td>
-                                                            <td>—</td>
+                                                            <td>{UNRANKED_LABEL}</td>
                                                             <td>—</td>
                                                             <td style={{ color: '#888' }}>—</td>
                                                         </tr>

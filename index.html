@@ -1798,7 +1798,7 @@ searchInput.addEventListener('input', (e) => {
             const stats = getCardStats(card);
             return `
             <div class="suggestion-item" data-index="${index}">
-                <span class="suggestion-rank">#${stats.rank || 'N/R'}</span>
+                <span class="suggestion-rank">${stats.rank != null ? '#' + stats.rank : 'Unranked'}</span>
                 <span class="suggestion-name">${card.name}</span>
                 <span class="suggestion-apr">APR: ${stats.apr || 'N/A'}</span>
             </div>
@@ -1946,7 +1946,7 @@ function displayCard(card) {
                         <div class="card-header">
                             <div class="card-title-row">
                                 <div class="card-name">${card.name}</div>
-                                <div class="card-rank">Rank #${stats.rank || 'N/R'} (${playerLabel})</div>
+                                <div class="card-rank">${stats.rank != null ? 'Rank #' + stats.rank : 'Unranked'} (${playerLabel})</div>
                             </div>
                             <div class="card-meta">
                                 ${typeLabel}
@@ -1973,7 +1973,7 @@ function displayCard(card) {
                         <div class="card-header">
                             <div class="card-title-row">
                                 <div class="card-name">${card.name}</div>
-                                <div class="card-rank">Rank #${stats.rank || 'N/R'} (${playerLabel})</div>
+                                <div class="card-rank">${stats.rank != null ? 'Rank #' + stats.rank : 'Unranked'} (${playerLabel})</div>
                             </div>
                             <div class="card-meta">
                                 ${typeLabel}
