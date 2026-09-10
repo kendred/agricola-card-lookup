@@ -161,7 +161,7 @@ html[data-theme="alternate"] button:focus-visible {
 html[data-theme="alternate"] .top-section {
     max-width: 960px;
     margin-bottom: 18px;
-    padding: 36px 48px;
+    padding: 24px 40px 28px;
     background: #fff;
     border: 1px solid #dadce0;
     border-radius: 1px;
@@ -323,7 +323,6 @@ html[data-theme="alternate"] .btn-danger {
 }
 
 html[data-theme="alternate"] .table-container {
-    height: 700px;
     padding: 0;
 }
 

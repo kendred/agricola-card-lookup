@@ -21,11 +21,14 @@ body {
     background-size: auto;
     min-height: 100vh;
     padding: 20px;
+    display: flex;
+    flex-direction: column;
 }
 
 .nav-bar {
     max-width: 900px;
-    margin: 0 auto 16px;
+    width: 100%;
+    margin: 0 auto 12px;
     display: flex;
     gap: 12px;
 }
@@ -65,8 +68,8 @@ header {
 
 h1 {
     color: #333;
-    font-size: 2.5em;
-    margin-bottom: 10px;
+    font-size: 2em;
+    margin-bottom: 4px;
 }
 
 .title-icon {
@@ -78,17 +81,17 @@ h1 {
 
 .subtitle {
     color: #666;
-    font-size: 1.1em;
+    font-size: 1em;
+    margin-bottom: 14px;
 }
 
 .search-section {
     position: relative;
-    margin-bottom: 30px;
 }
 
 #searchInput {
     width: 100%;
-    padding: 15px 20px;
+    padding: 12px 18px;
     font-size: 1.1em;
     border: 2px solid #e0e0e0;
     border-radius: 8px;
@@ -153,8 +156,8 @@ h1 {
     color: #8B6914;
 }
 
-.results {
-    margin-top: 30px;
+.results:not(:empty) {
+    margin-top: 24px;
 }
 
 .card-result {
@@ -556,6 +559,15 @@ h1 {
     }
 
     /* Table compact */
+    .bottom-section {
+        flex: none;
+        min-height: 0;
+    }
+
+    .table-grid {
+        flex: none;
+    }
+
     .table-container {
         height: auto;
         max-height: 500px;
@@ -599,12 +611,14 @@ h1 {
 /* Top section - white card */
 .top-section {
     max-width: 900px;
+    width: 100%;
     margin: 0 auto;
     background: rgba(255, 255, 255, 0.95);
     border-radius: 20px;
-    padding: 40px;
+    padding: 24px 32px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-    margin-bottom: 40px;
+    margin-bottom: 24px;
+    flex-shrink: 0;
 }
 
 .top-section h1 {
@@ -620,23 +634,31 @@ h1 {
 .bottom-section {
     max-width: 100%;
     padding: 0 20px;
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    /* Floor: when a card result pushes the table down, keep it usable and let the page scroll */
+    min-height: 480px;
 }
 
 .table-grid {
     display: grid;
     grid-template-columns: 220px 1fr;
+    grid-template-rows: minmax(0, 1fr);
     gap: 20px;
     align-items: start;
+    flex: 1 1 0;
+    min-height: 0;
 }
 
 /* Filter sidebar */
 .filter-sidebar {
     background: rgba(255, 255, 255, 0.95);
     border-radius: 12px;
-    padding: 20px;
+    padding: 16px 20px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 12px;
     position: sticky;
     top: 20px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.2);
@@ -645,7 +667,7 @@ h1 {
 .sidebar-title {
     font-weight: bold;
     font-size: 1.1em;
-    margin-bottom: 10px;
+    margin-bottom: 0;
     text-align: center;
     color: #333;
 }
@@ -653,13 +675,13 @@ h1 {
 .filter-content {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 12px;
 }
 
 .filter-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
 }
 
 .filter-label {
@@ -669,7 +691,7 @@ h1 {
 }
 
 .filter-select {
-    padding: 10px 12px;
+    padding: 7px 12px;
     border-radius: 8px;
     border: 2px solid #ddd;
     background: white;
@@ -694,7 +716,7 @@ h1 {
 
 .deck-dropdown-btn {
     width: 100%;
-    padding: 10px 12px;
+    padding: 7px 12px;
     border-radius: 8px;
     border: 2px solid #ddd;
     background: white;
@@ -816,7 +838,7 @@ h1 {
 }
 
 .clear-sort-btn {
-    padding: 12px 16px;
+    padding: 10px 16px;
     border-radius: 8px;
     border: none;
     background: #f0ad4e;
@@ -842,7 +864,8 @@ h1 {
     border-radius: 16px;
     padding: 20px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-    height: 700px;
+    align-self: stretch;
+    min-height: 0;
     display: flex;
     flex-direction: column;
 }
@@ -858,6 +881,7 @@ h1 {
 
 .table-wrapper {
     flex: 1;
+    min-height: 0;
     overflow-y: auto;
     overflow-x: auto;
     border-radius: 8px;
@@ -1043,6 +1067,7 @@ h1 {
 @media (max-width: 900px) {
     .table-grid {
         grid-template-columns: 1fr;
+        grid-template-rows: auto minmax(0, 1fr);
     }
 
     .filter-sidebar {
@@ -1099,7 +1124,7 @@ h1 {
 }
 
     </style>
-    <link rel="stylesheet" href="css/themes.css?v=2">
+    <link rel="stylesheet" href="css/themes.css?v=3">
 </head>
 <body>
     <nav class="nav-bar">
