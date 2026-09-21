@@ -1,0 +1,628 @@
+{
+ "dir": "evals/reports/model-o4-mini",
+ "rows": [
+  {
+   "fixtureId": "166zgs_r1",
+   "run": 1,
+   "round": 1,
+   "variant": "current",
+   "violations": [],
+   "error": "400 {\n  \"error\": {\n    \"message\": \"Unsupported value: 'temperature' does not support 0 with this model. Only the default (1) value is supported.\",\n    \"type\": \"invalid_request_error\",\n    \"param\": \"temper"
+  },
+  {
+   "fixtureId": "166zgs_r3",
+   "run": 1,
+   "round": 3,
+   "variant": "current",
+   "violations": [
+    {
+     "quote": "you lack a reliable food engine and true plow enhancement beyond the basic Farmland action",
+     "rule": "Seed Almanac gives an additional plow-1-field action each time after you play a later Minor Improvement, provided you pay 1 Food.",
+     "severity": "major"
+    },
+    {
+     "quote": "Seed Almanac and Festival Planning grant some bonus plow and improvement actions",
+     "rule": "Seed Almanac can grant a plow action, but Festival Planning carries out the field phase (sow and harvest) and then grants a Major or Minor Improvement action; it does not grant a plow action.",
+     "severity": "minor"
+    },
+    {
+     "quote": "Bellfounder converts the clay fields generate via Barrow Pusher into 3 food (or 1 VP) each harvest",
+     "rule": "Barrow Pusher gives 1 Clay and 1 Food for each new field tile. Bellfounder triggers in the Returning Home phase of each round, not each Harvest, and requires discarding all Clay to receive either 3 Food or 1 bonus point.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 20,
+   "usage": {
+    "completion_tokens": 1261,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 1024,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 10,
+     "engine_ttft_ms": 197,
+     "engine_ttlt_ms": 12882,
+     "pre_inference_ms": 103,
+     "service_tbt_ms": 10,
+     "service_ttft_ms": 560,
+     "service_ttlt_ms": 13241,
+     "user_visible_ttft_ms": 457
+    },
+    "prompt_tokens": 7976,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cache_write_tokens": 7973,
+     "cached_tokens": 0
+    },
+    "total_tokens": 9237
+   }
+  },
+  {
+   "fixtureId": "166zgs_r2",
+   "run": 1,
+   "round": 2,
+   "variant": "current",
+   "violations": [
+    {
+     "quote": "Seed Almanac and Festival Planning give extra plow and Improvement actions",
+     "rule": "Seed Almanac can provide a plow only after you play a later Minor Improvement and pay 1 Food. Festival Planning provides a Major or Minor Improvement action, but it does not itself provide any Plow action.",
+     "severity": "major"
+    },
+    {
+     "quote": "ensures every plow action via Seed Almanac or Farmland yields usable grain",
+     "rule": "Field Caretaker's clay-for-grain exchange occurs only when Field Caretaker is played. Farmland only places a field tile, and neither Farmland nor subsequent Seed Almanac plows automatically yields Grain.",
+     "severity": "major"
+    },
+    {
+     "quote": "It’s stronger than Home Brewer because it actively builds fields and triggers Barrow Pusher",
+     "rule": "Field Caretaker does not build or place any field tile. Its on-play effect only exchanges 0/1/3 Clay for 1/2/3 Grain; therefore it cannot itself trigger Barrow Pusher, which triggers when a player gets a new field tile.",
+     "severity": "major"
+    },
+    {
+     "quote": "grain harvested from fields plowed with Barrow Pusher and Seed Almanac",
+     "rule": "Barrow Pusher does not grant a Plow action. It gives 1 Clay and 1 Food only after you get a new field tile.",
+     "severity": "minor"
+    },
+    {
+     "quote": "It fills your extra_actions gap by chaining two plow actions into one play",
+     "rule": "Festival Planning immediately carries out its specified field phase and then grants a Major or Minor Improvement action; it grants no Plow actions. Seed Almanac can only add a single plow after each later Minor Improvement, if its owner pays 1 Food, so two plows are not an automatic result of playing Festival Planning.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 20,
+   "usage": {
+    "completion_tokens": 2432,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 2034,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 10,
+     "engine_ttft_ms": 298,
+     "engine_ttlt_ms": 24785,
+     "pre_inference_ms": 217,
+     "service_tbt_ms": 10,
+     "service_ttft_ms": 882,
+     "service_ttlt_ms": 25363,
+     "user_visible_ttft_ms": 665
+    },
+    "prompt_tokens": 7932,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cache_write_tokens": 7929,
+     "cached_tokens": 0
+    },
+    "total_tokens": 10364
+   }
+  },
+  {
+   "fixtureId": "166zgs_r4",
+   "run": 1,
+   "round": 4,
+   "variant": "current",
+   "violations": [
+    {
+     "quote": "Seed Almanac and Festival Planning grant bonus plows and harvests",
+     "rule": "Seed Almanac can, after playing a later Minor Improvement, pay 1 Food to plow 1 field. Festival Planning instead immediately carries out only the field phase on its owner's farmyard (explicitly not a harvest), then grants a Major or Minor Improvement action; it does not grant a plow or a harvest.",
+     "severity": "major"
+    },
+    {
+     "quote": "Festival Planning’s forced harvest",
+     "rule": "Festival Planning says to carry out the field phase only and explicitly states, “This is not a harvest.”",
+     "severity": "major"
+    },
+    {
+     "quote": "it guarantees both grain and vegetables every harvest",
+     "rule": "Winter Caretaker gives 1 Grain only when played. At the end of each harvest, its owner may buy exactly 1 Vegetable for 2 Food; it does not guarantee either resource every harvest.",
+     "severity": "major"
+    },
+    {
+     "quote": "It fills your early grain supply gap without costing actions or food.",
+     "rule": "Sheep Provider is an Occupation, so playing it requires using a Lessons action. Occupation play can also cost Food depending on the Lessons space and how many Occupations the player has played.",
+     "severity": "major"
+    },
+    {
+     "quote": "Eternal Rye turns your stored grain from Sheep Provider, Field Caretaker, and sowing into 1 food or an extra grain after each harvest",
+     "rule": "Eternal Rye Cultivation triggers only after a harvest in which its owner has 2 or 3+ Grain in supply: 2 Grain gives 1 Food, while 3+ Grain gives 1 additional Grain. It does not produce one of these benefits after every harvest merely from having stored Grain.",
+     "severity": "major"
+    },
+    {
+     "quote": "it immediately boosts your food economy at every harvest",
+     "rule": "Eternal Rye Cultivation has a 2-Grain/3+-Grain supply condition after each harvest, and at 3+ Grain it gives Grain rather than Food.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 20,
+   "usage": {
+    "completion_tokens": 2483,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 2048,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 10,
+     "engine_ttft_ms": 148,
+     "engine_ttlt_ms": 25286,
+     "pre_inference_ms": 281,
+     "service_tbt_ms": 10,
+     "service_ttft_ms": 602,
+     "service_ttlt_ms": 25735,
+     "user_visible_ttft_ms": 320
+    },
+    "prompt_tokens": 8036,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cache_write_tokens": 8033,
+     "cached_tokens": 0
+    },
+    "total_tokens": 10519
+   }
+  },
+  {
+   "fixtureId": "166zgs_r5",
+   "run": 1,
+   "round": 5,
+   "variant": "current",
+   "violations": [
+    {
+     "quote": "Festival Planning and Seed Almanac provide a few free sow and plow actions",
+     "rule": "Festival Planning can immediately carry out the field phase when played, but Seed Almanac is not free: after each later Minor Improvement, its optional plow costs 1 Food. It also does not itself provide a sow action.",
+     "severity": "major"
+    },
+    {
+     "quote": "Festival Planning’s repeated sows",
+     "rule": "Festival Planning has a one-time effect when the card is played: immediately carry out the field phase on your farmyard and then take a Major or Minor Improvement action. It does not repeat sowing.",
+     "severity": "major"
+    },
+    {
+     "quote": "if you fence off fields or switch to animals",
+     "rule": "Fields may not be fully enclosed. Fellow Grazer scores for each pasture covering at least 3 farmyard spaces; fenced pasture spaces cannot be field spaces.",
+     "severity": "major"
+    },
+    {
+     "quote": "Garden Claw ... converting planted fields into steady food across all remaining rounds",
+     "rule": "Garden Claw places Food on only up to three times the number of planted fields in remaining round spaces. It does not guarantee Food on every remaining round space unless that limit is sufficient.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 18,
+   "usage": {
+    "completion_tokens": 2840,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 2560,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 10,
+     "engine_ttft_ms": 186,
+     "engine_ttlt_ms": 29962,
+     "pre_inference_ms": 134,
+     "service_tbt_ms": 10,
+     "service_ttft_ms": 474,
+     "service_ttlt_ms": 30245,
+     "user_visible_ttft_ms": 340
+    },
+    "prompt_tokens": 8193,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cache_write_tokens": 8190,
+     "cached_tokens": 0
+    },
+    "total_tokens": 11033
+   }
+  },
+  {
+   "fixtureId": "wmmytg_r1",
+   "run": 1,
+   "round": 1,
+   "variant": "current",
+   "violations": [
+    {
+     "quote": "Claypit Owner synergizes with Debt Security by generating clay and food whenever improvements with a clay cost are played",
+     "rule": "Claypit Owner triggers only when another player plays or builds an Improvement with a printed Clay cost; it does not trigger from your own Improvement plays.",
+     "severity": "major"
+    },
+    {
+     "quote": "Patron ... provid[es] 2 food before each occupation play, ensuring you can pay for Lessons and improvement actions freely.",
+     "rule": "Patron gives 2 Food immediately before each later Occupation you play. It does not provide Food when taking Improvement actions, and its Food is not a general payment for Improvements.",
+     "severity": "major"
+    },
+    {
+     "quote": "Twibil complements Claypit Owner by turning room-building into food",
+     "rule": "Twibil gives 1 Food only after any player builds at least 1 wood room. It does not trigger from building Clay or Stone rooms.",
+     "severity": "minor"
+    }
+   ],
+   "claimsChecked": 16,
+   "usage": {
+    "completion_tokens": 1750,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 1538,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 10,
+     "engine_ttft_ms": 310,
+     "engine_ttlt_ms": 18307,
+     "pre_inference_ms": 110,
+     "service_tbt_ms": 10,
+     "service_ttft_ms": 884,
+     "service_ttlt_ms": 18854,
+     "user_visible_ttft_ms": 773
+    },
+    "prompt_tokens": 8115,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cache_write_tokens": 8112,
+     "cached_tokens": 0
+    },
+    "total_tokens": 9865
+   }
+  },
+  {
+   "fixtureId": "wmmytg_r3",
+   "run": 1,
+   "round": 3,
+   "variant": "current",
+   "violations": [
+    {
+     "quote": "No high‐VP cards or bonus‐scoring triggers yet",
+     "rule": "Animal Husbandry Worker states: \"During scoring, each player with the most pastures gets 2 bonus points.\"",
+     "severity": "major"
+    },
+    {
+     "quote": "Works with Claypit Owner’s clay/food gains to convert excess resources into grain, food, or sheep for flexible value.",
+     "rule": "Green Grocer has exchanges involving Cattle, Vegetable, Sheep, Food, and Grain only. It has no exchange that converts Clay; Claypit Owner's Clay gain cannot be converted by Green Grocer.",
+     "severity": "minor"
+    },
+    {
+     "quote": "grab Grain Depot for guaranteed early grain",
+     "rule": "Grain Depot gives grain only conditionally: \"If you paid wood/clay/stone for this card,\" then grain is placed on upcoming Round spaces.",
+     "severity": "major"
+    },
+    {
+     "quote": "Guarantees grain on upcoming rounds to feed early harvests and seed fields",
+     "rule": "Grain Depot's upcoming-round grain is conditional on having paid Wood, Clay, or Stone for the card; it is not guaranteed merely by playing the Improvement.",
+     "severity": "major"
+    },
+    {
+     "quote": "Provides both grain and vegetables immediately, giving you diverse resources for Minor or Major improvements",
+     "rule": "Food Basket immediately gives 1 Grain and 1 Vegetable, but Major Improvements in the supplied rules cost only building resources (Clay, Stone, Wood, and/or Reed), not Grain or Vegetables.",
+     "severity": "minor"
+    }
+   ],
+   "claimsChecked": 14,
+   "usage": {
+    "completion_tokens": 2178,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 1851,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 10,
+     "engine_ttft_ms": 173,
+     "engine_ttlt_ms": 22937,
+     "pre_inference_ms": 102,
+     "service_tbt_ms": 10,
+     "service_ttft_ms": 506,
+     "service_ttlt_ms": 23246,
+     "user_visible_ttft_ms": 404
+    },
+    "prompt_tokens": 8036,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cache_write_tokens": 8033,
+     "cached_tokens": 0
+    },
+    "total_tokens": 10214
+   }
+  },
+  {
+   "fixtureId": "wmmytg_r2",
+   "run": 1,
+   "round": 2,
+   "variant": "current",
+   "violations": [
+    {
+     "quote": "only two resource-conversion cards so far",
+     "rule": "Claypit Owner gives 1 Food and 1 Clay when another player plays or builds an Improvement with a printed Clay cost, while Barn Shed gives 1 Grain when another player uses Forest. Neither card converts one resource into another.",
+     "severity": "minor"
+    },
+    {
+     "quote": "Animal Husbandry Worker ... provides 2–4 wood and a Build Fences action early based on rounds remaining, immediately strengthening your resource engine",
+     "rule": "Animal Husbandry Worker provides its Wood and Build Fences action only if there are exactly 3, 6, or 9 complete rounds left, yielding 2, 3, or 4 Wood respectively. It does not provide this benefit merely because it is played early or at any arbitrary number of rounds remaining.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 15,
+   "usage": {
+    "completion_tokens": 2141,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 1935,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 18,
+     "engine_ttft_ms": 896,
+     "engine_ttlt_ms": 39767,
+     "pre_inference_ms": 153,
+     "service_tbt_ms": 18,
+     "service_ttft_ms": 1287,
+     "service_ttlt_ms": 40191,
+     "user_visible_ttft_ms": 1134
+    },
+    "prompt_tokens": 7907,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cache_write_tokens": 7904,
+     "cached_tokens": 0
+    },
+    "total_tokens": 10048
+   }
+  },
+  {
+   "fixtureId": "wmmytg_r4",
+   "run": 1,
+   "round": 4,
+   "variant": "current",
+   "violations": [
+    {
+     "quote": "No high-VP or bonus-scoring cards, relying on farm baseline",
+     "rule": "Animal Husbandry Worker has a scoring effect: during scoring, each player tied for the most pastures gets 2 bonus points.",
+     "severity": "minor"
+    },
+    {
+     "quote": "No field or plow synergies drafted",
+     "rule": "Fodder Planter lets you sow crops in exactly 1 field for each newborn animal during breeding, and Mud Patch holds 1 wild boar on each unplanted field tile. Both are field synergies.",
+     "severity": "major"
+    },
+    {
+     "quote": "Spice Trader delivers 3 vegetables at Round 11",
+     "rule": "Spice Trader places and later grants the 3 Vegetables only if it is played in round 4 or earlier; this is not unconditional.",
+     "severity": "major"
+    },
+    {
+     "quote": "Spice Trader delivers 3 vegetables at Round 11, feeding your growing family without costing an action",
+     "rule": "Spice Trader is an Occupation, and playing an Occupation requires using a Lessons action space (and paying its applicable Food cost). Its delayed Round-11 gain itself is automatic, but obtaining the effect is not action-free.",
+     "severity": "major"
+    },
+    {
+     "quote": "MushCollector converts each forest trip into 2 food while returning the wood, synergizing with Barn Shed’s forest triggers",
+     "rule": "Mushroom Collector is optional and triggers only after you use a wood accumulation space; Barn Shed triggers when another player uses Forest (except its solo-game exception). The cards do not share the asserted Forest-use trigger.",
+     "severity": "minor"
+    },
+    {
+     "quote": "Reed Belt guarantees four reeds on rounds 5, 8, 10, 12",
+     "rule": "Reed Belt places Reed only on the remaining listed Round spaces when played. If played after one or more of those rounds, it cannot provide all four Reeds.",
+     "severity": "major"
+    },
+    {
+     "quote": "Food Chest played via House Redevelopment yields 4 immediate food",
+     "rule": "Food Chest gives 4 Food only when played on the \"Major Improvement\" action space. House Redevelopment instead permits an Improvement after renovating, so Food Chest played there gets its otherwise-effect of only 2 Food.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 18,
+   "usage": {
+    "completion_tokens": 3029,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 2547,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 10,
+     "engine_ttft_ms": 186,
+     "engine_ttlt_ms": 31885,
+     "pre_inference_ms": 177,
+     "service_tbt_ms": 10,
+     "service_ttft_ms": 589,
+     "service_ttlt_ms": 32279,
+     "user_visible_ttft_ms": 412
+    },
+    "prompt_tokens": 7975,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cache_write_tokens": 7972,
+     "cached_tokens": 0
+    },
+    "total_tokens": 11004
+   }
+  },
+  {
+   "fixtureId": "wmmytg_r5",
+   "run": 1,
+   "round": 5,
+   "variant": "current",
+   "violations": [
+    {
+     "quote": "You’ve drafted two Major/Minor cards (Vegetable Vendor, Food Chest)",
+     "rule": "Vegetable Vendor is an Occupation, not a Major or Minor Improvement. Food Chest is a Minor Improvement.",
+     "severity": "major"
+    },
+    {
+     "quote": "Without plow coverage, Fodder Planter and Vegetable Vendor may miss key triggers.",
+     "rule": "Fodder Planter triggers in the breeding phase for each newborn animal; Vegetable Vendor triggers when using the Major Improvement or Vegetable Seeds action space. Neither card's trigger is caused by, or requires, a Plow/Farmland action.",
+     "severity": "major"
+    },
+    {
+     "quote": "granting 3 food each time you play a minor improvement",
+     "rule": "Small Trader gives 3 Food only when you take a \"Major or Minor Improvement\" action to play an Improvement from your hand. It does not trigger for every Minor Improvement play.",
+     "severity": "major"
+    },
+    {
+     "quote": "It fills the feeding gap without requiring additional actions or contested spaces.",
+     "rule": "Small Trader's Food effect is conditional on taking a \"Major or Minor Improvement\" action to play an Improvement from hand. Such a normal action-space use requires a worker and occupies that action space for the round.",
+     "severity": "major"
+    },
+    {
+     "quote": "Omnifarmer meshes with Animal Husbandry Worker’s newborn animals",
+     "rule": "Animal Husbandry Worker does not provide newborn animals or modify breeding. It conditionally gives Wood and a Build Fences action, and awards scoring points to players tied for most pastures.",
+     "severity": "major"
+    },
+    {
+     "quote": "Drinking Trough directly expands pasture capacity, enhancing Animal Husbandry Worker’s breeding and Mud Patch’s wild boar storage",
+     "rule": "Drinking Trough adds capacity only to pastures. Animal Husbandry Worker has no breeding effect, and Mud Patch stores one Wild boar on each unplanted field tile rather than in a pasture.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 19,
+   "usage": {
+    "completion_tokens": 3296,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 2869,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 10,
+     "engine_ttft_ms": 197,
+     "engine_ttlt_ms": 33100,
+     "pre_inference_ms": 98,
+     "service_tbt_ms": 10,
+     "service_ttft_ms": 487,
+     "service_ttlt_ms": 33385,
+     "user_visible_ttft_ms": 389
+    },
+    "prompt_tokens": 8345,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cache_write_tokens": 8342,
+     "cached_tokens": 0
+    },
+    "total_tokens": 11641
+   }
+  },
+  {
+   "fixtureId": "wmmytg_r6",
+   "run": 1,
+   "round": 6,
+   "variant": "current",
+   "violations": [
+    {
+     "quote": "Synergizes with Animal Husbandry Worker’s Forest trips and Baseboards-built rooms",
+     "rule": "Animal Husbandry Worker does not use or grant a Forest action; it immediately gives wood and a Build Fences action only at its listed remaining-round thresholds. Baseboards does not build rooms; it gives wood based on rooms already owned (plus one wood if rooms exceed people).",
+     "severity": "major"
+    },
+    {
+     "quote": "by generating steady animals each round",
+     "rule": "Animal Tamer's Apprentice gives an animal only for each unoccupied wood, clay, or stone room at the start of the round. If there are no such unoccupied rooms, it gives no animal.",
+     "severity": "major"
+    },
+    {
+     "quote": "Amplifies Fishing trips into a bona fide food engine—1–4 extra food each round",
+     "rule": "Stone Weir triggers only when its owner uses Fishing, and its additional food is 4/3/2/1 only when Fishing has exactly 0/1/2/3 Food on it, respectively. The card does not provide that bonus with 4 or more Food on Fishing, nor does it generate Food without taking Fishing.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 30,
+   "usage": {
+    "completion_tokens": 3875,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 3584,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 11,
+     "engine_ttft_ms": 192,
+     "engine_ttlt_ms": 40901,
+     "pre_inference_ms": 97,
+     "service_tbt_ms": 11,
+     "service_ttft_ms": 485,
+     "service_ttlt_ms": 41194,
+     "user_visible_ttft_ms": 388
+    },
+    "prompt_tokens": 8537,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cache_write_tokens": 8534,
+     "cached_tokens": 0
+    },
+    "total_tokens": 12412
+   }
+  },
+  {
+   "fixtureId": "wmmytg_r7",
+   "run": 1,
+   "round": 7,
+   "variant": "current",
+   "violations": [
+    {
+     "quote": "each breeding-driven sow creates fields you’ll subsequently harvest to trigger Slurry Spreader’s food bonus",
+     "rule": "Fodder Planter lets the player sow crops in exactly 1 field for each newborn animal; it does not plow or create a field. A pre-existing field is required.",
+     "severity": "major"
+    },
+    {
+     "quote": "Immediate 1 grain+1 veg feeds Slurry Spreader triggers and seeds Omnifarmer",
+     "rule": "Food Basket gives Grain and a Vegetable to the supply. Slurry Spreader triggers only when the last Grain or Vegetable is taken from a field during the Field phase, and Omnifarmer can receive only a harvested crop or a newborn animal—not crops obtained directly into supply.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 20,
+   "usage": {
+    "completion_tokens": 2963,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 2762,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 11,
+     "engine_ttft_ms": 197,
+     "engine_ttlt_ms": 31410,
+     "pre_inference_ms": 234,
+     "service_tbt_ms": 11,
+     "service_ttft_ms": 654,
+     "service_ttlt_ms": 31861,
+     "user_visible_ttft_ms": 420
+    },
+    "prompt_tokens": 8861,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cache_write_tokens": 8858,
+     "cached_tokens": 0
+    },
+    "total_tokens": 11824
+   }
+  }
+ ]
+}

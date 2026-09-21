@@ -1,0 +1,2030 @@
+{
+ "dir": "evals/reports/baseline",
+ "rows": [
+  {
+   "fixtureId": "166zgs_r1",
+   "run": 2,
+   "round": 1,
+   "variant": "baseline",
+   "violations": [],
+   "error": "400 {\n  \"error\": {\n    \"message\": \"Unsupported value: 'temperature' does not support 0 with this model. Only the default (1) value is supported.\",\n    \"type\": \"invalid_request_error\",\n    \"param\": \"temper"
+  },
+  {
+   "fixtureId": "166zgs_r2",
+   "run": 3,
+   "round": 2,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "Home Brewer converts every grain into 3 food or a point",
+     "rule": "Home Brewer: after the field phase of each harvest, you can use this card to turn exactly 1 grain into your choice of 3 food or 1 bonus point",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 8,
+   "usage": {
+    "completion_tokens": 4053,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 3968,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 199,
+     "engine_ttlt_ms": 24668,
+     "pre_inference_ms": 252,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 809,
+     "service_ttlt_ms": 25272,
+     "user_visible_ttft_ms": 558
+    },
+    "prompt_tokens": 7849,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 0
+    },
+    "total_tokens": 11902
+   }
+  },
+  {
+   "fixtureId": "166zgs_r3",
+   "run": 3,
+   "round": 3,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "turn every future Minor or Major Improvement into free food",
+     "rule": "Basketmaker's Workshop only converts up to 1 Reed to Food per Harvest and does not grant food for playing Improvements",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 8,
+   "usage": {
+    "completion_tokens": 5256,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 5184,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 254,
+     "engine_ttlt_ms": 32606,
+     "pre_inference_ms": 286,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 1134,
+     "service_ttlt_ms": 33428,
+     "user_visible_ttft_ms": 848
+    },
+    "prompt_tokens": 8005,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 7168
+    },
+    "total_tokens": 13261
+   }
+  },
+  {
+   "fixtureId": "166zgs_r4",
+   "run": 2,
+   "round": 4,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "Seed Almanac, Festival Planning, and Barn Cats provide spare plow and harvest actions.",
+     "rule": "Barn Cats provides food on future rounds but does not grant any plow or harvest actions; its text places food on round spaces but does not trigger plowing or harvesting.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 13,
+   "usage": {
+    "completion_tokens": 5593,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 5504,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 134,
+     "engine_ttlt_ms": 34268,
+     "pre_inference_ms": 125,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 539,
+     "service_ttlt_ms": 34668,
+     "user_visible_ttft_ms": 414
+    },
+    "prompt_tokens": 7989,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 13582
+   }
+  },
+  {
+   "fixtureId": "166zgs_r5",
+   "run": 2,
+   "round": 5,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "Opponents have snapped up animal-breeding cards (Milking Stool)",
+     "rule": "Milking Stool grants food in the Field phase and bonus points at scoring, but does not trigger any animal breeding",
+     "severity": "major"
+    },
+    {
+     "quote": "This occupation turns the fields you’ll plow and sow into scoring pastures: once you fence 3+ spaces of a field, you get 2 bonus points each",
+     "rule": "Fellow Grazer grants 2 bonus points for each pasture covering at least 3 farmyard spaces (enclosed by fences), not for \"spaces of a field\"",
+     "severity": "minor"
+    },
+    {
+     "quote": "As you harvest abundant grain from Field Caretaker, you can convert each grain into a vegetable",
+     "rule": "Food Merchant lets you pay food to acquire a vegetable for each grain harvested (3 food, or 2 if it’s the last grain), rather than trading the grain itself",
+     "severity": "minor"
+    }
+   ],
+   "claimsChecked": 11,
+   "usage": {
+    "completion_tokens": 6946,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 6720,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 195,
+     "engine_ttlt_ms": 42843,
+     "pre_inference_ms": 172,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 662,
+     "service_ttlt_ms": 43306,
+     "user_visible_ttft_ms": 490
+    },
+    "prompt_tokens": 8279,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 0
+    },
+    "total_tokens": 15225
+   }
+  },
+  {
+   "fixtureId": "19033r_r2",
+   "run": 2,
+   "round": 2,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "Feed Pellets and Profiteering’s 1 food provide early feeding support",
+     "rule": "Feed Pellets does not provide any food or feeding support; it gives a sheep on play and allows exchanging a vegetable for an animal, which does not feed Family members",
+     "severity": "major"
+    },
+    {
+     "quote": "one‐time investment scales with up to 9 uses",
+     "rule": "Collector can be used only four times; its text defines benefits for the 1st/2nd/3rd/4th uses only",
+     "severity": "major"
+    },
+    {
+     "quote": "Treegardener’s harvest wood is less flexible and dependent on vegetable feeding",
+     "rule": "Treegardener grants 1 wood automatically in each Harvest and allows buying up to 2 additional wood for 1 food each; it has no dependency on vegetables",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 11,
+   "usage": {
+    "completion_tokens": 5440,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 5248,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 135,
+     "engine_ttlt_ms": 33332,
+     "pre_inference_ms": 195,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 741,
+     "service_ttlt_ms": 33934,
+     "user_visible_ttft_ms": 547
+    },
+    "prompt_tokens": 8055,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 13495
+   }
+  },
+  {
+   "fixtureId": "19033r_r5",
+   "run": 2,
+   "round": 5,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "You’ve drafted 2 Day Laborer cards",
+     "rule": "There is no Day Laborer card; Day Laborer is an action space and cannot be drafted",
+     "severity": "major"
+    },
+    {
+     "quote": "Profiteering and Feed Pellets give some early food",
+     "rule": "Feed Pellets gives 1 sheep when played, not food; only Profiteering grants 1 food on play",
+     "severity": "major"
+    },
+    {
+     "quote": "Debt Security helps free up actions for food later",
+     "rule": "Debt Security only awards end‐of‐game bonus points and does not grant actions or food",
+     "severity": "major"
+    },
+    {
+     "quote": "Clay Kneader supplies the clay needed to trigger your second renovation on R6",
+     "rule": "Renovating from Clay to Stone requires stone and reed (not clay) per room; clay is not a needed resource for that step",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 16,
+   "usage": {
+    "completion_tokens": 6280,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 6080,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 200,
+     "engine_ttlt_ms": 39061,
+     "pre_inference_ms": 177,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 728,
+     "service_ttlt_ms": 39585,
+     "user_visible_ttft_ms": 550
+    },
+    "prompt_tokens": 8332,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 0
+    },
+    "total_tokens": 14612
+   }
+  },
+  {
+   "fixtureId": "19033r_r7",
+   "run": 2,
+   "round": 7,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "Established Person and Priest set up a free early renovation into stone",
+     "rule": "Established Person grants a single renovation step (e.g. Wooden→Clay) without paying resources and does not directly produce a stone house; Priest grants resources when played but does not perform any renovation",
+     "severity": "major"
+    },
+    {
+     "quote": "No scalable food engine drafted—only one-off food from Profiteering and Hauberg",
+     "rule": "Hauberg does not produce food—it alternately places wood and wild boar on round spaces—so it provides no immediate or one-off food",
+     "severity": "major"
+    },
+    {
+     "quote": "Artisan District and Site Manager give some bonus points",
+     "rule": "Site Manager has no printed victory points or scoring text—it grants only building and cost benefits, with no bonus points",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 10,
+   "usage": {
+    "completion_tokens": 6657,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 6464,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 144,
+     "engine_ttlt_ms": 41502,
+     "pre_inference_ms": 184,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 643,
+     "service_ttlt_ms": 41945,
+     "user_visible_ttft_ms": 459
+    },
+    "prompt_tokens": 8800,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 15457
+   }
+  },
+  {
+   "fixtureId": "9pkrks_r5",
+   "run": 1,
+   "round": 5,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "flip-order–dependent cards like Mill Wheel",
+     "rule": "Mill Wheel triggers when you use the Grain Utilization action space while the Fishing space is occupied; it is based on occupancy, not strictly on turn order",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 14,
+   "usage": {
+    "completion_tokens": 5581,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 5504,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 138,
+     "engine_ttlt_ms": 34805,
+     "pre_inference_ms": 206,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 673,
+     "service_ttlt_ms": 35336,
+     "user_visible_ttft_ms": 467
+    },
+    "prompt_tokens": 8213,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 13794
+   }
+  },
+  {
+   "fixtureId": "9pkrks_r6",
+   "run": 3,
+   "round": 6,
+   "variant": "baseline",
+   "violations": [],
+   "claimsChecked": 16,
+   "usage": {
+    "completion_tokens": 6620,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 6592,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 145,
+     "engine_ttlt_ms": 41297,
+     "pre_inference_ms": 202,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 633,
+     "service_ttlt_ms": 41778,
+     "user_visible_ttft_ms": 430
+    },
+    "prompt_tokens": 8706,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 15326
+   }
+  },
+  {
+   "fixtureId": "am48tz_r2",
+   "run": 3,
+   "round": 2,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "doubling goods on each plowed-and-sown field",
+     "rule": "Plant Fertilizer applies only to fields with exactly 1 good, placing 1 additional good; it does not double goods on every plowed-and-sown field.",
+     "severity": "major"
+    },
+    {
+     "quote": "turning fence-and-stable actions into food and scoring resources",
+     "rule": "Shed Builder triggers only when you build stables (not fences) and grants grain or vegetables (not immediate food or points); it does not reward fence actions or directly give food or scoring resources.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 5,
+   "usage": {
+    "completion_tokens": 4432,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 4288,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 134,
+     "engine_ttlt_ms": 27719,
+     "pre_inference_ms": 244,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 804,
+     "service_ttlt_ms": 28724,
+     "user_visible_ttft_ms": 560
+    },
+    "prompt_tokens": 7990,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 12422
+   }
+  },
+  {
+   "fixtureId": "am48tz_r3",
+   "run": 1,
+   "round": 3,
+   "variant": "baseline",
+   "violations": [],
+   "claimsChecked": 9,
+   "usage": {
+    "completion_tokens": 5149,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 5120,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 147,
+     "engine_ttlt_ms": 31507,
+     "pre_inference_ms": 144,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 640,
+     "service_ttlt_ms": 31929,
+     "user_visible_ttft_ms": 495
+    },
+    "prompt_tokens": 8062,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 13211
+   }
+  },
+  {
+   "fixtureId": "am48tz_r6",
+   "run": 2,
+   "round": 6,
+   "variant": "baseline",
+   "violations": [],
+   "claimsChecked": 9,
+   "usage": {
+    "completion_tokens": 6684,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 6656,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 263,
+     "engine_ttlt_ms": 41420,
+     "pre_inference_ms": 144,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 895,
+     "service_ttlt_ms": 42047,
+     "user_visible_ttft_ms": 751
+    },
+    "prompt_tokens": 8536,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 15220
+   }
+  },
+  {
+   "fixtureId": "bb2edx_r4",
+   "run": 3,
+   "round": 4,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "Winter Caretaker and Bonehead/Sleight of Hand conversion provide moderate food reserves",
+     "rule": "Winter Caretaker does not generate food (it lets you spend 2 Food to buy 1 Vegetable); Bonehead generates wood not food, and Sleight of Hand swaps building resources without producing Food",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 12,
+   "usage": {
+    "completion_tokens": 5473,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 5376,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 137,
+     "engine_ttlt_ms": 33581,
+     "pre_inference_ms": 165,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 626,
+     "service_ttlt_ms": 34064,
+     "user_visible_ttft_ms": 460
+    },
+    "prompt_tokens": 7884,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 13357
+   }
+  },
+  {
+   "fixtureId": "bb2edx_r5",
+   "run": 1,
+   "round": 5,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "each occupation played nets immediate wood from Writing Boards",
+     "rule": "Writing Boards grants wood only once when played, equal to the number of Occupations already in front of you; it does not trigger on each Occupation played.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 7,
+   "usage": {
+    "completion_tokens": 3983,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 3904,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 146,
+     "engine_ttlt_ms": 25777,
+     "pre_inference_ms": 110,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 557,
+     "service_ttlt_ms": 26167,
+     "user_visible_ttft_ms": 446
+    },
+    "prompt_tokens": 8280,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 12263
+   }
+  },
+  {
+   "fixtureId": "bb2edx_r7",
+   "run": 1,
+   "round": 7,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "Only one Stone House card with no renovation support.",
+     "rule": "There is no “Stone House” card in the game or draft; the shared Major Improvements board contains “Stone Oven,” not a Stone House.",
+     "severity": "major"
+    },
+    {
+     "quote": "converting surplus wood or grain into scarce resources",
+     "rule": "Sleight of Hand only exchanges building resources (wood, clay, reed, stone); grain is not a building resource and cannot be exchanged by this card.",
+     "severity": "major"
+    },
+    {
+     "quote": "Generates 1 grain each round you hold at least one sheep",
+     "rule": "Mineral Feeder triggers at the start of each round that does not end with a harvest, not every round.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 16,
+   "usage": {
+    "completion_tokens": 5675,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 5504,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 150,
+     "engine_ttlt_ms": 35170,
+     "pre_inference_ms": 127,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 553,
+     "service_ttlt_ms": 35571,
+     "user_visible_ttft_ms": 427
+    },
+    "prompt_tokens": 8872,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 14547
+   }
+  },
+  {
+   "fixtureId": "d90hkw_r1",
+   "run": 3,
+   "round": 1,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "Kindling Gatherer by giving you 1 wood every time you gain food",
+     "rule": "Kindling Gatherer triggers only when you get food from an action space, and does not trigger on gaining Grain or Vegetable (which are not food) or on card effects outside an action space.",
+     "severity": "major"
+    },
+    {
+     "quote": "Baseboards scales with future room-building cards like Furnisher or Wooden Hut Extender by giving wood equal to your rooms (plus one extra)",
+     "rule": "Baseboards gives 1 wood per room, and only gives the additional 1 wood if you have more rooms than family members; it does not always give +1.",
+     "severity": "major"
+    },
+    {
+     "quote": "immediate food sources (Food Basket)",
+     "rule": "Food Basket gives 1 Grain and 1 Vegetable, not food; Grain/Vegetables must be converted (1:1) to Food and are not themselves Food.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 8,
+   "usage": {
+    "completion_tokens": 4310,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 4096,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 257,
+     "engine_ttlt_ms": 26233,
+     "pre_inference_ms": 180,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 1092,
+     "service_ttlt_ms": 27048,
+     "user_visible_ttft_ms": 912
+    },
+    "prompt_tokens": 7892,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 12202
+   }
+  },
+  {
+   "fixtureId": "d90hkw_r3",
+   "run": 1,
+   "round": 3,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "Lynchet and Scythe Worker yield food from fields but no independent engine",
+     "rule": "Scythe Worker yields grain (not food) from each grain field; only Lynchet yields food from fields.",
+     "severity": "major"
+    },
+    {
+     "quote": "Consultant immediately yields grain for sowing/harvest synergy with Scythe Worker and Lynchet, plus clay and reed to build rooms and feed with Baseboards—filling your resource gap.",
+     "rule": "Consultant in a 4-player game only yields sheep (card text gives 2 sheep at 4p); it does not give grain, clay, or reed.",
+     "severity": "major"
+    },
+    {
+     "quote": "It’s superior to Pan Baker, which requires baking infrastructure you don’t yet have.",
+     "rule": "Pan Baker is an occupation that triggers on the Grain Utilization action and gives clay and wood; it has nothing to do with baking improvements or a Bake Bread action.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 21,
+   "usage": {
+    "completion_tokens": 8218,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 8000,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 254,
+     "engine_ttlt_ms": 50822,
+     "pre_inference_ms": 175,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 995,
+     "service_ttlt_ms": 51538,
+     "user_visible_ttft_ms": 820
+    },
+    "prompt_tokens": 7918,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 16136
+   }
+  },
+  {
+   "fixtureId": "enh505_r1",
+   "run": 1,
+   "round": 1,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "Ash Trees sets up a free-fence engine that sidelines fence actions.",
+     "rule": "Card text: 'When building fences, fences taken from this card cost you nothing.' You still must take the Fencing (Build Fences) action to place fences; the card does not grant free fence actions.",
+     "severity": "major"
+    },
+    {
+     "quote": "(2) secures future fence actions without dedicating resources or actions",
+     "rule": "Card text gives you fences as a free resource but does not grant any additional fencing actions; you still need to use the Fencing action space to build them.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 14,
+   "usage": {
+    "completion_tokens": 4693,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 4544,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 142,
+     "engine_ttlt_ms": 28986,
+     "pre_inference_ms": 248,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 840,
+     "service_ttlt_ms": 29673,
+     "user_visible_ttft_ms": 593
+    },
+    "prompt_tokens": 7986,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 12679
+   }
+  },
+  {
+   "fixtureId": "enh505_r4",
+   "run": 3,
+   "round": 4,
+   "variant": "baseline",
+   "violations": [],
+   "claimsChecked": 6,
+   "usage": {
+    "completion_tokens": 2844,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 2816,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 136,
+     "engine_ttlt_ms": 17307,
+     "pre_inference_ms": 201,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 749,
+     "service_ttlt_ms": 17912,
+     "user_visible_ttft_ms": 548
+    },
+    "prompt_tokens": 7706,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 10550
+   }
+  },
+  {
+   "fixtureId": "enh505_r5",
+   "run": 3,
+   "round": 5,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "Without growth or plow coverage, we’ll struggle to build the rooms or fields needed to trigger Priest or Town Hall.",
+     "rule": "Priest triggers on play if you live in a clay house with exactly 2 rooms; Town Hall triggers each harvest if you live in a clay or stone house — neither card requires fields to activate.",
+     "severity": "major"
+    },
+    {
+     "quote": "Town Hall provides 1 food each harvest for a clay or stone house, synergizing with Priest’s clay-house requirement.",
+     "rule": "Town Hall grants 1 Food for a clay house and 2 Food for a stone house each harvest, not a uniform 1 Food for both.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 9,
+   "usage": {
+    "completion_tokens": 5091,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 4928,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 138,
+     "engine_ttlt_ms": 32118,
+     "pre_inference_ms": 272,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 718,
+     "service_ttlt_ms": 32692,
+     "user_visible_ttft_ms": 446
+    },
+    "prompt_tokens": 8337,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 13428
+   }
+  },
+  {
+   "fixtureId": "enh505_r7",
+   "run": 3,
+   "round": 7,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "\"Muddy Waters, Winter Caretaker, Ox Goad and Harvest House give periodic food\"",
+     "rule": "Winter Caretaker doesn’t grant free food each harvest (it lets you buy a vegetable for 2 food); Ox Goad costs food to plow fields rather than giving food; Harvest House grants 1 food only once on play; only Muddy Waters provides occasional food.",
+     "severity": "major"
+    },
+    {
+     "quote": "\"Freemason and Muddy Waters generate clay each round\"",
+     "rule": "Muddy Waters only places clay on alternating (even-numbered) rounds, not every round.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 14,
+   "usage": {
+    "completion_tokens": 6814,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 6656,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 145,
+     "engine_ttlt_ms": 42821,
+     "pre_inference_ms": 154,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 632,
+     "service_ttlt_ms": 43304,
+     "user_visible_ttft_ms": 478
+    },
+    "prompt_tokens": 8902,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 15716
+   }
+  },
+  {
+   "fixtureId": "et161x_r1",
+   "run": 2,
+   "round": 1,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "Rewards the fields you’ll be sowing with future Grain or Vegetable Seeds actions",
+     "rule": "Grain Seeds (Take 1 Grain) and Vegetable Seeds (Take 1 Vegetable) give you resources; sowing fields is done via the Grain Utilization (Sow) or Cultivation actions, not by taking Grain or Vegetable Seeds",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 13,
+   "usage": {
+    "completion_tokens": 5546,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 5440,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 131,
+     "engine_ttlt_ms": 34858,
+     "pre_inference_ms": 130,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 531,
+     "service_ttlt_ms": 35255,
+     "user_visible_ttft_ms": 401
+    },
+    "prompt_tokens": 7973,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 13519
+   }
+  },
+  {
+   "fixtureId": "et161x_r2",
+   "run": 2,
+   "round": 2,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "It guarantees a free Growth action at your next harvest",
+     "rule": "Bed in the Grain Field reads “At the start of the next harvest, you get a ‘Family Growth’ action if you have room for the newborn.” It is conditional on having room, not an unconditional guarantee.",
+     "severity": "major"
+    },
+    {
+     "quote": "Provides two extra worker-placements without costing food",
+     "rule": "Bed in the Grain Field grants one Family Growth action (one extra worker placement next round), not two.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 8,
+   "usage": {
+    "completion_tokens": 4226,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 4096,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 138,
+     "engine_ttlt_ms": 25846,
+     "pre_inference_ms": 198,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 713,
+     "service_ttlt_ms": 26416,
+     "user_visible_ttft_ms": 515
+    },
+    "prompt_tokens": 8001,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 12227
+   }
+  },
+  {
+   "fixtureId": "et161x_r4",
+   "run": 2,
+   "round": 4,
+   "variant": "baseline",
+   "violations": [],
+   "claimsChecked": 9,
+   "usage": {
+    "completion_tokens": 5468,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 5440,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 142,
+     "engine_ttlt_ms": 33848,
+     "pre_inference_ms": 105,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 562,
+     "service_ttlt_ms": 34222,
+     "user_visible_ttft_ms": 457
+    },
+    "prompt_tokens": 7957,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 13425
+   }
+  },
+  {
+   "fixtureId": "et161x_r6",
+   "run": 3,
+   "round": 6,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "breeding (Haydryer + Champion Breeder)",
+     "rule": "Haydryer buys an adult cattle before the harvest; Champion Breeder only scores points for newborn animals placed during the breeding phase, so they do not synergize.",
+     "severity": "major"
+    },
+    {
+     "quote": "Opponents have taken Mining Hammer, signaling a contested Stone House/Stable overlap and vying for stone.",
+     "rule": "Mining Hammer does not produce stone; it grants a free stable when you renovate, so it does not contest stone resources.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 20,
+   "usage": {
+    "completion_tokens": 6022,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 5888,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 140,
+     "engine_ttlt_ms": 37461,
+     "pre_inference_ms": 173,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 586,
+     "service_ttlt_ms": 37902,
+     "user_visible_ttft_ms": 413
+    },
+    "prompt_tokens": 8526,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 14548
+   }
+  },
+  {
+   "fixtureId": "g0194v_r1",
+   "run": 2,
+   "round": 1,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "Tree Farm Joiner…kick‐starts a wood engine on odd rounds",
+     "rule": "Tree Farm Joiner places 1 wood on each of the next 2 odd-numbered round spaces only, not on every odd round.",
+     "severity": "major"
+    },
+    {
+     "quote": "complementing Tree Farm Joiner’s odd‐round wood drops to create a near–every‐round wood engine",
+     "rule": "Tree Farm Joiner only provides wood on the next two odd rounds, so it does not produce odd-round wood drops for the entire game.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 7,
+   "usage": {
+    "completion_tokens": 3790,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 3648,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 139,
+     "engine_ttlt_ms": 23217,
+     "pre_inference_ms": 162,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 653,
+     "service_ttlt_ms": 23725,
+     "user_visible_ttft_ms": 491
+    },
+    "prompt_tokens": 7927,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 11717
+   }
+  },
+  {
+   "fixtureId": "g0194v_r6",
+   "run": 1,
+   "round": 6,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "Opponents' picks of Comb and Cutter and Hewer signal ... wood contention",
+     "rule": "Hewer triggers on clay accumulation spaces being unoccupied and gives stone and food, not wood (see Hewer card text)",
+     "severity": "major"
+    },
+    {
+     "quote": "Fodder Beets and Wholesale Market together generate ~21 food over the game",
+     "rule": "Fodder Beets places 1 food on each remaining odd round space (≈4 food when played in round 6) and Wholesale Market places 1 food on each remaining round space (≈9 food), far less than ~21",
+     "severity": "major"
+    },
+    {
+     "quote": "No family growth enablers or room-building acceleration beyond Wood Barterer",
+     "rule": "Wood Barterer grants resource exchange before Build Rooms or Build Fences actions, but does not grant Family Growth or accelerate room building",
+     "severity": "major"
+    },
+    {
+     "quote": "Tutor, Tree Farm Joiner, and Tea House provide some side-actions",
+     "rule": "Tutor has no action ability—it only scores points at end game; it does not grant any extra actions",
+     "severity": "major"
+    },
+    {
+     "quote": "Immediately renovates your two clay rooms to stone for +4 VP",
+     "rule": "Established Person Renovates the house one step without cost (Wooden→Clay or Clay→Stone) but does not specifically upgrade two clay rooms to stone in all cases",
+     "severity": "major"
+    },
+    {
+     "quote": "feed this card wood to gain scarce clay, reed, or stone each round",
+     "rule": "Entrepreneur’s ability is triggered by moving or discarding 1 FOOD, not wood, to gain a building resource",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 6,
+   "usage": {
+    "completion_tokens": 6625,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 6272,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 142,
+     "engine_ttlt_ms": 41181,
+     "pre_inference_ms": 145,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 563,
+     "service_ttlt_ms": 41600,
+     "user_visible_ttft_ms": 417
+    },
+    "prompt_tokens": 8790,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6400
+    },
+    "total_tokens": 15415
+   }
+  },
+  {
+   "fixtureId": "hxfbx0_r2",
+   "run": 3,
+   "round": 2,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "Your stable strategy hinges on having enough wood and clay to build multiple stables and enough grain income to feed Beer Stall.",
+     "rule": "Stables cost only 2 Wood each (no Clay) per the rules (Section 6: “Stables cost 2 Wood…”).",
+     "severity": "major"
+    },
+    {
+     "quote": "Prophet’s free Renovation and Build Fences actions help you secure pastures and optimize stable placement",
+     "rule": "Prophet’s text specifies both actions require their usual cost (Card: “(Both actions require their usual cost.)”).",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 9,
+   "usage": {
+    "completion_tokens": 5202,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 5056,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 139,
+     "engine_ttlt_ms": 32715,
+     "pre_inference_ms": 366,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 862,
+     "service_ttlt_ms": 33431,
+     "user_visible_ttft_ms": 496
+    },
+    "prompt_tokens": 7851,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 13053
+   }
+  },
+  {
+   "fixtureId": "hxfbx0_r7",
+   "run": 2,
+   "round": 7,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "Opponents on stable tags (Animal Bedding, Stable Sergeant) may contest Minor Improvement and Fencing plays",
+     "rule": "Animal Bedding is played via a Minor Improvement action, and Stable Sergeant is an Occupation played via Lessons; neither uses the Fencing action space, so they do not contest Fencing plays.",
+     "severity": "major"
+    },
+    {
+     "quote": "Patch Caregiver ties into Schnapps Distillery and your Plow cards by supplying vegetables or grain when you plow fields via Plow Maker/Plowman",
+     "rule": "Patch Caregiver places fields on future round spaces and lets you plow them; it does not supply any grain or vegetables.",
+     "severity": "major"
+    },
+    {
+     "quote": "Patch Caregiver addresses your lack of vegetable sources to fuel Schnapps Distillery’s food conversion",
+     "rule": "Patch Caregiver never grants vegetables (or grain); it only adds fields to future rounds.",
+     "severity": "major"
+    },
+    {
+     "quote": "ensures you can pay the 2-food cost on the Major Improvement action for 4 food",
+     "rule": "There is no 2-food cost to take a Major Improvement action; Major Improvements cost the printed resources, not food.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 20,
+   "usage": {
+    "completion_tokens": 6532,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 6272,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 146,
+     "engine_ttlt_ms": 40410,
+     "pre_inference_ms": 190,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 749,
+     "service_ttlt_ms": 41008,
+     "user_visible_ttft_ms": 559
+    },
+    "prompt_tokens": 8869,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 15401
+   }
+  },
+  {
+   "fixtureId": "m987xg_r3",
+   "run": 3,
+   "round": 3,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "\"Two minor improvements already give extra plow on actions\"",
+     "rule": "Shifting Cultivation’s text reads “Immediately plow 1 field,” a one-time effect on play, and does not trigger on Farmland or Cultivation actions.",
+     "severity": "major"
+    },
+    {
+     "quote": "\"expect moderate competition for that space in rounds 4–5\"",
+     "rule": "Grain Seeds appears in Stage 1 (rounds 1–4) only and is not available in round 5.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 13,
+   "usage": {
+    "completion_tokens": 6854,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 6720,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 137,
+     "engine_ttlt_ms": 43182,
+     "pre_inference_ms": 300,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 924,
+     "service_ttlt_ms": 43903,
+     "user_visible_ttft_ms": 624
+    },
+    "prompt_tokens": 7856,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 14710
+   }
+  },
+  {
+   "fixtureId": "m987xg_r4",
+   "run": 2,
+   "round": 4,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "Fills your clay supply gap critical for room building and Renovation to stone via Conservator.",
+     "rule": "Renovation to stone (even via Conservator) uses stone (and reed) only, not clay; Mud Wallower’s clay does not help with stone renovation.",
+     "severity": "major"
+    },
+    {
+     "quote": "lack guaranteed access to Food/Grain accumulation spaces",
+     "rule": "There is no grain‐accumulation space; Grain Seeds is a fixed‐yield space (no accumulation arrow), so ‘Grain accumulation space’ is incorrect.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 15,
+   "usage": {
+    "completion_tokens": 6350,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 6208,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 256,
+     "engine_ttlt_ms": 38877,
+     "pre_inference_ms": 273,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 1240,
+     "service_ttlt_ms": 39855,
+     "user_visible_ttft_ms": 966
+    },
+    "prompt_tokens": 7941,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 14291
+   }
+  },
+  {
+   "fixtureId": "m987xg_r6",
+   "run": 2,
+   "round": 6,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "Homekeeper directly amplifies your Big House strategy—paired with Carpenter and Conservator, it grants free extra family members when you add clay or stone rooms adjacent to both a field and pasture.",
+     "rule": "Homekeeper: “Exactly one clay or stone room in your house can hold an additional person if the room is adjacent to both a field and a pasture.” It does not grant Family Growth or free family members upon building rooms.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 14,
+   "usage": {
+    "completion_tokens": 4344,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 4224,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 144,
+     "engine_ttlt_ms": 27181,
+     "pre_inference_ms": 210,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 841,
+     "service_ttlt_ms": 27874,
+     "user_visible_ttft_ms": 631
+    },
+    "prompt_tokens": 8485,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 12829
+   }
+  },
+  {
+   "fixtureId": "m987xg_r7",
+   "run": 3,
+   "round": 7,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "resource-accumulation (Fodder Beets, Thick Forest) that also trigger Kindling Gatherer",
+     "rule": "Kindling Gatherer only triggers when you get food from an action space; Fodder Beets and Thick Forest grant resources at the start of rounds, not via an action space",
+     "severity": "major"
+    },
+    {
+     "quote": "Blade Shears immediately grants 3 food, which synergizes with Kindling Gatherer to net 3 wood alongside feeding",
+     "rule": "Blade Shears gives a choice of 3 food or 1 food per sheep, and this food comes from a card effect, not an action space, so it does not automatically grant 3 food nor trigger Kindling Gatherer",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 9,
+   "usage": {
+    "completion_tokens": 5297,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 5120,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 151,
+     "engine_ttlt_ms": 33376,
+     "pre_inference_ms": 190,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 639,
+     "service_ttlt_ms": 33864,
+     "user_visible_ttft_ms": 449
+    },
+    "prompt_tokens": 8689,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 13986
+   }
+  },
+  {
+   "fixtureId": "pjt09m_r1",
+   "run": 2,
+   "round": 1,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "nets building resources+reed whenever opponents convert resources to food",
+     "rule": "Wares Salesman triggers on any player (including you) playing or building a card that turns building resources into food, not just opponents.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 6,
+   "usage": {
+    "completion_tokens": 3789,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 3712,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 270,
+     "engine_ttlt_ms": 22796,
+     "pre_inference_ms": 190,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 1112,
+     "service_ttlt_ms": 23633,
+     "user_visible_ttft_ms": 922
+    },
+    "prompt_tokens": 7859,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 11648
+   }
+  },
+  {
+   "fixtureId": "pjt09m_r3",
+   "run": 3,
+   "round": 3,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "Plowman synergizes with Field Watchman by giving free plows at key future rounds, letting you seed and plow without worker spend",
+     "rule": "Plowman says “at the start of these rounds, you can plow the field for 1 food.” You still must pay 1 food—plowing is not free.",
+     "severity": "major"
+    },
+    {
+     "quote": "Consultant gives 3 clay to play Carrot Museum and 2 sheep to activate Dolly’s Mother, plus grain and reed support for your fields",
+     "rule": "Consultant’s text grants only one resource type based on player count (at 4 players you get 2 sheep), not all four resources.",
+     "severity": "major"
+    },
+    {
+     "quote": "it’s better than Seaweed Fertilizer because its effect triggers earlier",
+     "rule": "Seaweed Fertilizer also triggers from the first available Sow action (Stage 1); its timing is no later than Corn Scoop’s Grain Seeds bonus.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 6,
+   "usage": {
+    "completion_tokens": 5477,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 5248,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 138,
+     "engine_ttlt_ms": 34646,
+     "pre_inference_ms": 202,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 740,
+     "service_ttlt_ms": 35238,
+     "user_visible_ttft_ms": 538
+    },
+    "prompt_tokens": 7985,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 13462
+   }
+  },
+  {
+   "fixtureId": "pjt09m_r4",
+   "run": 1,
+   "round": 4,
+   "variant": "baseline",
+   "violations": [],
+   "claimsChecked": 14,
+   "usage": {
+    "completion_tokens": 5597,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 5568,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 147,
+     "engine_ttlt_ms": 34322,
+     "pre_inference_ms": 284,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 851,
+     "service_ttlt_ms": 35020,
+     "user_visible_ttft_ms": 567
+    },
+    "prompt_tokens": 7978,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 13575
+   }
+  },
+  {
+   "fixtureId": "pjt09m_r5",
+   "run": 2,
+   "round": 5,
+   "variant": "baseline",
+   "violations": [],
+   "claimsChecked": 10,
+   "usage": {
+    "completion_tokens": 3740,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 3712,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 142,
+     "engine_ttlt_ms": 23452,
+     "pre_inference_ms": 147,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 559,
+     "service_ttlt_ms": 23880,
+     "user_visible_ttft_ms": 412
+    },
+    "prompt_tokens": 8296,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 12036
+   }
+  },
+  {
+   "fixtureId": "pjt09m_r6",
+   "run": 1,
+   "round": 6,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "Pickler and Carrot Museum grant conditional points",
+     "rule": "Carrot Museum does not grant conditional points; it yields resources at end of rounds and has printed VP, but gives no bonus points based on conditions",
+     "severity": "major"
+    },
+    {
+     "quote": "Seaweed Fertilizer and harvest cards generate produce",
+     "rule": "Seaweed Fertilizer places food on future round spaces when you use Fishing, it does not generate produce (grain or vegetables)",
+     "severity": "minor"
+    }
+   ],
+   "claimsChecked": 8,
+   "usage": {
+    "completion_tokens": 3387,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 3264,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 10,
+     "engine_ttft_ms": 307,
+     "engine_ttlt_ms": 34083,
+     "pre_inference_ms": 115,
+     "service_tbt_ms": 10,
+     "service_ttft_ms": 701,
+     "service_ttlt_ms": 34468,
+     "user_visible_ttft_ms": 586
+    },
+    "prompt_tokens": 8241,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 0
+    },
+    "total_tokens": 11628
+   }
+  },
+  {
+   "fixtureId": "pjt09m_r7",
+   "run": 2,
+   "round": 7,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "Field Watchman, Hill Cultivator, Seaweed Fertilizer, Carrot Museum, and Pickler emphasizing Grain Seeds and Vegetable Seeds",
+     "rule": "Pickler has no effect tied to Grain Seeds or Vegetable Seeds action spaces; it grants wood based on complete rounds remaining and bonus points for most vegetables at scoring, but does not trigger on using seed spaces.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 12,
+   "usage": {
+    "completion_tokens": 5227,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 5120,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 138,
+     "engine_ttlt_ms": 32728,
+     "pre_inference_ms": 214,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 659,
+     "service_ttlt_ms": 33245,
+     "user_visible_ttft_ms": 445
+    },
+    "prompt_tokens": 8809,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 14036
+   }
+  },
+  {
+   "fixtureId": "pq9fn4_r1",
+   "run": 3,
+   "round": 1,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "fills a resource gap with steady wood and front-loaded bonus points",
+     "rule": "Constable’s bonus points apply during the scoring phase, not immediately when played",
+     "severity": "major"
+    },
+    {
+     "quote": "using wood income to build fields adjacent to your house and trigger food gains",
+     "rule": "Plowing fields (Farmland action) costs no wood; field tiles are placed at no resource cost",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 26,
+   "usage": {
+    "completion_tokens": 6894,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 6784,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 144,
+     "engine_ttlt_ms": 43358,
+     "pre_inference_ms": 175,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 694,
+     "service_ttlt_ms": 43904,
+     "user_visible_ttft_ms": 518
+    },
+    "prompt_tokens": 7919,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 14813
+   }
+  },
+  {
+   "fixtureId": "pq9fn4_r2",
+   "run": 2,
+   "round": 2,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "No generated‐action cards beyond Chimney Sweep’s passive discount",
+     "rule": "Chimney Sweep provides only a stone‐cost discount on renovation and grants no extra actions—it is not a generated‐action card.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 14,
+   "usage": {
+    "completion_tokens": 6925,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 6848,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 128,
+     "engine_ttlt_ms": 44035,
+     "pre_inference_ms": 247,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 813,
+     "service_ttlt_ms": 44716,
+     "user_visible_ttft_ms": 566
+    },
+    "prompt_tokens": 7982,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 14907
+   }
+  },
+  {
+   "fixtureId": "pq9fn4_r3",
+   "run": 1,
+   "round": 3,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "Cesspit and Gardening Head Official provide passive clay/boar and timed wood/vegetable returns",
+     "rule": "Gardening Head Official grants only timed wood (2/3/4 wood at 3/6/9 rounds left) and bonus points for vegetable leaders, but does not return any vegetables",
+     "severity": "major"
+    },
+    {
+     "quote": "No generated-action or free-play occupations in the draft",
+     "rule": "Seed Researcher is an Occupation that grants a free occupation play (no cost) when people return from Grain Seeds and Vegetable Seeds",
+     "severity": "major"
+    },
+    {
+     "quote": "No plow, sow, or field-related cards to support agriculture yet",
+     "rule": "Slurry Spreader and Field Cultivator are Occupations that provide benefits tied to harvesting fields, so field-related synergy cards are present",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 15,
+   "usage": {
+    "completion_tokens": 5122,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 4928,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 144,
+     "engine_ttlt_ms": 31387,
+     "pre_inference_ms": 113,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 548,
+     "service_ttlt_ms": 31791,
+     "user_visible_ttft_ms": 436
+    },
+    "prompt_tokens": 7974,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 13096
+   }
+  },
+  {
+   "fixtureId": "pq9fn4_r5",
+   "run": 1,
+   "round": 5,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "Homekeeper ... giving an extra family member once you have a stone room adjacent to a field and pasture.",
+     "rule": "Homekeeper only provides extra housing capacity; it does not grant a Family Growth action or an immediate family member.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 27,
+   "usage": {
+    "completion_tokens": 6352,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 6272,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 202,
+     "engine_ttlt_ms": 39898,
+     "pre_inference_ms": 121,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 602,
+     "service_ttlt_ms": 40282,
+     "user_visible_ttft_ms": 481
+    },
+    "prompt_tokens": 8313,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 0
+    },
+    "total_tokens": 14665
+   }
+  },
+  {
+   "fixtureId": "pq9fn4_r6",
+   "run": 3,
+   "round": 6,
+   "variant": "baseline",
+   "violations": [],
+   "claimsChecked": 19,
+   "usage": {
+    "completion_tokens": 7965,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 7936,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 141,
+     "engine_ttlt_ms": 49519,
+     "pre_inference_ms": 105,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 530,
+     "service_ttlt_ms": 49887,
+     "user_visible_ttft_ms": 425
+    },
+    "prompt_tokens": 8615,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 16580
+   }
+  },
+  {
+   "fixtureId": "pq9fn4_r7",
+   "run": 3,
+   "round": 7,
+   "variant": "baseline",
+   "violations": [],
+   "claimsChecked": 10,
+   "usage": {
+    "completion_tokens": 7388,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 7360,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 141,
+     "engine_ttlt_ms": 46576,
+     "pre_inference_ms": 125,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 537,
+     "service_ttlt_ms": 46964,
+     "user_visible_ttft_ms": 412
+    },
+    "prompt_tokens": 8798,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 16186
+   }
+  },
+  {
+   "fixtureId": "wmmytg_r2",
+   "run": 3,
+   "round": 2,
+   "variant": "baseline",
+   "violations": [],
+   "claimsChecked": 9,
+   "usage": {
+    "completion_tokens": 4444,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 4416,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 150,
+     "engine_ttlt_ms": 26866,
+     "pre_inference_ms": 233,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 757,
+     "service_ttlt_ms": 27468,
+     "user_visible_ttft_ms": 523
+    },
+    "prompt_tokens": 7960,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 12404
+   }
+  },
+  {
+   "fixtureId": "wmmytg_r3",
+   "run": 2,
+   "round": 3,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "(1) Plays off any wood accumulation (including Claypit Owner’s clay improvement triggers) to plow free fields, feeding your sow strategy without extra worker placements.",
+     "rule": "Shifting Cultivator only triggers when you use a wood accumulation space (Forest, Grove, Copse); Claypit Owner’s effect is not a wood accumulation space and does not count.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 10,
+   "usage": {
+    "completion_tokens": 4396,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 4288,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 258,
+     "engine_ttlt_ms": 26508,
+     "pre_inference_ms": 160,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 950,
+     "service_ttlt_ms": 27195,
+     "user_visible_ttft_ms": 791
+    },
+    "prompt_tokens": 8042,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 7168
+    },
+    "total_tokens": 12438
+   }
+  },
+  {
+   "fixtureId": "wmmytg_r4",
+   "run": 1,
+   "round": 4,
+   "variant": "baseline",
+   "violations": [
+    {
+     "quote": "synergizes with Barn Shed by hitting Forest accumulation: you place wood to stockpile a grain via Barn Shed",
+     "rule": "Barn Shed only triggers when another player (not you) uses the Forest accumulation space in multiplayer; it does not give you grain when you use Forest yourself",
+     "severity": "major"
+    },
+    {
+     "quote": "immediately gives 4 food",
+     "rule": "Roman Pot places 4 food on the card but does not immediately give it to your supply; you only collect food from it later if you’re last in turn order",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 6,
+   "usage": {
+    "completion_tokens": 3660,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 3520,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 6,
+     "engine_ttft_ms": 136,
+     "engine_ttlt_ms": 22152,
+     "pre_inference_ms": 211,
+     "service_tbt_ms": 6,
+     "service_ttft_ms": 646,
+     "service_ttlt_ms": 22658,
+     "user_visible_ttft_ms": 435
+    },
+    "prompt_tokens": 8129,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cached_tokens": 6272
+    },
+    "total_tokens": 11789
+   }
+  }
+ ]
+}

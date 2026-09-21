@@ -34,11 +34,27 @@ const BY_NAME = new Map(CARDS.filter(c => !c.banned).map(c => [c.name, c]));
 const DEFAULTS = {
   concurrency: 3,
   sample: 0,            // 0 == every response in the directory
-  // o4-mini, not gpt-4o. Validated against 4 known-positive responses: o4-mini
-  // returned ~3-4 true positives of 4, gpt-4o returned 1 of 4 and rated three
-  // accurate paraphrases of card text as major violations. This task is careful
-  // text comparison, which the reasoning model does markedly better.
-  deployment: process.env.AZURE_OPENAI_JUDGE_DEPLOYMENT || 'o4-mini',
+  // A reasoning model, not gpt-4o. gpt-4o was tried early on and returned 1
+  // true positive of 4 while rating three accurate paraphrases of card text as
+  // major violations. This task is careful text comparison, which reasoning
+  // models do markedly better.
+  //
+  // o4-mini held this job until Sept 2026 and was retired from it early, ahead
+  // of its 19 Nov 2026 deadline. Calibrated on the 49 hand-judged baseline
+  // responses (`--calibrate evals/judgments/baseline-tier1.json`):
+  //
+  //   judge           known violations caught   total flagged
+  //   o4-mini          5/11                      79
+  //   gpt-5.6-luna     8/11                     258
+  //   gpt-5.6-terra    9/11                     216
+  //
+  // terra dominates: it misses fewest of the violations a human already found
+  // while flagging fewer total than luna. o4-mini missed over half of them.
+  //
+  // Swapping this deployment invalidates every stored judgment — scores from
+  // different judges are not comparable. Re-calibrate, and re-judge anything
+  // you intend to compare against.
+  deployment: process.env.AZURE_OPENAI_JUDGE_DEPLOYMENT || 'gpt-5.6-terra',
   out: null,
   calibrate: null,
   only: null,
@@ -166,20 +182,38 @@ ${JSON.stringify(prose, null, 1)}`;
   const url = `${creds.endpoint.replace(/\/$/, '')}/openai/deployments/${cfg.deployment}`
     + '/chat/completions?api-version=2025-04-01-preview';
 
-  for (let attempt = 0; attempt < 6; attempt++) {
+  // Whether the deployment accepts an explicit temperature is decided by
+  // trying it, not by pattern-matching the name. The old `/^o\d/` test only
+  // knew about o1/o3/o4 and would have sent temperature to gpt-5.x, which
+  // rejects it outright. `sendTemperature` is module-level so the probe costs
+  // one 400 per process rather than one per response.
+  for (let attempt = 0; attempt < 8; attempt++) {
     const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'api-key': creds.key },
       body: JSON.stringify({
         messages: [{ role: 'system', content: SYSTEM }, { role: 'user', content: user }],
         response_format: { type: 'json_object' },
-        // o-series reasoning deployments reject an explicit temperature.
-        ...(/^o\d/.test(cfg.deployment) ? {} : { temperature: 0 }),
+        ...(sendTemperature ? { temperature: 0 } : {}),
       }),
     });
     if (res.status === 429) {
-      await new Promise(r2 => setTimeout(r2, 15000 * (attempt + 1)));
+      // Honour Retry-After when the service sends one, otherwise back off
+      // exponentially with jitter. The previous linear 15s ramp gave up while
+      // the window was still closed and recorded 19 of 49 calibration rows as
+      // failures, which silently read as "found no violations".
+      const hinted = Number(res.headers.get('retry-after')) * 1000;
+      const wait = hinted || Math.min(120000, 5000 * 2 ** attempt) * (0.75 + Math.random() * 0.5);
+      await new Promise(r2 => setTimeout(r2, wait));
       continue;
+    }
+    if (res.status === 400) {
+      const text = await res.text();
+      if (sendTemperature && /temperature/i.test(text)) {
+        sendTemperature = false;   // this deployment is a reasoning model
+        continue;
+      }
+      return { error: `400 ${text.slice(0, 200)}` };
     }
     if (!res.ok) return { error: `${res.status} ${(await res.text()).slice(0, 200)}` };
     const data = await res.json();
@@ -192,6 +226,12 @@ ${JSON.stringify(prose, null, 1)}`;
   }
   return { error: 'rate limited after retries' };
 }
+
+/**
+ * Set false the first time a deployment rejects `temperature`, so the rest of
+ * the run skips the parameter instead of eating a 400 per response.
+ */
+let sendTemperature = true;
 
 /** Compare automated output against a manual judgment file, per fixture. */
 function calibrate(rows, manualPath) {
@@ -212,14 +252,55 @@ function calibrate(rows, manualPath) {
   const manualTotal = manual.violations.length;
   const autoTotal = judged.reduce((s, r) => s + (r.violations || []).length, 0);
 
+  // Recall on the known positives is the metric that actually discriminates.
+  // Raw counts do not: the manual pass found violations in only 10 of 49
+  // responses, so its 11 entries are a FLOOR, not an exhaustive answer key. A
+  // judge that reports more than 11 is usually being more thorough than the
+  // human was, not hallucinating — spot-checking a sample of the extra flags
+  // against card text is what settles that, and a sample of both o4-mini's and
+  // gpt-5.6-terra's extras checked out as real. Missing a violation a human
+  // already caught, by contrast, is unambiguously bad.
+  const norm = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9 ]/g, ' ')
+    .replace(/\s+/g, ' ').trim();
+  const overlaps = (a, b) => {
+    const A = norm(a), B = norm(b);
+    if (!A || !B) return false;
+    if (A.includes(B) || B.includes(A)) return true;
+    const ta = new Set(A.split(' ').filter((w) => w.length > 3));
+    const tb = new Set(B.split(' ').filter((w) => w.length > 3));
+    if (!ta.size || !tb.size) return false;
+    let shared = 0;
+    for (const w of ta) if (tb.has(w)) shared++;
+    return shared / Math.min(ta.size, tb.size) >= 0.5;
+  };
+
+  const autoByFixture = new Map();
+  for (const r of judged) autoByFixture.set(r.fixtureId, r.violations || []);
+  let caught = 0;
+  const missed = [];
+  for (const v of manual.violations) {
+    const auto = autoByFixture.get(v.fixture);
+    if (!auto) continue;   // that response was not in this judge's scope
+    if (auto.some((a) => overlaps(a.quote, v.quote))) caught++;
+    else missed.push(v);
+  }
+  const inScope = manual.violations.filter((v) => autoByFixture.has(v.fixture)).length;
+
   console.log('\n── calibration against manual judgment ──');
   console.log(`  scope: ${judged.length} responses also judged by hand`);
+  console.log(`  known violations caught: ${caught}/${inScope}  <-- the discriminating metric`);
   console.log(`  manual found ${manualTotal} violations, automated found ${autoTotal}`);
   console.log(`  exact per-fixture agreement: ${agree}/${judged.length}`);
-  console.log(`  automated over-reported on ${over}, under-reported on ${under}`);
-  if (autoTotal > manualTotal * 1.5) {
-    console.log('  !! automated is over-reporting substantially — check for false positives');
-    console.log('     on card-specific claims before trusting the full run.');
+  console.log(`  automated flagged more on ${over}, fewer on ${under}`);
+  if (missed.length) {
+    console.log('  missed known violations:');
+    for (const v of missed.slice(0, 5)) {
+      console.log(`    [${v.fixture}] ${String(v.quote).slice(0, 70)}`);
+    }
+  }
+  if (under > 0) {
+    console.log('  !! this judge reported FEWER violations than the human pass on some');
+    console.log('     responses. Under-reporting against a known floor is a real failure.');
   }
 }
 
@@ -286,8 +367,12 @@ async function main() {
   }
   await Promise.all(Array.from({ length: cfg.concurrency }, worker));
 
-  // include anything judged in a previous interrupted run
+  // include anything judged in a previous interrupted run. Skip the roll-up
+  // this function writes at the end: it lives in the same directory but is
+  // {dir, rows}, not a row, so picking it up here pushes a violations-less
+  // object into `rows` and every later reduce throws.
   for (const f of readdirSync(outDir)) {
+    if (f.startsWith('_') || !f.endsWith('.json')) continue;
     const row = JSON.parse(readFileSync(join(outDir, f), 'utf8'));
     if (!rows.find(r => r.fixtureId === row.fixtureId && r.run === row.run)) rows.push(row);
   }

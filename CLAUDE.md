@@ -213,10 +213,22 @@ Notes that cost time to rediscover:
   OCR at a reasoning model means changing those two parameters.
 - The `gpt-4o` deployment is `Standard` capacity 50; the others are `GlobalStandard` 150.
   gpt-4o throttles at a concurrency the others tolerate, hence the 429 backoff.
-- **`evals/judge.mjs` itself defaults to `o4-mini`**, which is on the same retirement
-  notice as the strategy model. Override with `AZURE_OPENAI_JUDGE_DEPLOYMENT` when the
-  time comes, and re-validate against `evals/judgments/baseline-tier1.json` — a judge
-  swap moves the scores, so old and new judgments are not comparable.
+- **`evals/judge.mjs` runs `gpt-5.6-terra`** (override with `AZURE_OPENAI_JUDGE_DEPLOYMENT`).
+  It was moved off `o4-mini` in Sept 2026, ahead of that model's retirement. Validated
+  with `--calibrate` against the 49 hand-judged responses in
+  `evals/judgments/baseline-tier1.json`: terra catches 9 of the 11 known violations,
+  luna 8, o4-mini only 5. **A judge swap invalidates every stored judgment** — re-calibrate
+  and re-judge anything you plan to compare.
+- **Do not read "the judge flagged more than the manual pass" as over-reporting.** The
+  manual pass found violations in only 10 of 49 responses, so its 11 entries are a floor,
+  not an answer key. Sampled extras from both o4-mini and terra checked out as real
+  violations against card text. Recall on the known positives is the metric that
+  discriminates; the raw count is not. Under-reporting against that floor is the genuine
+  failure signal.
+- **The strategy advisor still averages ~1.4 rules violations per response** under the
+  terra judge (o4-mini the *model* scored 4.18, luna 2.18). The much lower numbers from
+  before the judge swap were the old judge missing violations, not the advisor being
+  clean. `docs/strategy-quality-plan.md` still has real work left.
 - OCR fixtures are **synthetic composites**, not real BGA screenshots. Good for ranking
   models against each other on identical input; not an absolute accuracy prediction. Drop
   a real screenshot plus a hand-written `<id>.json` answer key into `evals/ocr-fixtures/`

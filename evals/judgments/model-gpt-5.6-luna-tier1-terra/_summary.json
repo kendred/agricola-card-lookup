@@ -1,0 +1,517 @@
+{
+ "dir": "evals/reports/model-gpt-5.6-luna",
+ "rows": [
+  {
+   "fixtureId": "166zgs_r2",
+   "run": 1,
+   "round": 2,
+   "variant": "current",
+   "violations": [],
+   "error": "400 {\n  \"error\": {\n    \"message\": \"Unsupported value: 'temperature' does not support 0 with this model. Only the default (1) value is supported.\",\n    \"type\": \"invalid_request_error\",\n    \"param\": \"temper"
+  },
+  {
+   "fixtureId": "166zgs_r3",
+   "run": 1,
+   "round": 3,
+   "variant": "current",
+   "violations": [
+    {
+     "quote": "helps convert reed and wood into food during harvests",
+     "rule": "Basketmaker's Workshop converts Reed to Food during Harvests; it does not convert Wood to Food.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 26,
+   "usage": {
+    "completion_tokens": 2128,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 2048,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 11,
+     "engine_ttft_ms": 308,
+     "engine_ttlt_ms": 23388,
+     "pre_inference_ms": 207,
+     "service_tbt_ms": 11,
+     "service_ttft_ms": 734,
+     "service_ttlt_ms": 23801,
+     "user_visible_ttft_ms": 527
+    },
+    "prompt_tokens": 8290,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cache_write_tokens": 8287,
+     "cached_tokens": 0
+    },
+    "total_tokens": 10418
+   }
+  },
+  {
+   "fixtureId": "166zgs_r1",
+   "run": 1,
+   "round": 1,
+   "variant": "current",
+   "violations": [
+    {
+     "quote": "Fishing and Stone House cards are tempting but would commit early to narrower action spaces",
+     "rule": "Stone House Reconstruction can be used \"at any time\" to renovate a clay house to stone without placing a person; it does not require using or committing to an action space.",
+     "severity": "major"
+    },
+    {
+     "quote": "Milking Stool is the strongest standalone Minor Improvement in this hand",
+     "rule": "Milking Stool has a prerequisite of 2 Occupations, so it is not a standalone playable Minor Improvement in this state with no drafted Occupations.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 19,
+   "usage": {
+    "completion_tokens": 3083,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 2922,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 10,
+     "engine_ttft_ms": 270,
+     "engine_ttlt_ms": 32101,
+     "pre_inference_ms": 161,
+     "service_tbt_ms": 10,
+     "service_ttft_ms": 753,
+     "service_ttlt_ms": 32494,
+     "user_visible_ttft_ms": 592
+    },
+    "prompt_tokens": 8074,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cache_write_tokens": 8071,
+     "cached_tokens": 0
+    },
+    "total_tokens": 11157
+   }
+  },
+  {
+   "fixtureId": "166zgs_r5",
+   "run": 1,
+   "round": 5,
+   "variant": "current",
+   "violations": [
+    {
+     "quote": "with Basket Weaver adding a Major/Minor and resource angle",
+     "rule": "Basket Weaver does not grant a Major or Minor Improvement action. Its text immediately builds the specific Basketmaker's Workshop Major Improvement for 1 Stone and 1 Reed.",
+     "severity": "major"
+    },
+    {
+     "quote": "Seed Almanac can convert later minor plays into free Farmland actions",
+     "rule": "After a later Minor Improvement is played, Seed Almanac lets its owner pay 1 Food to plow 1 field. The plow is not free.",
+     "severity": "minor"
+    },
+    {
+     "quote": "Reed Belt provides only four scheduled reed gains for 2 Food",
+     "rule": "Reed Belt places Reed only on the remaining spaces for rounds 5, 8, 10, and 12. It does not guarantee all four gains if one or more of those round spaces are no longer remaining when it is played.",
+     "severity": "minor"
+    },
+    {
+     "quote": "Garden Claw needs multiple planted fields and a wood payment before its food arrives",
+     "rule": "Garden Claw costs 1 Wood, but its effect does not require multiple planted fields: even 1 planted field permits placement of Food on up to 3 remaining round spaces.",
+     "severity": "minor"
+    }
+   ],
+   "claimsChecked": 30,
+   "usage": {
+    "completion_tokens": 1291,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 1024,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 10,
+     "engine_ttft_ms": 196,
+     "engine_ttlt_ms": 12821,
+     "pre_inference_ms": 173,
+     "service_tbt_ms": 10,
+     "service_ttft_ms": 529,
+     "service_ttlt_ms": 13149,
+     "user_visible_ttft_ms": 356
+    },
+    "prompt_tokens": 8529,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cache_write_tokens": 8526,
+     "cached_tokens": 0
+    },
+    "total_tokens": 9820
+   }
+  },
+  {
+   "fixtureId": "166zgs_r4",
+   "run": 1,
+   "round": 4,
+   "variant": "current",
+   "violations": [
+    {
+     "quote": "so rooms and the Stage 2 growth action remain necessary.",
+     "rule": "The Stage 5 \"Family Growth Even without Room\" space permits Family Growth without a room, so neither rooms nor the Stage 2 Wish for Children space is universally necessary for growth.",
+     "severity": "major"
+    },
+    {
+     "quote": "It fills part of the food and grain-supply gap at no resource cost",
+     "rule": "Sheep Provider is an Occupation. Playing an Occupation requires a Lessons action and can require Food: on main-board Lessons each Occupation after the first costs 1 Food, and the extra 4-player Lessons space costs 1 or 2 Food.",
+     "severity": "major"
+    },
+    {
+     "quote": "Its harvest triggers provide both food and additional grain",
+     "rule": "Eternal Rye Cultivation gives 1 Food after a harvest with exactly 2 Grain in supply, or 1 additional Grain after a harvest with 3 or more Grain in supply. It does not give both rewards from one trigger.",
+     "severity": "major"
+    },
+    {
+     "quote": "the repeated field actions enabled by Seed Almanac and Barrow Pusher",
+     "rule": "Seed Almanac can allow a paid plow after later Minor Improvements, but Barrow Pusher does not grant or enable a field action; it gives 1 Clay and 1 Food for each new field tile received.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 20,
+   "usage": {
+    "completion_tokens": 4426,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 4094,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 11,
+     "engine_ttft_ms": 244,
+     "engine_ttlt_ms": 47902,
+     "pre_inference_ms": 189,
+     "service_tbt_ms": 11,
+     "service_ttft_ms": 566,
+     "service_ttlt_ms": 48218,
+     "user_visible_ttft_ms": 377
+    },
+    "prompt_tokens": 8252,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cache_write_tokens": 8249,
+     "cached_tokens": 0
+    },
+    "total_tokens": 12678
+   }
+  },
+  {
+   "fixtureId": "wmmytg_r1",
+   "run": 1,
+   "round": 1,
+   "variant": "current",
+   "violations": [],
+   "claimsChecked": 20,
+   "usage": {
+    "completion_tokens": 3409,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 3352,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 10,
+     "engine_ttft_ms": 170,
+     "engine_ttlt_ms": 35414,
+     "pre_inference_ms": 122,
+     "service_tbt_ms": 10,
+     "service_ttft_ms": 513,
+     "service_ttlt_ms": 35749,
+     "user_visible_ttft_ms": 391
+    },
+    "prompt_tokens": 8262,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cache_write_tokens": 8259,
+     "cached_tokens": 0
+    },
+    "total_tokens": 11671
+   }
+  },
+  {
+   "fixtureId": "wmmytg_r2",
+   "run": 1,
+   "round": 2,
+   "variant": "current",
+   "violations": [
+    {
+     "quote": "The current cards do not directly provide family growth or rooms",
+     "rule": "Riparian Builder states: \"Each time another player uses the 'Reed Bank' accumulation space, you can build a room\" (with a discount for clay or stone rooms).",
+     "severity": "major"
+    },
+    {
+     "quote": "Stone Weir requires 1 stone and repeated Fishing actions",
+     "rule": "Stone Weir costs 1 Stone and requires 2 Occupations. It triggers each time you use Fishing, but neither its card text nor the rules require repeated Fishing actions for it to be played or to function.",
+     "severity": "minor"
+    }
+   ],
+   "claimsChecked": 17,
+   "usage": {
+    "completion_tokens": 2190,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 2029,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 10,
+     "engine_ttft_ms": 220,
+     "engine_ttlt_ms": 23078,
+     "pre_inference_ms": 252,
+     "service_tbt_ms": 10,
+     "service_ttft_ms": 606,
+     "service_ttlt_ms": 23459,
+     "user_visible_ttft_ms": 354
+    },
+    "prompt_tokens": 8256,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cache_write_tokens": 8253,
+     "cached_tokens": 0
+    },
+    "total_tokens": 10446
+   }
+  },
+  {
+   "fixtureId": "wmmytg_r3",
+   "run": 1,
+   "round": 3,
+   "variant": "current",
+   "violations": [
+    {
+     "quote": "Animal Husbandry Worker supplies a Build Fences action",
+     "rule": "Animal Husbandry Worker grants its wood and Build Fences action only if there are exactly 3, 6, or 9 complete rounds left to play when it is played.",
+     "severity": "major"
+    },
+    {
+     "quote": "Shifting Cultivator directly fills the missing plow dimension by turning future wood-accumulation actions into a field",
+     "rule": "Shifting Cultivator does not give a field automatically from a wood accumulation action: on each such use, the player may additionally pay 3 Food to plow 1 field.",
+     "severity": "major"
+    },
+    {
+     "quote": "Mud Patch benefits from having planted or unplanted field space",
+     "rule": "Mud Patch permits holding 1 wild boar on each unplanted field tile only. Planted fields do not provide this boar-housing benefit.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 19,
+   "usage": {
+    "completion_tokens": 3037,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 2807,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 10,
+     "engine_ttft_ms": 193,
+     "engine_ttlt_ms": 31523,
+     "pre_inference_ms": 118,
+     "service_tbt_ms": 10,
+     "service_ttft_ms": 534,
+     "service_ttlt_ms": 31853,
+     "user_visible_ttft_ms": 416
+    },
+    "prompt_tokens": 8289,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cache_write_tokens": 8286,
+     "cached_tokens": 0
+    },
+    "total_tokens": 11326
+   }
+  },
+  {
+   "fixtureId": "wmmytg_r4",
+   "run": 1,
+   "round": 4,
+   "variant": "current",
+   "violations": [
+    {
+     "quote": "Mushroom Collector turns every wood accumulation action into 2 food while returning the wood to the accumulation space",
+     "rule": "Mushroom Collector is optional: immediately after using a wood accumulation space, you can exchange 1 Wood for 2 Food; only if you choose to do so is the Wood placed on that accumulation space.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 20,
+   "usage": {
+    "completion_tokens": 2409,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 2290,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 10,
+     "engine_ttft_ms": 205,
+     "engine_ttlt_ms": 24879,
+     "pre_inference_ms": 110,
+     "service_tbt_ms": 10,
+     "service_ttft_ms": 559,
+     "service_ttlt_ms": 25202,
+     "user_visible_ttft_ms": 449
+    },
+    "prompt_tokens": 8225,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cache_write_tokens": 8222,
+     "cached_tokens": 0
+    },
+    "total_tokens": 10634
+   }
+  },
+  {
+   "fixtureId": "wmmytg_r5",
+   "run": 1,
+   "round": 5,
+   "variant": "current",
+   "violations": [
+    {
+     "quote": "Trimmer only pays after repeated fencing",
+     "rule": "Trimmer says that in each work phase, after you enclose at least one farmyard space, you get 2 Stone. A single qualifying enclosure in a work phase is sufficient; repeated fencing is not required.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 19,
+   "usage": {
+    "completion_tokens": 2666,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 2560,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 10,
+     "engine_ttft_ms": 180,
+     "engine_ttlt_ms": 27506,
+     "pre_inference_ms": 128,
+     "service_tbt_ms": 10,
+     "service_ttft_ms": 529,
+     "service_ttlt_ms": 27853,
+     "user_visible_ttft_ms": 401
+    },
+    "prompt_tokens": 8535,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cache_write_tokens": 8532,
+     "cached_tokens": 0
+    },
+    "total_tokens": 11201
+   }
+  },
+  {
+   "fixtureId": "wmmytg_r6",
+   "run": 1,
+   "round": 6,
+   "variant": "current",
+   "violations": [
+    {
+     "quote": "It fills the immediate food-and-action gap by producing animals",
+     "rule": "Pioneering Spirit's rounds 6-8 action can provide a wild boar or cattle, but animals have no Food value without a cooking Improvement. The card itself does not provide Food or a cooking conversion.",
+     "severity": "major"
+    }
+   ],
+   "claimsChecked": 20,
+   "usage": {
+    "completion_tokens": 3560,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 3438,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 10,
+     "engine_ttft_ms": 182,
+     "engine_ttlt_ms": 37391,
+     "pre_inference_ms": 183,
+     "service_tbt_ms": 10,
+     "service_ttft_ms": 530,
+     "service_ttlt_ms": 37735,
+     "user_visible_ttft_ms": 348
+    },
+    "prompt_tokens": 8802,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cache_write_tokens": 8799,
+     "cached_tokens": 0
+    },
+    "total_tokens": 12362
+   }
+  },
+  {
+   "fixtureId": "wmmytg_r7",
+   "run": 1,
+   "round": 7,
+   "variant": "current",
+   "violations": [
+    {
+     "quote": "Animal Husbandry Worker, which supplies wood and a Build Fences action",
+     "rule": "Animal Husbandry Worker gives wood and a Build Fences action only if there are exactly 3, 6, or 9 complete rounds left to play; it does not always supply these benefits.",
+     "severity": "major"
+    },
+    {
+     "quote": "turning each wood accumulation action into a plow action for 3 Food",
+     "rule": "Shifting Cultivator says that each time you use a wood accumulation space, you can also pay 3 Food to plow 1 field. The plow is optional, not an automatic result of every wood-accumulation action.",
+     "severity": "minor"
+    },
+    {
+     "quote": "Food Basket has a reliable effect with only a 1 Reed cost",
+     "rule": "Food Basket costs 1 Reed and also requires 2 Occupations and 2 Improvements already played. Its effect is not available merely by paying 1 Reed.",
+     "severity": "major"
+    },
+    {
+     "quote": "Fodder Planter only enables sowing after breeding",
+     "rule": "Fodder Planter permits sowing during the breeding phase of each Harvest, for each newborn animal received; it is not an effect that occurs after breeding.",
+     "severity": "minor"
+    },
+    {
+     "quote": "Grain Bag, which needs a Bake improvement and repeated Grain Seeds use",
+     "rule": "Grain Bag can be played without a Bake improvement, and it triggers on each use of Grain Seeds. A single Grain Seeds use with a Bake improvement already produces its additional Grain; repeated uses are not required.",
+     "severity": "minor"
+    }
+   ],
+   "claimsChecked": 35,
+   "usage": {
+    "completion_tokens": 2396,
+    "completion_tokens_details": {
+     "accepted_prediction_tokens": 0,
+     "audio_tokens": 0,
+     "reasoning_tokens": 2046,
+     "rejected_prediction_tokens": 0
+    },
+    "latency_checkpoint": {
+     "engine_tbt_ms": 11,
+     "engine_ttft_ms": 186,
+     "engine_ttlt_ms": 26155,
+     "pre_inference_ms": 117,
+     "service_tbt_ms": 11,
+     "service_ttft_ms": 471,
+     "service_ttlt_ms": 26434,
+     "user_visible_ttft_ms": 354
+    },
+    "prompt_tokens": 9190,
+    "prompt_tokens_details": {
+     "audio_tokens": 0,
+     "cache_write_tokens": 9187,
+     "cached_tokens": 0
+    },
+    "total_tokens": 11586
+   }
+  }
+ ]
+}

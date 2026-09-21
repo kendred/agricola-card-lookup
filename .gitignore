@@ -23,3 +23,9 @@ evals/judgments/*-auto/
 # key is worth keeping: add it with `git add -f`.
 evals/ocr-fixtures/*.png
 evals/ocr-fixtures/*.json
+
+# Judge calibration and re-judge runs — one file per response, regenerable by
+# paying for another judging run. Same policy as the *-auto dirs: the per-
+# response files are ignored, the _summary.json roll-up is force-added.
+evals/judgments/calib-*/
+evals/judgments/*-tier1-terra/
