@@ -199,8 +199,15 @@ async function processImage(context, headers, endpoint, apiKey, deployment, imag
                 ],
             },
         ],
-        max_tokens: 1000,
-        temperature: 0.1,
+        // gpt-5.x reasoning models reject `temperature` outright and require
+        // `max_completion_tokens` in place of `max_tokens`. gpt-4o accepts this
+        // shape too, so the parameters are not tied to whichever deployment
+        // AZURE_OPENAI_DEPLOYMENT currently names.
+        //
+        // The budget now has to cover reasoning tokens as well as the answer.
+        // The old 1000 cap would be spent reasoning before a single card name
+        // was emitted; 4000 ran all 40 eval fixtures with zero truncations.
+        max_completion_tokens: 4000,
     };
 
     try {
@@ -298,8 +305,10 @@ async function processDetailExtraction(context, headers, endpoint, apiKey, deplo
                 ],
             },
         ],
-        max_tokens: 2000,
-        temperature: 0.1,
+        // Same parameter shape as the name-extraction call above. Detail
+        // extraction returns full card text for several cards at once, so it
+        // needs more room than that call on top of the reasoning budget.
+        max_completion_tokens: 6000,
     };
 
     try {
@@ -373,3 +382,12 @@ async function processDetailExtraction(context, headers, endpoint, apiKey, deplo
         };
     }
 }
+
+// --- Exports for the eval harness (evals/ocr-compare.mjs) ---
+// module.exports is the v3 handler itself; these ride along as properties so
+// api/src/functions/ocr.js keeps getting the function it expects. Sharing the
+// prompt means the harness and the live endpoint send byte-identical input,
+// so a model comparison measures the model and not a drifted copy of a prompt.
+module.exports.SYSTEM_PROMPT = SYSTEM_PROMPT;
+module.exports.DETAIL_EXTRACTION_PROMPT = DETAIL_EXTRACTION_PROMPT;
+module.exports.CARD_NAMES = CARD_NAMES;

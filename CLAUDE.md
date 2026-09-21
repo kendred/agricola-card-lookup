@@ -183,6 +183,45 @@ Push to `main` → GitHub Actions → Azure Static Web Apps. See `docs/azure-dep
 ## Testing
 No automated tests. Manual verification via browser. `test-strategy.html` is a test harness for the strategy advisor.
 
+### Model comparison harnesses (`evals/`)
+Used to choose a replacement model before a retirement deadline, and to re-check
+after any prompt change. Both call Azure OpenAI **directly** so nothing about the
+live site changes while a comparison runs, and both import the production prompt
+rather than a copy of it, so a comparison measures the model and not prompt drift.
+
+| Script | What it does |
+|---|---|
+| `evals/model-compare.mjs` | Strategy A/B. Same fixtures through several deployments. Writes `run.mjs`-shaped records to `evals/reports/model-<deployment>/`, so `check.mjs` and `judge.mjs` score them unchanged. |
+| `evals/ocr-fixtures/build.mjs` | Builds OCR fixtures: composites real `card-images/` art into hand-view screenshots via headless Chrome, with a generated answer key. |
+| `evals/ocr-compare.mjs` | OCR A/B. Scores recall / precision / exact-set / invented names per deployment. |
+
+```bash
+export AZURE_OPENAI_ENDPOINT=$(az cognitiveservices account show --name agricola-resource --resource-group rg-agricola --query properties.endpoint -o tsv)
+export AZURE_OPENAI_KEY=$(az cognitiveservices account keys list --name agricola-resource --resource-group rg-agricola --query key1 -o tsv)
+node evals/ocr-fixtures/build.mjs
+node evals/ocr-compare.mjs --deployments gpt-4o,gpt-5.6-terra
+node evals/model-compare.mjs --deployments o4-mini,gpt-5.6-terra --sample 12 --runs 2
+```
+
+Notes that cost time to rediscover:
+- **`api-version` `2025-04-01-preview` works for the gpt-5.x models too.** There is no
+  newer version on this resource; `2026-01-01-preview` 404s. A model migration does
+  **not** need the pin at `api/strategy/index.js` bumped.
+- **Reasoning models reject `temperature` and require `max_completion_tokens`.**
+  `ocr-compare.mjs` sends the legacy shape first and retries on the 400, recording which
+  shape worked. `api/ocr/index.js` still sends `max_tokens` + `temperature`, so pointing
+  OCR at a reasoning model means changing those two parameters.
+- The `gpt-4o` deployment is `Standard` capacity 50; the others are `GlobalStandard` 150.
+  gpt-4o throttles at a concurrency the others tolerate, hence the 429 backoff.
+- **`evals/judge.mjs` itself defaults to `o4-mini`**, which is on the same retirement
+  notice as the strategy model. Override with `AZURE_OPENAI_JUDGE_DEPLOYMENT` when the
+  time comes, and re-validate against `evals/judgments/baseline-tier1.json` — a judge
+  swap moves the scores, so old and new judgments are not comparable.
+- OCR fixtures are **synthetic composites**, not real BGA screenshots. Good for ranking
+  models against each other on identical input; not an absolute accuracy prediction. Drop
+  a real screenshot plus a hand-written `<id>.json` answer key into `evals/ocr-fixtures/`
+  and the scorer picks it up with no changes.
+
 Cheap pre-commit checks worth running:
 ```bash
 node --check api/strategy/index.js && diff -q data/agricola-cards.json api/data/agricola-cards.json && diff -q docs/agricola-strategy-guide.md api/docs/agricola-strategy-guide.md && diff -q docs/agricola-rules-reference.md api/docs/agricola-rules-reference.md

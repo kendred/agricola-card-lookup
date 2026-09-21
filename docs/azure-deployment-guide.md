@@ -43,18 +43,19 @@ The old method of creating an "Azure OpenAI" resource directly in the Azure Port
    - From the hub overview, click **+ New project**
    - Name it (e.g., `agricola-project`)
    - Hub-level config (region, resource group) is inherited automatically
-4. **Deploy two models** from within your project:
+4. **Deploy the model** from within your project:
    - Go to **Deployments** (in the left sidebar) → **+ Deploy model** → **Deploy base model**
+   - Model: **gpt-5.6-terra**
+   - Deployment name: `gpt-5.6-terra` (or any name — you'll reference it later)
+   - SKU: **GlobalStandard** (pay per token; an idle deployment costs nothing)
+   - Keep the remaining defaults → **Deploy**
 
-   **Deployment 1 — OCR (screenshot → card names):**
-   - Model: **gpt-4o**
-   - Deployment name: `gpt-4o` (or any name — you'll reference it later)
-   - Keep default settings → **Deploy**
-
-   **Deployment 2 — Strategy advisor:**
-   - Model: **o3**
-   - Deployment name: `o3` (or any name — you'll reference it later)
-   - Keep default settings → **Deploy**
+   One deployment serves both OCR and the strategy advisor. They were split
+   across `gpt-4o` and `o4-mini` until September 2026; an eval run (see
+   `evals/model-compare.mjs` and `evals/ocr-compare.mjs`) put gpt-5.6-terra
+   ahead of both on quality, and ahead of gpt-4o on price, so they were merged
+   onto it. Keeping them on separate deployments still works — set the two
+   environment variables below to different names.
 
 5. **Get your endpoint and key** — after deployment, note two things:
    - **Endpoint**: Use the base Azure AI Services URL, e.g., `https://your-resource.services.ai.azure.com` (found on the project overview page). **Important:** use only the base URL — do NOT include the `/api/projects/...` path that Foundry shows as the "Microsoft Foundry project endpoint."
@@ -127,8 +128,8 @@ The Azure Functions need your OpenAI credentials and a GitHub token for card sub
 |------|-------|
 | `AZURE_OPENAI_ENDPOINT` | `https://your-resource.services.ai.azure.com` |
 | `AZURE_OPENAI_KEY` | Your Key 1 from Step 2 |
-| `AZURE_OPENAI_DEPLOYMENT` | `gpt-4o` (or whatever you named the OCR deployment) |
-| `AZURE_OPENAI_STRATEGY_DEPLOYMENT` | `o3` (or whatever you named the strategy deployment) |
+| `AZURE_OPENAI_DEPLOYMENT` | `gpt-5.6-terra` (or whatever you named the OCR deployment) |
+| `AZURE_OPENAI_STRATEGY_DEPLOYMENT` | `gpt-5.6-terra` (or a different deployment, to run strategy on another model) |
 | `GITHUB_TOKEN` | A GitHub PAT with `issues:write` on this repo (see below) |
 
 4. Click **Save**
@@ -206,8 +207,8 @@ There's no `local.settings.json` in the repo (correctly — it should be gitigno
     "FUNCTIONS_WORKER_RUNTIME": "node",
     "AZURE_OPENAI_ENDPOINT": "https://your-endpoint.openai.azure.com/",
     "AZURE_OPENAI_KEY": "your-key-here",
-    "AZURE_OPENAI_DEPLOYMENT": "gpt-4o",
-    "AZURE_OPENAI_STRATEGY_DEPLOYMENT": "o3",
+    "AZURE_OPENAI_DEPLOYMENT": "gpt-5.6-terra",
+    "AZURE_OPENAI_STRATEGY_DEPLOYMENT": "gpt-5.6-terra",
     "GITHUB_TOKEN": "your-github-pat-here"
   }
 }
@@ -220,8 +221,8 @@ There's no `local.settings.json` in the repo (correctly — it should be gitigno
 | Item | Cost |
 |------|------|
 | Azure Static Web App (Free tier) | $0 |
-| Azure OpenAI — OCR calls via gpt-4o (10/day x 30 days, ~2K tokens each) | ~$1.50 |
-| Azure OpenAI — Strategy calls via o3 (5/day x 30 days, ~10K tokens each) | ~$5–8 |
+| Azure OpenAI — OCR calls via gpt-5.6-terra (10/day x 30 days) | ~$2–3 |
+| Azure OpenAI — Strategy calls via gpt-5.6-terra (5/day x 30 days) | ~$10–12 |
 | **Total for light personal use** | **~$7–10/mo** |
 
 The $200 free credit for new accounts covers many months of use.
@@ -244,8 +245,8 @@ The $200 free credit for new accounts covers many months of use.
 |----------|---------|-------------|
 | `AZURE_OPENAI_ENDPOINT` | Both functions | Full Azure OpenAI endpoint URL |
 | `AZURE_OPENAI_KEY` | Both functions | API key for Azure OpenAI |
-| `AZURE_OPENAI_DEPLOYMENT` | OCR function (+ strategy fallback) | Model deployment name for OCR (defaults to `gpt-4o`) |
-| `AZURE_OPENAI_STRATEGY_DEPLOYMENT` | Strategy function | Model deployment name for strategy advisor (defaults to `o3`) |
+| `AZURE_OPENAI_DEPLOYMENT` | OCR function (+ strategy fallback) | Model deployment name for OCR (defaults to `gpt-5.6-terra`) |
+| `AZURE_OPENAI_STRATEGY_DEPLOYMENT` | Strategy function | Model deployment name for strategy advisor (defaults to `gpt-5.6-terra`) |
 | `GITHUB_TOKEN` | `submit-card` function | Fine-grained PAT with `issues:write` on this repo — used to open a GitHub issue for each unrecognized card submitted by a user |
 
 ---

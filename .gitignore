@@ -16,3 +16,10 @@ evals/*.log
 evals/judgments/*-auto/
 # ...but keep the roll-up: regenerating it costs a paid judging run
 !evals/judgments/*-auto/_summary.json
+
+# Synthetic OCR fixtures — regenerable and deterministic for a given --seed
+# (node evals/ocr-fixtures/build.mjs), and several MB of PNGs. The builder is
+# tracked; its output is not. A REAL screenshot plus its hand-written answer
+# key is worth keeping: add it with `git add -f`.
+evals/ocr-fixtures/*.png
+evals/ocr-fixtures/*.json

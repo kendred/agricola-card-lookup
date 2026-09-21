@@ -376,7 +376,7 @@ app.http('strategy', {
         // Validate environment
         const endpoint = process.env.AZURE_OPENAI_ENDPOINT;
         const apiKey = process.env.AZURE_OPENAI_KEY;
-        const deployment = process.env.AZURE_OPENAI_STRATEGY_DEPLOYMENT || process.env.AZURE_OPENAI_DEPLOYMENT || 'o3';
+        const deployment = process.env.AZURE_OPENAI_STRATEGY_DEPLOYMENT || process.env.AZURE_OPENAI_DEPLOYMENT || 'gpt-5.6-terra';
 
         if (!endpoint || !apiKey) {
             return {
@@ -587,4 +587,4 @@ app.http('strategy', {
 
 // Exposed for the eval harness: lets a prompt-variant check verify what is
 // actually being sent without issuing a billed request.
-module.exports = { PROMPTS, buildUserMessage, hoistMisnestedFields };
+module.exports = { PROMPTS, buildUserMessage, hoistMisnestedFields, normalizeSuggestions };
