@@ -152,7 +152,8 @@ New cards arrive as **open GitHub issues labeled `card-submission`**, titled `[C
 - **Truncated names** → the issue title may be a fragment of the real card name.
 
 ## Draft Tool Concepts
-- **7 rounds**, 1 occupation + 1 minor picked per round. Hand sizes by round: `HAND_SIZE_BY_ROUND = 10/9/8/7/6/5/4`.
+- **7 rounds**, 1 occupation + 1 minor picked per round. Hand sizes by round come from `getHandSize(round, draftFormat)`: 10/9/8/7/6/5/4 in the standard format.
+- **Draft formats** (`DRAFT_FORMATS` in `draft.html`, stored as `draftFormat` in draft state, default `draft10`). BGA's "Draft 7 out of 10/9/8" and "Draft 7 cards" differ **only in the deal size**. Every round's hand shrinks by one from that deal, and rotation, returning hands and marking are unchanged. `keep10` ("Keep 7 out of 10 dealt") passes nothing: one 10+10 hand, keep 7 of each, recorded as rounds 1-7 so the summary, archive and sync paths stay the same. The welcome-screen picker resets to 7 of 10 every time on purpose. A non-default format shows in the header, and the API prompt names it only when it isn't 7 of 10, so standard prompts stay byte-identical for evals. Ranking stats (ADP especially) come from 10-pick-7 drafts.
 - **New vs. returning hands**: early rounds deal fresh hands; later rounds return a hand the user has seen before, minus everything taken since. "Marking phase" = the user identifies which cards remain in a returning hand.
 - **Hand rotation depends on player count** — see `getRotation(playerCount)` near the top of `draft.html`:
   - **4p**: hands `1,2,3,4,1,2,3`. Hands 1-3 come back in rounds 5-7; hand 4 appears only in round 4. First returning round is 5.

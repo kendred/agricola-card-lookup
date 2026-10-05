@@ -42,12 +42,23 @@ const COMPACT_INDEX_3P = buildCompactIndex(3);
 const draftStats = require('../lib/draft-stats.js');
 draftStats.init(CARDS.filter(c => !c.banned));
 
-// Cards of each type dealt per round; mirrors HAND_SIZE_BY_ROUND in draft.html.
-const HAND_SIZE_BY_ROUND = { 1: 10, 2: 9, 3: 8, 4: 7, 5: 6, 6: 5, 7: 4 };
+// Cards of each type in the hand held in a given round; mirrors getHandSize in
+// draft.html. dealSize is 10 for the standard "draft 7 of 10" format. BGA's other
+// draft formats deal 7, 8 or 9 and otherwise run identically. Keep mode passes
+// nothing, so its single hand is the full deal.
+const DEFAULT_DEAL_SIZE = 10;
+function getDealSize(body) {
+    const n = Number(body && body.dealSize);
+    return Number.isInteger(n) && n >= 7 && n <= 10 ? n : DEFAULT_DEAL_SIZE;
+}
+function getHandSize(round, dealSize, keepMode) {
+    if (keepMode) return dealSize;
+    return Math.max(dealSize - (round - 1), 1);
+}
 
 // Which physical hand appears in each round. Hand N is always first seen in
-// round N, which is what makes HAND_SIZE_BY_ROUND[handNumber] the size that hand
-// was originally dealt at.
+// round N, which is what makes getHandSize(handNumber) the size that hand was
+// originally dealt at.
 const ROTATION = {
     3: { 1: 1, 2: 2, 3: 3, 4: 1, 5: 2, 6: 3, 7: 1 },
     4: { 1: 1, 2: 2, 3: 3, 4: 4, 5: 1, 6: 2, 7: 3 },
@@ -216,9 +227,11 @@ function buildAnalysisBlock(body, playerCount, round) {
     // handSize is this round's deal; originalHandSize is the deal size of the round
     // this hand was FIRST seen in. On a returning hand those differ, and using the
     // current size for both grades a picked-over hand against a fresh-deal baseline.
-    const handSize = HAND_SIZE_BY_ROUND[round] || 4;
-    const handNumber = (ROTATION[playerCount] || ROTATION[4])[round] || round;
-    const originalHandSize = HAND_SIZE_BY_ROUND[handNumber] || handSize;
+    const dealSize = getDealSize(body);
+    const keepMode = body.keepMode === true;
+    const handSize = getHandSize(round, dealSize, keepMode);
+    const handNumber = keepMode ? 1 : ((ROTATION[playerCount] || ROTATION[4])[round] || round);
+    const originalHandSize = getHandSize(handNumber, dealSize, keepMode);
 
     // Tag survival for a returning hand is resolved from the cards actually seen
     // before. Without that history the known-hand path finds no surviving tagged
@@ -234,7 +247,8 @@ function buildAnalysisBlock(body, playerCount, round) {
             round,
             body.seenHands || null,
             body.draftedByRound || null,
-            originalHandSize
+            originalHandSize,
+            { dealSize, passing: !keepMode }
         );
     } catch (err) {
         return '';
@@ -296,7 +310,33 @@ function buildUserMessage(body, variant) {
     const rotationNote = playerCount === 3
         ? '3-player draft: 3 distinct hands, each passes around 3 times. Rotation R1=H1, R2=H2, R3=H3, R4=H1, R5=H2, R6=H3, R7=H1. Returning rounds start at R4. H1 is seen 3 times, H2/H3 twice.'
         : '4-player draft: 4 distinct hands. Rotation R1=H1, R2=H2, R3=H3, R4=H4, R5=H1, R6=H2, R7=H3. Returning rounds start at R5. H4 is seen only once.';
-    let msg = `PLAYER COUNT: ${playerCount}\nGAME FORMAT: ${rotationNote}\nCURRENT ROUND: ${round}\n\n`;
+    let msg;
+    if (body.keepMode === true) {
+        // Keep mode has no rounds and no passing, so the rotation note and round
+        // number would only mislead. The stage-depth rules key off the round, so
+        // they are overridden explicitly.
+        msg = `PLAYER COUNT: ${playerCount}\n`
+            + 'DRAFT FORMAT: Keep 7 out of 10 dealt. There is NO passing and there are no further hands. '
+            + 'The player was dealt the 10 occupations and 10 minor improvements below and keeps exactly 7 of each; '
+            + 'the other 3 of each are discarded. This is the only drafting decision, so give a full analysis '
+            + '(ignore the early-round brevity guidance). Analyze the hand as a whole: which 7+7 form the most '
+            + 'coherent strategy. Use "suggestions" for the 2 most important keeps of each type, and name the '
+            + '3 occupations and 3 minor improvements to discard in "overall_analysis".\n\n';
+    } else {
+        msg = `PLAYER COUNT: ${playerCount}\nGAME FORMAT: ${rotationNote}\n`;
+        const dealSize = getDealSize(body);
+        // Only stated for non-standard formats, so standard-format prompts stay
+        // byte-identical to what the evals were run against.
+        if (dealSize !== DEFAULT_DEAL_SIZE) {
+            msg += `DRAFT FORMAT: Draft 7 out of ${dealSize}. Each hand is dealt ${dealSize} occupations and ${dealSize} minor improvements `
+                + `(hand sizes by round: ${[1, 2, 3, 4, 5, 6, 7].map(r => getHandSize(r, dealSize, false)).join('/')}), `
+                + (dealSize === 7
+                    ? 'so every dealt card gets drafted and round 7 is a forced pick'
+                    : `so ${dealSize - 7} of each type per hand ${dealSize - 7 === 1 ? 'is' : 'are'} never drafted`)
+                + '.\n';
+        }
+        msg += `CURRENT ROUND: ${round}\n\n`;
+    }
 
     msg += `CURRENT HAND (choose from these cards):\n${JSON.stringify(handCards, null, 1)}\n\n`;
     if (draftedCards.length > 0) {

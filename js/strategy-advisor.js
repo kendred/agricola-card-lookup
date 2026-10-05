@@ -80,7 +80,11 @@ var strategyAdvisor = (function () {
     // onProgress(partialState): optional callback fired whenever the recovery parser
     // produces a richer snapshot than the previous emit. Callers can merge this into
     // UI state for progressive rendering.
-    async function getAdvice(handNames, draftedNames, othersDrafted, currentRound, playerCount, onProgress, history) {
+    //
+    // format: optional { dealSize, keep } for non-standard BGA draft formats. Both
+    // are omitted from the request for the standard 7-of-10 draft, so those
+    // requests are unchanged.
+    async function getAdvice(handNames, draftedNames, othersDrafted, currentRound, playerCount, onProgress, history, format) {
         var response = await fetch(STRATEGY_PATH, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -95,6 +99,8 @@ var strategyAdvisor = (function () {
                 // buildAnalysisBlock in api/strategy/index.js.
                 seenHands: (history && history.seenHands) || undefined,
                 draftedByRound: (history && history.draftedByRound) || undefined,
+                dealSize: (format && format.dealSize && format.dealSize !== 10) ? format.dealSize : undefined,
+                keepMode: (format && format.keep) ? true : undefined,
             }),
         });
 

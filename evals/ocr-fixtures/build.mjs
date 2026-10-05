@@ -44,7 +44,7 @@ const DEFAULTS = {
 };
 
 /**
- * Hand sizes mirror HAND_SIZE_BY_ROUND in draft.html (10 down to 4), so the
+ * Hand sizes mirror getHandSize() in draft.html for the standard 7-of-10 format (10 down to 4), so the
  * fixtures cover the range of screenshots a user actually uploads.
  *
  * `scale` multiplies the card art's native 183px width. 1.0 is the small,

@@ -16,8 +16,13 @@ var draftStats = (function () {
     var cardsByName = {};   // { cardName: cardObject }
     var initialized = false;
 
-    // Hand sizes by round (matches HAND_SIZE_BY_ROUND in draft.html)
-    var HAND_SIZE_BY_ROUND_STATS = { 1: 10, 2: 9, 3: 8, 4: 7, 5: 6, 6: 5, 7: 4 };
+    // Hand size in a given round: the per-type deal size minus one card per prior
+    // round (matches getHandSize in draft.html). dealSize is 10 for the standard
+    // "draft 7 of 10" format; the other BGA formats deal 7, 8 or 9.
+    var DEFAULT_DEAL_SIZE = 10;
+    function handSizeForRound(round, dealSize) {
+        return Math.max((dealSize || DEFAULT_DEAL_SIZE) - (round - 1), 1);
+    }
 
     // Hand rotation: which physical hand number appears in each round, by player count
     var ROTATION_BY_PLAYER_COUNT = {
@@ -375,7 +380,9 @@ var draftStats = (function () {
     // --- Get all stats for a hand ---
     // seenHands: { roundNum: [cardName, ...] } — cards seen in each prior round
     // userDrafted: { roundNum: { occupation: name, minor: name } } — user's picks per round
-    function analyzeHand(handCards, handSize, playerCount, currentRound, seenHands, userDrafted, originalHandSize) {
+    // format (optional): { dealSize, passing }. Defaults to the standard 7-of-10 draft.
+    //   passing === false is the "keep 7 of 10" format: no hands follow this one.
+    function analyzeHand(handCards, handSize, playerCount, currentRound, seenHands, userDrafted, originalHandSize, format) {
         if (!initialized) return null;
 
         var occCards = handCards.filter(function (c) { return c.type === 'Occupation' && typeof c.rank === 'number' && isFinite(c.rank); });
@@ -461,11 +468,14 @@ var draftStats = (function () {
         // Current round's hand — it may return later, and we know its cards
         if (currentHandNum !== undefined) handNumToFirstRound[currentHandNum] = round;
 
-        for (var fr = round + 1; fr <= 7; fr++) {
+        var dealSize = (format && format.dealSize) || DEFAULT_DEAL_SIZE;
+        var lastRound = (format && format.passing === false) ? round : 7;
+
+        for (var fr = round + 1; fr <= lastRound; fr++) {
             var futureHandNum = rotation[fr];
             if (futureHandNum === undefined) continue;
             var passes = Math.min(fr - 1, pc - 1);
-            var futureHandSize = HAND_SIZE_BY_ROUND_STATS[fr] || 4;
+            var futureHandSize = handSizeForRound(fr, dealSize);
 
             if (handNumToFirstRound[futureHandNum] !== undefined) {
                 // Returning hand — resolve to actual card objects

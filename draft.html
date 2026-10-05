@@ -6,7 +6,7 @@
     <link rel="icon" href="Icons/Grain.webp" data-alternate-href="Icons/document.svg">
     <title data-classic-title="Agricola Draft Tool" data-alternate-title="[GRCS] Planning (Draft)">Agricola Draft Tool</title>
     <script src="js/theme.js?v=2"></script>
-    <link rel="stylesheet" href="css/draft.css?v=4">
+    <link rel="stylesheet" href="css/draft.css?v=5">
     <link rel="stylesheet" href="css/themes.css?v=3">
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
@@ -29,7 +29,31 @@
 const { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } = React;
 
 // ─── Constants ──────────────────────────────────────────────────────
-const HAND_SIZE_BY_ROUND = { 1: 10, 2: 9, 3: 8, 4: 7, 5: 6, 6: 5, 7: 4 };
+// BGA draft formats. Every format ends with 7 occupations + 7 minors; the
+// "draft" formats differ only in how many of each are dealt per hand, which
+// shifts every round's hand size. "keep" deals 10 of each and passes nothing.
+const DRAFT_FORMATS = {
+    draft10: { label: 'Draft 7 out of 10', short: '7 of 10', dealSize: 10, passing: true },
+    draft9:  { label: 'Draft 7 out of 9',  short: '7 of 9',  dealSize: 9,  passing: true },
+    draft8:  { label: 'Draft 7 out of 8',  short: '7 of 8',  dealSize: 8,  passing: true },
+    draft7:  { label: 'Draft 7 cards',     short: '7 of 7',  dealSize: 7,  passing: true },
+    keep10:  { label: 'Keep 7 out of 10 dealt (no passing)', short: 'Keep 7 of 10', dealSize: 10, passing: false },
+};
+const DEFAULT_DRAFT_FORMAT = 'draft10';
+const DRAFT_FORMAT_PREF_KEY = 'agricola-draft-format';
+
+function normalizeDraftFormat(key) {
+    return Object.prototype.hasOwnProperty.call(DRAFT_FORMATS, key) ? key : DEFAULT_DRAFT_FORMAT;
+}
+function getDraftFormat(key) {
+    return DRAFT_FORMATS[normalizeDraftFormat(key)];
+}
+// Cards of each type in the hand you hold in `round`.
+function getHandSize(round, formatKey) {
+    const f = getDraftFormat(formatKey);
+    if (!f.passing) return f.dealSize;
+    return Math.max(f.dealSize - ((parseInt(round) || 1) - 1), 1);
+}
 
 // Rotation depends on player count.
 // 4p: H1,H2,H3,H4,H1,H2,H3 (4 distinct hands, each seen twice except H4)
@@ -578,7 +602,7 @@ function TagPills({ tags, abbreviated = true }) {
 }
 
 // ─── HandColumn Component ───────────────────────────────────────────
-function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSelectCard, selectedCardName, showRemove, fadedCardNames, onToggleFaded, highlightedCardNames, suggestions, expandedSuggestion, onToggleSuggestion, onEditTempCard, cardQualities }) {
+function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSelectCard, selectedCardName, selectedCardNames, showRemove, fadedCardNames, onToggleFaded, highlightedCardNames, suggestions, expandedSuggestion, onToggleSuggestion, onEditTempCard, cardQualities }) {
     const count = cards.length;
     const fadedSet = useMemo(() => new Set(fadedCardNames || []), [fadedCardNames]);
     const highlightedSet = useMemo(() => new Set(highlightedCardNames || []), [highlightedCardNames]);
@@ -622,7 +646,7 @@ function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSele
                     </div>
                 )}
                 {sortedCards.map(card => {
-                    const isSelected = card.name === selectedCardName;
+                    const isSelected = card.name === selectedCardName || (!!selectedCardNames && selectedCardNames.includes(card.name));
                     const isFaded = fadedSet.has(card.name);
                     const isHighlighted = highlightedSet.has(card.name);
                     const suggestion = suggestionMap[card.name];
@@ -1354,11 +1378,13 @@ function CardDetailPopover({ card, anchorRect, onClose, wheelWatchNote, onWheelW
 }
 
 // ─── SummaryView Component ──────────────────────────────────────────
-function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, onCardClick, playedCards, onTogglePlayed, readOnly, playerCount = 4, ghostAssignments = {}, onAssignGhostPick }) {
+function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, onCardClick, playedCards, onTogglePlayed, readOnly, playerCount = 4, keepMode = false, ghostAssignments = {}, onAssignGhostPick }) {
     const SUMMARY_VIEW_KEY = 'agricola-summary-view';
-    const [viewMode, setViewMode] = useState(
+    const [storedViewMode, setViewMode] = useState(
         () => localStorage.getItem(SUMMARY_VIEW_KEY) || 'myhand'
     );
+    // Keep mode passes nothing, so there are no opponents' cards to show.
+    const viewMode = keepMode ? 'myhand' : storedViewMode;
     const [expandedSlotId, setExpandedSlotId] = useState(null);
 
     function switchView(mode) {
@@ -1585,7 +1611,7 @@ function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, 
             <div className="summary-title">
                 {viewMode === 'myhand' ? 'Draft Complete — Your Final Hand' : "Draft Complete — Opponents' Cards"}
             </div>
-            <div className="summary-toggle">
+            {!keepMode && <div className="summary-toggle">
                 <button
                     className={`toggle-btn${viewMode === 'myhand' ? ' active' : ''}`}
                     onClick={() => switchView('myhand')}
@@ -1598,7 +1624,7 @@ function SummaryView({ draftedCards, cardMap, onNewDraft, hands, othersDrafted, 
                 >
                     Opponents' Cards
                 </button>
-            </div>
+            </div>}
 
             {viewMode === 'myhand' ? (
                 <div className="summary-columns">
@@ -1689,6 +1715,7 @@ function DraftHistoryModal({ onClose, onSelect }) {
                             </div>
                             <div className="history-entry-meta">
                                 {meta.playerCount ? `${meta.playerCount}p` : ''}
+                                {normalizeDraftFormat(meta.draftFormat) !== DEFAULT_DRAFT_FORMAT && ` · ${getDraftFormat(meta.draftFormat).short}`}
                                 {meta.archetypes && meta.archetypes.length > 0 && (
                                     <span> · {meta.archetypes.join(' / ')}</span>
                                 )}
@@ -1733,6 +1760,7 @@ function HistoryEntryViewer({ id, cardMap, onClose, onCardClick }) {
                         onTogglePlayed={() => {}}
                         readOnly={true}
                         playerCount={entry.state.playerCount === 3 ? 3 : 4}
+                        keepMode={!getDraftFormat(entry.state.draftFormat).passing}
                         ghostAssignments={entry.state.ghostAssignments || {}}
                     />
                 )}
@@ -1750,12 +1778,18 @@ function DraftApp() {
     // Draft state — all of these get persisted to localStorage
     const [currentRound, setCurrentRound] = useState(1);
     const [playerCount, setPlayerCount] = useState(4);
+    const [draftFormat, setDraftFormat] = useState(DEFAULT_DRAFT_FORMAT);
     const [draftStarted, setDraftStarted] = useState(false);
     const [currentHandNames, setCurrentHandNames] = useState([]);
     const [hands, setHands] = useState({});
     const [draftedCards, setDraftedCards] = useState({});
     const [selectedOccupation, setSelectedOccupation] = useState(null);
     const [selectedMinor, setSelectedMinor] = useState(null);
+    // Keep 7 of 10 format: the cards ticked to keep (both types)
+    const [keptCards, setKeptCards] = useState([]);
+    // Format picked on the welcome screen. Deliberately not remembered: 7 of 10
+    // is what's almost always played, so every new draft starts there.
+    const [newDraftFormat, setNewDraftFormat] = useState(DEFAULT_DRAFT_FORMAT);
     const [sortKey, setSortKey] = useState('rank');
 
     // Rounds 5-7: marking phase + others' drafted cards
@@ -1913,6 +1947,7 @@ function DraftApp() {
 
                     setCurrentRound(saved.currentRound || 1);
                     setPlayerCount(saved.playerCount === 3 ? 3 : 4);
+                    setDraftFormat(normalizeDraftFormat(saved.draftFormat));
                     setDraftStarted(true);
                     setCurrentHandNames(filterNames(saved.currentHandNames));
                     setSortKey(saved.sortKey || 'rank');
@@ -2003,6 +2038,7 @@ function DraftApp() {
         saveState({
             currentRound,
             playerCount,
+            draftFormat,
             draftStarted,
             currentHandNames,
             hands,
@@ -2021,7 +2057,7 @@ function DraftApp() {
             ghostAssignments,
             autoAdviceTriggered: autoAdviceTriggeredRef.current,
         });
-    }, [restoredFromStorage, currentRound, playerCount, draftStarted, currentHandNames, hands, draftedCards, sortKey, markingPhase, markedRemaining, othersDrafted, farmGrid, strategyNotes, aiEnabled, manualDimensions, wheelWatch, tempCards, playedCards, ghostAssignments, strategyResult]);
+    }, [restoredFromStorage, currentRound, playerCount, draftFormat, draftStarted, currentHandNames, hands, draftedCards, sortKey, markingPhase, markedRemaining, othersDrafted, farmGrid, strategyNotes, aiEnabled, manualDimensions, wheelWatch, tempCards, playedCards, ghostAssignments, strategyResult]);
 
     // Auto-trigger AI advice when draft completes.
     // handleGetAdvice is held in a ref so this effect doesn't re-run every time
@@ -2050,6 +2086,7 @@ function DraftApp() {
             const stateObj = {
                 currentRound,
                 playerCount,
+                draftFormat,
                 draftStarted,
                 currentHandNames,
                 hands,
@@ -2079,7 +2116,7 @@ function DraftApp() {
                 cloudSaveTimerRef.current = null;
             }
         };
-    }, [restoredFromStorage, currentUser, draftStarted, draftComplete, currentRound, playerCount, currentHandNames, hands, draftedCards, sortKey, markingPhase, markedRemaining, othersDrafted, farmGrid, strategyNotes, aiEnabled, manualDimensions, wheelWatch, tempCards, playedCards]);
+    }, [restoredFromStorage, currentUser, draftStarted, draftComplete, currentRound, playerCount, draftFormat, currentHandNames, hands, draftedCards, sortKey, markingPhase, markedRemaining, othersDrafted, farmGrid, strategyNotes, aiEnabled, manualDimensions, wheelWatch, tempCards, playedCards]);
 
     // Archive completed drafts to cloud history, then clear active slot.
     useEffect(() => {
@@ -2094,6 +2131,7 @@ function DraftApp() {
         const stateObj = {
             currentRound,
             playerCount,
+            draftFormat,
             draftStarted,
             currentHandNames,
             hands,
@@ -2124,6 +2162,7 @@ function DraftApp() {
 
         const summaryMeta = {
             playerCount,
+            draftFormat,
             archetypes,
             occupationNames,
             minorNames,
@@ -2133,7 +2172,7 @@ function DraftApp() {
         const arraysEqual = (a, b) => a.length === b.length && a.every((v, i) => v === b[i]);
 
         // Dedupe: if the most recent history entry matches this draft's
-        // occ/min/playerCount, skip the archive but still drop the active slot.
+        // occ/min/playerCount/format, skip the archive but still drop the active slot.
         // Common cause: cold reload of an already-archived completed draft when
         // deleteActiveDraft failed or didn't run.
         draftSync.listHistory()
@@ -2143,7 +2182,8 @@ function DraftApp() {
                 const m = latest.summaryMeta;
                 return arraysEqual(m.occupationNames || [], occupationNames)
                     && arraysEqual(m.minorNames || [], minorNames)
-                    && (m.playerCount || 0) === playerCount;
+                    && (m.playerCount || 0) === playerCount
+                    && normalizeDraftFormat(m.draftFormat) === draftFormat;
             })
             .catch(() => false)
             .then(isDuplicate => {
@@ -2206,7 +2246,8 @@ function DraftApp() {
 
     // Is this a returning-hand round?
     const rotation = useMemo(() => getRotation(playerCount), [playerCount]);
-    const isReturningRound = currentRound >= rotation.firstReturningRound && currentRound <= 7;
+    const isKeepFormat = !getDraftFormat(draftFormat).passing;
+    const isReturningRound = !isKeepFormat && currentRound >= rotation.firstReturningRound && currentRound <= 7;
 
     // Current hand card objects split by type
     const currentHandCards = useMemo(() => {
@@ -2232,9 +2273,10 @@ function DraftApp() {
         const statsCards = isReturningRound ? [...availableOccs, ...availableMins] : currentHandCards;
         if (statsCards.length === 0) return null;
         const targetHand = rotation.roundToHand[currentRound];
-        const originalHandSize = HAND_SIZE_BY_ROUND[targetHand] || HAND_SIZE_BY_ROUND[currentRound] || 10;
-        return draftStats.analyzeHand(statsCards, HAND_SIZE_BY_ROUND[currentRound] || 10, playerCount, currentRound, hands, draftedCards, originalHandSize);
-    }, [currentHandCards, availableOccs, availableMins, isReturningRound, currentRound, playerCount, hands, draftedCards, rotation]);
+        // Hand N is first seen in round N, so its deal size is the round-N hand size.
+        const originalHandSize = getHandSize(isKeepFormat ? 1 : (targetHand || currentRound), draftFormat);
+        return draftStats.analyzeHand(statsCards, getHandSize(currentRound, draftFormat), playerCount, currentRound, hands, draftedCards, originalHandSize, getDraftFormat(draftFormat));
+    }, [currentHandCards, availableOccs, availableMins, isReturningRound, currentRound, playerCount, hands, draftedCards, rotation, draftFormat, isKeepFormat]);
 
     // Set of all card names used across all rounds (to prevent duplicates in search)
     const allUsedCardNames = useMemo(() => {
@@ -2245,7 +2287,7 @@ function DraftApp() {
         return names;
     }, [currentHandNames, hands]);
 
-    const expectedHandSize = HAND_SIZE_BY_ROUND[currentRound] || 10;
+    const expectedHandSize = getHandSize(currentRound, draftFormat);
 
     // For returning rounds, hand is "full" once auto-populated (no manual entry needed)
     const handIsFull = isReturningRound
@@ -2299,6 +2341,7 @@ function DraftApp() {
         setDraftedCards({});
         setSelectedOccupation(null);
         setSelectedMinor(null);
+        setKeptCards([]);
         setSortKey('rank');
         setMarkingPhase(false);
         setOthersDrafted([]);
@@ -2323,8 +2366,10 @@ function DraftApp() {
         setExtractingDetails(false);
     }, [clearScreenshotBanner]);
 
-    const handleNewDraft = (pc = 4) => {
+    const handleNewDraft = (pc = 4, format = DEFAULT_DRAFT_FORMAT) => {
         setPlayerCount(pc === 3 ? 3 : 4);
+        setDraftFormat(normalizeDraftFormat(format));
+        setNewDraftFormat(DEFAULT_DRAFT_FORMAT);
         resetDraftState();
         setDraftStarted(true);
     };
@@ -2385,13 +2430,13 @@ function DraftApp() {
         setTempCards(prev => ({ ...prev, [name]: card }));
         setCurrentHandNames(prev => {
             if (prev.includes(name)) return prev;
-            const limit = HAND_SIZE_BY_ROUND[currentRound] || 10;
+            const limit = getHandSize(currentRound, draftFormat);
             const typeCount = prev.map(n => cardMap[n]).filter(c => c && c.type === type).length;
             if (typeCount >= limit) return prev;
             return [...prev, name];
         });
         submitCardInBackground({ name, type, description: description || '', cost: cost || '', prerequisites: prerequisites || '', vps: vps || '' });
-    }, [cardMap, currentRound, submitCardInBackground]);
+    }, [cardMap, currentRound, draftFormat, submitCardInBackground]);
 
     const editTempCard = useCallback((oldName, newName, { description, cost, prerequisites, vps } = {}) => {
         setTempCards(prev => {
@@ -2413,15 +2458,16 @@ function DraftApp() {
             if (prev.includes(card.name)) return prev;
             const currentCards = prev.map(n => cardMap[n]).filter(Boolean);
             const typeCount = currentCards.filter(c => c.type === card.type).length;
-            if (typeCount >= (HAND_SIZE_BY_ROUND[currentRound] || 10)) return prev;
+            if (typeCount >= getHandSize(currentRound, draftFormat)) return prev;
             return [...prev, card.name];
         });
-    }, [cardMap, currentRound]);
+    }, [cardMap, currentRound, draftFormat]);
 
     const handleRemoveCard = useCallback((cardName) => {
         setCurrentHandNames(prev => prev.filter(n => n !== cardName));
         if (cardName === selectedOccupation) setSelectedOccupation(null);
         if (cardName === selectedMinor) setSelectedMinor(null);
+        setKeptCards(prev => prev.filter(n => n !== cardName));
         setTempCards(prev => {
             if (!prev[cardName]) return prev;
             const updated = { ...prev };
@@ -2434,7 +2480,7 @@ function DraftApp() {
     const handleAddCards = useCallback((cardNames) => {
         setCurrentHandNames(prev => {
             let updated = [...prev];
-            const limit = HAND_SIZE_BY_ROUND[currentRound] || 10;
+            const limit = getHandSize(currentRound, draftFormat);
             cardNames.forEach(name => {
                 if (updated.includes(name)) return;
                 const card = cardMap[name];
@@ -2445,7 +2491,7 @@ function DraftApp() {
             });
             return updated;
         });
-    }, [cardMap, currentRound]);
+    }, [cardMap, currentRound, draftFormat]);
 
     // Screenshot processing handler
     const handleScreenshotProcess = useCallback(async (imageBlob) => {
@@ -2504,7 +2550,7 @@ function DraftApp() {
                     if (!detailedCards || detailedCards.length === 0) return;
                     const autoAddedNames = [];
                     const skippedSlotsFull = [];
-                    const limit = HAND_SIZE_BY_ROUND[currentRound] || 10;
+                    const limit = getHandSize(currentRound, draftFormat);
                     // Track type counts as we add cards (handle multi-card extraction correctly)
                     const typeCounters = {};
                     currentHandNames.forEach(n => {
@@ -2557,7 +2603,7 @@ function DraftApp() {
         } finally {
             if (!isStale()) setScreenshotProcessing(false);
         }
-    }, [screenshotProcessing, cards, cardMap, currentHandNames, allUsedCardNames, currentRound, handleAddCards, isReturningRound, markingPhase, markedRemaining, addTempCard]);
+    }, [screenshotProcessing, cards, cardMap, currentHandNames, allUsedCardNames, currentRound, draftFormat, handleAddCards, isReturningRound, markingPhase, markedRemaining, addTempCard]);
 
     // Manual dimension editing (used when AI recommendations are toggled off)
     const handleManualDimensionChange = useCallback((key, field, value) => {
@@ -2610,7 +2656,8 @@ function DraftApp() {
                 currentRound,
                 playerCount,
                 onProgress,
-                { seenHands: hands, draftedByRound: draftedCards }
+                { seenHands: hands, draftedByRound: draftedCards },
+                { dealSize: getDraftFormat(draftFormat).dealSize, keep: isKeepFormat }
             );
             if (isStale()) return;
             setStrategyResult(result);
@@ -2627,7 +2674,7 @@ function DraftApp() {
         } finally {
             if (!isStale()) setStrategyLoading(false);
         }
-    }, [strategyLoading, currentHandNames, draftedCards, othersDrafted, currentRound, playerCount]);
+    }, [strategyLoading, currentHandNames, draftedCards, othersDrafted, currentRound, playerCount, draftFormat, isKeepFormat]);
 
     const handleToggleSuggestion = useCallback((cardName) => {
         setExpandedSuggestion(prev => prev === cardName ? null : cardName);
@@ -2751,6 +2798,42 @@ function DraftApp() {
         setCurrentRound(prev => prev + 1);
     }, [selectedOccupation, selectedMinor, currentHandNames, currentRound, clearScreenshotBanner]);
 
+    // ─── Keep 7 of 10 ───
+    const KEEP_COUNT = 7;
+    const keptOccs = useMemo(() => keptCards.filter(n => cardMap[n] && cardMap[n].type === 'Occupation'), [keptCards, cardMap]);
+    const keptMins = useMemo(() => keptCards.filter(n => cardMap[n] && cardMap[n].type === 'Minor Improvement'), [keptCards, cardMap]);
+    const canConfirmKeep = keptOccs.length === KEEP_COUNT && keptMins.length === KEEP_COUNT;
+
+    const handleToggleKeep = useCallback((cardName) => {
+        setKeptCards(prev => {
+            if (prev.includes(cardName)) return prev.filter(n => n !== cardName);
+            const card = cardMap[cardName];
+            if (!card) return prev;
+            const sameType = prev.filter(n => cardMap[n] && cardMap[n].type === card.type).length;
+            if (sameType >= KEEP_COUNT) return prev;
+            return [...prev, cardName];
+        });
+    }, [cardMap]);
+
+    // Record the keep as rounds 1-7 (one occ + one minor each, best rank first) so
+    // the summary, archive, and cloud-sync paths see the same shape as a draft.
+    const handleConfirmKeep = useCallback(() => {
+        if (!canConfirmKeep) return;
+        const byRank = (a, b) => rankSortValue(cardMap[a]) - rankSortValue(cardMap[b]);
+        const occs = [...keptOccs].sort(byRank);
+        const mins = [...keptMins].sort(byRank);
+        const picks = {};
+        for (let i = 0; i < KEEP_COUNT; i++) {
+            picks[i + 1] = { occupation: occs[i], minor: mins[i] };
+        }
+        setHands({ 1: [...currentHandNames] });
+        setDraftedCards(picks);
+        setCurrentHandNames([]);
+        setKeptCards([]);
+        clearScreenshotBanner();
+        setCurrentRound(KEEP_COUNT + 1);
+    }, [canConfirmKeep, keptOccs, keptMins, cardMap, currentHandNames, clearScreenshotBanner]);
+
     const handleUndo = useCallback(() => {
         if (currentRound <= 1) return;
         const prevRound = currentRound - 1;
@@ -2796,7 +2879,10 @@ function DraftApp() {
                         <span className="theme-heading-alternate">[GRCS] Planning (Draft)</span>
                     </h1>
                     <div className="draft-header-right">
-                        {draftStarted && !draftComplete && (
+                        {draftStarted && !draftComplete && isKeepFormat && (
+                            <div className="round-indicator">Choose 7 + 7</div>
+                        )}
+                        {draftStarted && !draftComplete && !isKeepFormat && (
                             <div className="round-indicator">
                                 Round <span className="round-num">{currentRound}</span> of 7
                                 {isReturningRound && <span style={{ fontSize: '0.75em', marginLeft: '6px', color: '#888' }}>(returning)</span>}
@@ -2808,7 +2894,10 @@ function DraftApp() {
                             </div>
                         )}
                         {draftStarted && (
-                            <span style={{ fontSize: '0.85em', color: '#888', marginRight: '8px' }}>{playerCount}-Player</span>
+                            <span style={{ fontSize: '0.85em', color: '#888', marginRight: '8px' }}>
+                                {playerCount}-Player
+                                {draftFormat !== DEFAULT_DRAFT_FORMAT && ` · ${getDraftFormat(draftFormat).short}`}
+                            </span>
                         )}
                         {currentUser && (
                             <button className="btn btn-secondary" onClick={() => setShowHistoryModal(true)}>Past Drafts</button>
@@ -2835,11 +2924,25 @@ function DraftApp() {
                         <div className="empty-hand" style={{ textAlign: 'center' }}>
                             <div style={{ fontSize: '1.1em', marginBottom: '16px' }}>How many players?</div>
                             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
-                                <button className="btn btn-primary" onClick={() => handleNewDraft(3)}>Start 3-Player Draft</button>
-                                <button className="btn btn-primary" onClick={() => handleNewDraft(4)}>Start 4-Player Draft</button>
+                                <button className="btn btn-primary" onClick={() => handleNewDraft(3, newDraftFormat)}>Start 3-Player Draft</button>
+                                <button className="btn btn-primary" onClick={() => handleNewDraft(4, newDraftFormat)}>Start 4-Player Draft</button>
+                            </div>
+                            <div className="draft-format-picker">
+                                <label htmlFor="draft-format-select">Format:</label>
+                                <select
+                                    id="draft-format-select"
+                                    value={newDraftFormat}
+                                    onChange={(e) => setNewDraftFormat(normalizeDraftFormat(e.target.value))}
+                                >
+                                    {Object.entries(DRAFT_FORMATS).map(([key, f]) => (
+                                        <option key={key} value={key}>{f.label}</option>
+                                    ))}
+                                </select>
                             </div>
                             <div style={{ fontSize: '0.85em', color: '#888', marginTop: '16px' }}>
-                                You'll enter each hand as it's dealt, then draft 1 occupation + 1 minor improvement per round across 7 rounds.
+                                {getDraftFormat(newDraftFormat).passing
+                                    ? `You'll enter each hand as it's dealt (${getDraftFormat(newDraftFormat).dealSize} of each type to start), then draft 1 occupation + 1 minor improvement per round across 7 rounds.`
+                                    : "You'll enter the 10 occupations and 10 minor improvements you were dealt, then keep 7 of each. Nothing is passed."}
                             </div>
                         </div>
                     </div>
@@ -2849,12 +2952,12 @@ function DraftApp() {
                 {draftStarted && (
                     <div className="draft-wide-layout">
                         <div className="draft-main-col">
-                            {/* Prior Hands */}
-                            <PriorHands hands={hands} draftedCards={draftedCards} cardMap={cardMap} currentRound={currentRound} othersDrafted={othersDrafted} onCardClick={handleMiniCardClick} wheelWatch={wheelWatch} onToggleWheelWatch={handleToggleWheelWatch} playerCount={playerCount} />
+                            {/* Prior Hands (nothing is passed in keep mode) */}
+                            {!isKeepFormat && <PriorHands hands={hands} draftedCards={draftedCards} cardMap={cardMap} currentRound={currentRound} othersDrafted={othersDrafted} onCardClick={handleMiniCardClick} wheelWatch={wheelWatch} onToggleWheelWatch={handleToggleWheelWatch} playerCount={playerCount} />}
 
                             {/* Summary view (after completion) */}
                             {draftComplete && (
-                                <SummaryView draftedCards={draftedCards} cardMap={cardMap} onNewDraft={handleNewDraft} hands={hands} othersDrafted={othersDrafted} onCardClick={handleMiniCardClick} playedCards={playedCards} onTogglePlayed={handleTogglePlayedCard} playerCount={playerCount} ghostAssignments={ghostAssignments} onAssignGhostPick={(slotId, cardName) => setGhostAssignments(prev => ({ ...prev, [slotId]: cardName }))} />
+                                <SummaryView draftedCards={draftedCards} cardMap={cardMap} onNewDraft={handleNewDraft} hands={hands} othersDrafted={othersDrafted} onCardClick={handleMiniCardClick} playedCards={playedCards} onTogglePlayed={handleTogglePlayedCard} playerCount={playerCount} keepMode={isKeepFormat} ghostAssignments={ghostAssignments} onAssignGhostPick={(slotId, cardName) => setGhostAssignments(prev => ({ ...prev, [slotId]: cardName }))} />
                             )}
 
                             {/* Search + Screenshot (only for rounds 1-4 manual entry) */}
@@ -2973,8 +3076,9 @@ function DraftApp() {
                                                     expectedCount={expectedHandSize}
                                                     sortKey={sortKey}
                                                     onRemoveCard={handleRemoveCard}
-                                                    onSelectCard={(!markingPhase && handIsFull) ? handleSelectMinor : null}
-                                                    selectedCardName={!markingPhase ? selectedMinor : null}
+                                                    onSelectCard={(!markingPhase && handIsFull) ? (isKeepFormat ? handleToggleKeep : handleSelectMinor) : null}
+                                                    selectedCardName={!markingPhase && !isKeepFormat ? selectedMinor : null}
+                                                    selectedCardNames={isKeepFormat ? keptCards : null}
                                                     showRemove={!isReturningRound}
                                                     fadedCardNames={isReturningRound && !markingPhase ? othersDrafted : null}
                                                     onToggleFaded={markingPhase ? handleToggleMarking : null}
@@ -2991,8 +3095,9 @@ function DraftApp() {
                                                     expectedCount={expectedHandSize}
                                                     sortKey={sortKey}
                                                     onRemoveCard={handleRemoveCard}
-                                                    onSelectCard={(!markingPhase && handIsFull) ? handleSelectOccupation : null}
-                                                    selectedCardName={!markingPhase ? selectedOccupation : null}
+                                                    onSelectCard={(!markingPhase && handIsFull) ? (isKeepFormat ? handleToggleKeep : handleSelectOccupation) : null}
+                                                    selectedCardName={!markingPhase && !isKeepFormat ? selectedOccupation : null}
+                                                    selectedCardNames={isKeepFormat ? keptCards : null}
                                                     showRemove={!isReturningRound}
                                                     fadedCardNames={isReturningRound && !markingPhase ? othersDrafted : null}
                                                     onToggleFaded={markingPhase ? handleToggleMarking : null}
@@ -3008,8 +3113,23 @@ function DraftApp() {
                                     })()}
                                 </div>
 
+                                {/* Keep 7 of 10: one decision over the whole deal */}
+                                {isKeepFormat && handIsFull && (
+                                    <div className="draft-actions">
+                                        <button
+                                            className="btn btn-primary"
+                                            disabled={!canConfirmKeep}
+                                            onClick={handleConfirmKeep}
+                                        >
+                                            {canConfirmKeep
+                                                ? 'Confirm Keep — 7 Minor Improvements + 7 Occupations'
+                                                : `Select 7 of each to keep (${keptMins.length}/7 minors, ${keptOccs.length}/7 occupations)`}
+                                        </button>
+                                    </div>
+                                )}
+
                                 {/* Draft action buttons */}
-                                {!markingPhase && handIsFull && (
+                                {!isKeepFormat && !markingPhase && handIsFull && (
                                     <div className="draft-actions">
                                         {currentRound > 1 && (
                                             <button className="btn btn-secondary" onClick={handleUndo}>
@@ -3149,7 +3269,8 @@ function DraftApp() {
                         </div>
 
                         {/* Section C: Tag Pairing Odds */}
-                        {Object.keys(handStats.tagStats).length > 0 && (
+                        {/* Keep mode has no further hands, so these odds are always +0 */}
+                        {!isKeepFormat && Object.keys(handStats.tagStats).length > 0 && (
                             <div className="stats-section">
                                 <div className="stats-section-label">ADDITIONAL TAGGED CARDS</div>
                                 <div style={{ fontSize: '0.75em', color: '#999', marginBottom: '8px' }}>
