@@ -584,6 +584,75 @@ function ScreenshotResults({ results, error, onDismiss, onAddTempCard, extractin
     );
 }
 
+// ─── FastTooltip Component ──────────────────────────────────────────
+// One delegated tooltip for every element carrying `data-tip`. Native `title`
+// tooltips wait ~1s and can't be styled; this shows after a short delay,
+// renders at body level so scrolling containers can't clip it, and flips
+// below the target when there's no room above.
+function FastTooltip() {
+    const [tip, setTip] = useState(null);
+    const tipRef = useRef(null);
+    const timerRef = useRef(null);
+    const targetRef = useRef(null);
+    const shownRef = useRef(false);
+    shownRef.current = !!tip;
+
+    useEffect(() => {
+        const hide = () => {
+            clearTimeout(timerRef.current);
+            targetRef.current = null;
+            setTip(null);
+        };
+        const handleOver = (e) => {
+            const el = e.target.closest && e.target.closest('[data-tip]');
+            if (el === targetRef.current) return;
+            clearTimeout(timerRef.current);
+            targetRef.current = el;
+            if (!el) { setTip(null); return; }
+            // Moving between tipped elements swaps instantly; a fresh hover waits briefly.
+            const delay = shownRef.current ? 0 : 150;
+            timerRef.current = setTimeout(() => {
+                if (targetRef.current !== el || !document.contains(el)) return;
+                setTip({ text: el.getAttribute('data-tip'), rect: el.getBoundingClientRect() });
+            }, delay);
+        };
+        document.addEventListener('mouseover', handleOver);
+        document.addEventListener('mousedown', hide);
+        window.addEventListener('scroll', hide, true);
+        return () => {
+            clearTimeout(timerRef.current);
+            document.removeEventListener('mouseover', handleOver);
+            document.removeEventListener('mousedown', hide);
+            window.removeEventListener('scroll', hide, true);
+        };
+    }, []);
+
+    const [pos, setPos] = useState(null);
+    useLayoutEffect(() => {
+        if (!tip || !tipRef.current) { setPos(null); return; }
+        const GAP = 6, MARGIN = 8;
+        const box = tipRef.current.getBoundingClientRect();
+        let left = tip.rect.left + tip.rect.width / 2 - box.width / 2;
+        left = Math.max(MARGIN, Math.min(left, window.innerWidth - box.width - MARGIN));
+        let top = tip.rect.top - box.height - GAP;
+        let below = false;
+        if (top < MARGIN) { top = tip.rect.bottom + GAP; below = true; }
+        setPos({ top, left, below });
+    }, [tip]);
+
+    if (!tip || !tip.text) return null;
+    return (
+        <div
+            ref={tipRef}
+            className={`fast-tooltip${pos ? ' visible' : ''}${pos && pos.below ? ' below' : ''}`}
+            style={pos ? { top: pos.top, left: pos.left } : { top: -9999, left: -9999 }}
+            role="tooltip"
+        >
+            {tip.text}
+        </div>
+    );
+}
+
 // ─── TagPills Component ─────────────────────────────────────────────
 function TagPills({ tags, abbreviated = true }) {
     if (!tags || tags.length === 0) return null;
@@ -592,7 +661,7 @@ function TagPills({ tags, abbreviated = true }) {
             {tags.map(tag => {
                 const def = TAG_DEFINITIONS[tag];
                 return def ? (
-                    <span key={tag} className="tag-pill" style={{ background: def.color }} title={tag}>
+                    <span key={tag} className="tag-pill" style={{ background: def.color }} data-tip={tag}>
                         {abbreviated ? def.abbrev : tag}
                     </span>
                 ) : null;
@@ -602,7 +671,7 @@ function TagPills({ tags, abbreviated = true }) {
 }
 
 // ─── HandColumn Component ───────────────────────────────────────────
-function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSelectCard, selectedCardName, selectedCardNames, showRemove, fadedCardNames, onToggleFaded, highlightedCardNames, suggestions, expandedSuggestion, onToggleSuggestion, onEditTempCard, cardQualities }) {
+function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onShowDetail, onSelectCard, selectedCardName, selectedCardNames, showRemove, fadedCardNames, onToggleFaded, highlightedCardNames, suggestions, expandedSuggestion, onToggleSuggestion, onEditTempCard, cardQualities }) {
     const count = cards.length;
     const fadedSet = useMemo(() => new Set(fadedCardNames || []), [fadedCardNames]);
     const highlightedSet = useMemo(() => new Set(highlightedCardNames || []), [highlightedCardNames]);
@@ -668,7 +737,7 @@ function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSele
                                 {suggestion && (
                                     <span
                                         className="ai-suggestion-pill"
-                                        title="AI suggestion — click for rationale"
+                                        data-tip="AI suggestion — click for rationale"
                                         onClick={(e) => { e.stopPropagation(); onToggleSuggestion && onToggleSuggestion(card.name); }}
                                     >
                                         {suggestion.rank_number}
@@ -678,7 +747,7 @@ function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSele
                                 {!isTemp && cardQualities && cardQualities[card.name] && cardQualities[card.name].quality !== 'none' && (
                                     <span
                                         className={`rank-quality-dot quality-${cardQualities[card.name].quality}`}
-                                        title={cardQualities[card.name].quality === 'strong'
+                                        data-tip={cardQualities[card.name].quality === 'strong'
                                             ? `Better than expected (${Math.round(-cardQualities[card.name].delta)} ranks above)`
                                             : cardQualities[card.name].quality === 'weak'
                                             ? `Below expected (${Math.round(cardQualities[card.name].delta)} ranks below)`
@@ -703,6 +772,16 @@ function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onSele
                                     <div className="card-stat-label">Value</div>
                                     <div>{isTemp ? '—' : (card.value ? parseFloat(card.value).toFixed(1) : '—')}</div>
                                 </div>
+                                {!isTemp && onShowDetail && (
+                                    <button
+                                        className="card-info-btn"
+                                        onClick={(e) => { e.stopPropagation(); onShowDetail(card.name, e); }}
+                                        aria-label={`Details for ${card.name}`}
+                                        data-tip="Card details"
+                                    >
+                                        i
+                                    </button>
+                                )}
                                 {isTemp && onEditTempCard && (
                                     <button
                                         className="edit-temp-btn"
@@ -770,7 +849,7 @@ function PriorHands({ hands, draftedCards, cardMap, currentRound, othersDrafted,
         const tagDots = cardTags.map(tag => {
             const def = TAG_DEFINITIONS[tag];
             return def ? (
-                <span key={tag} className="mini-tag-dot" style={{ background: def.color }} title={tag}>{'\u200B'}</span>
+                <span key={tag} className="mini-tag-dot" style={{ background: def.color }} data-tip={tag}>{'\u200B'}</span>
             ) : null;
         }).filter(Boolean);
 
@@ -3076,6 +3155,7 @@ function DraftApp() {
                                                     expectedCount={expectedHandSize}
                                                     sortKey={sortKey}
                                                     onRemoveCard={handleRemoveCard}
+                                                    onShowDetail={handleMiniCardClick}
                                                     onSelectCard={(!markingPhase && handIsFull) ? (isKeepFormat ? handleToggleKeep : handleSelectMinor) : null}
                                                     selectedCardName={!markingPhase && !isKeepFormat ? selectedMinor : null}
                                                     selectedCardNames={isKeepFormat ? keptCards : null}
@@ -3095,6 +3175,7 @@ function DraftApp() {
                                                     expectedCount={expectedHandSize}
                                                     sortKey={sortKey}
                                                     onRemoveCard={handleRemoveCard}
+                                                    onShowDetail={handleMiniCardClick}
                                                     onSelectCard={(!markingPhase && handIsFull) ? (isKeepFormat ? handleToggleKeep : handleSelectOccupation) : null}
                                                     selectedCardName={!markingPhase && !isKeepFormat ? selectedOccupation : null}
                                                     selectedCardNames={isKeepFormat ? keptCards : null}
@@ -3190,6 +3271,8 @@ function DraftApp() {
                     </div>
                 )}
             </div>
+
+            <FastTooltip />
 
             {/* Card Detail Popover */}
             {popoverCard && popoverAnchor && (

@@ -2339,3 +2339,52 @@ textarea.dimension-reason-input:focus {
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
     position: relative;
 }
+
+/* ─── Fast tooltip (data-tip) ───────────────────────────────────────── */
+.fast-tooltip {
+    position: fixed;
+    z-index: 4000;
+    max-width: 260px;
+    padding: 4px 8px;
+    border-radius: 5px;
+    background: #2b2b2b;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.35;
+    pointer-events: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+    opacity: 0;
+    transform: translateY(2px);
+    transition: opacity 0.1s ease, transform 0.1s ease;
+}
+.fast-tooltip.below { transform: translateY(-2px); }
+.fast-tooltip.visible { opacity: 1; transform: none; }
+
+.tag-pill,
+.rank-quality-dot { cursor: help; }
+
+/* ─── Card details button on hand rows ──────────────────────────────── */
+.card-info-btn {
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    flex-shrink: 0;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    background: none;
+    color: #999;
+    font: italic 600 11px/16px Georgia, serif;
+    text-align: center;
+    cursor: pointer;
+    opacity: 0.55;
+    transition: opacity 0.15s, color 0.15s, border-color 0.15s;
+}
+.card-row:hover .card-info-btn { opacity: 1; }
+.card-info-btn:hover,
+.card-info-btn:focus-visible {
+    opacity: 1;
+    color: #8B6914;
+    border-color: #8B6914;
+    background: #fdf6e3;
+}
