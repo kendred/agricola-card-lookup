@@ -2361,9 +2361,6 @@ textarea.dimension-reason-input:focus {
 .fast-tooltip.below { transform: translateY(-2px); }
 .fast-tooltip.visible { opacity: 1; transform: none; }
 
-.tag-pill,
-.rank-quality-dot { cursor: help; }
-
 /* ─── Card details button on hand rows ──────────────────────────────── */
 .card-info-btn {
     width: 18px;
