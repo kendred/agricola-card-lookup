@@ -2362,26 +2362,40 @@ textarea.dimension-reason-input:focus {
 .fast-tooltip.visible { opacity: 1; transform: none; }
 
 /* ─── Card details button on hand rows ──────────────────────────────── */
+/* Name + info button share the flexible slot so the button sits right after
+   the name (not pushed to the far edge) while long names still truncate. */
+.card-row .card-name-wrap {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.card-row .card-name-wrap .card-name {
+    flex: 0 1 auto;
+}
 .card-info-btn {
-    width: 18px;
-    height: 18px;
+    width: 14px;
+    height: 14px;
     padding: 0;
     flex-shrink: 0;
-    border: 1px solid #ccc;
+    border: 1px solid #c8c8c8;
     border-radius: 50%;
     background: none;
     color: #999;
-    font: italic 600 11px/16px Georgia, serif;
+    font-family: inherit;
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 12px;
     text-align: center;
     cursor: pointer;
-    opacity: 0.55;
-    transition: opacity 0.15s, color 0.15s, border-color 0.15s;
+    opacity: 0;
+    transition: opacity 0.12s, color 0.12s, border-color 0.12s;
 }
-.card-row:hover .card-info-btn { opacity: 1; }
+.card-row:hover .card-info-btn,
+.card-info-btn:focus-visible { opacity: 1; }
 .card-info-btn:hover,
 .card-info-btn:focus-visible {
-    opacity: 1;
     color: #8B6914;
     border-color: #8B6914;
-    background: #fdf6e3;
 }

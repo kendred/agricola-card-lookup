@@ -754,7 +754,19 @@ function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onShow
                                             : 'About expected'}
                                     />
                                 )}
-                                <span className="card-name">{card.name}</span>
+                                <span className="card-name-wrap">
+                                    <span className="card-name">{card.name}</span>
+                                    {!isTemp && onShowDetail && (
+                                        <button
+                                            className="card-info-btn"
+                                            onClick={(e) => { e.stopPropagation(); onShowDetail(card.name, e); }}
+                                            aria-label={`Details for ${card.name}`}
+                                            data-tip="Card details"
+                                        >
+                                            i
+                                        </button>
+                                    )}
+                                </span>
                                 {!isTemp && <TagPills tags={card.tags} />}
                                 <div className="card-stat">
                                     <div className="card-stat-label">Rank</div>
@@ -772,16 +784,6 @@ function HandColumn({ title, cards, expectedCount, sortKey, onRemoveCard, onShow
                                     <div className="card-stat-label">Value</div>
                                     <div>{isTemp ? '—' : (card.value ? parseFloat(card.value).toFixed(1) : '—')}</div>
                                 </div>
-                                {!isTemp && onShowDetail && (
-                                    <button
-                                        className="card-info-btn"
-                                        onClick={(e) => { e.stopPropagation(); onShowDetail(card.name, e); }}
-                                        aria-label={`Details for ${card.name}`}
-                                        data-tip="Card details"
-                                    >
-                                        i
-                                    </button>
-                                )}
                                 {isTemp && onEditTempCard && (
                                     <button
                                         className="edit-temp-btn"
