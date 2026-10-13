@@ -1877,6 +1877,22 @@ function DraftApp() {
     const [markingPhase, setMarkingPhase] = useState(false);
     const [othersDrafted, setOthersDrafted] = useState([]);
     const [markedRemaining, setMarkedRemaining] = useState(new Set());
+    // Set when a screenshot accounted for the whole returning hand and marking
+    // finished on its own, so the draft-phase banner can say so and offer the
+    // way back. { remaining, taken } counts; null after a manual Done Marking.
+    const [autoMarkSummary, setAutoMarkSummary] = useState(null);
+
+    // Leave the marking phase with `remaining` as the cards still in hand. Every
+    // other card in the hand is recorded as taken by another player.
+    const finishMarking = useCallback((handNames, remaining, summary = null) => {
+        const takenByOthers = handNames.filter(name => !remaining.has(name));
+        setOthersDrafted(prev => [...prev, ...takenByOthers]);
+        setMarkedRemaining(new Set());
+        setMarkingPhase(false);
+        setSelectedOccupation(null);
+        setSelectedMinor(null);
+        setAutoMarkSummary(summary);
+    }, []);
 
     // Temporary cards (not in database)
     const [tempCards, setTempCards] = useState({});
@@ -2425,6 +2441,7 @@ function DraftApp() {
         setKeptCards([]);
         setSortKey('rank');
         setMarkingPhase(false);
+        setAutoMarkSummary(null);
         setOthersDrafted([]);
         setTempCards({});
         setFarmGrid(INITIAL_FARM_GRID());
@@ -2595,6 +2612,26 @@ function DraftApp() {
                 // In returning rounds, "duplicates" = cards in hand that screenshot confirmed
                 const confirmedRemaining = result.duplicates || [];
                 const newlyMarked = confirmedRemaining.filter(name => !markedRemaining.has(name));
+
+                // Happy path: the screenshot accounts for exactly the returning hand
+                // (the expected count of each type, nothing unrecognized). Finish
+                // marking without a confirm. Anything short, over or unread falls
+                // through to manual marking so an OCR miss is never guessed past.
+                const allMarked = new Set([...markedRemaining, ...confirmedRemaining]);
+                const expected = getHandSize(currentRound, draftFormat);
+                const countOf = (type) => [...allMarked].filter(n => cardMap[n] && cardMap[n].type === type).length;
+                const exactMatch = result.unmatched.length === 0
+                    && countOf('Occupation') === expected
+                    && countOf('Minor Improvement') === expected;
+                if (exactMatch) {
+                    clearScreenshotBanner();
+                    finishMarking(currentHandNames, allMarked, {
+                        remaining: allMarked.size,
+                        taken: currentHandNames.filter(n => !allMarked.has(n)).length,
+                    });
+                    return;
+                }
+
                 if (newlyMarked.length > 0) {
                     setMarkedRemaining(prev => {
                         const next = new Set(prev);
@@ -2684,7 +2721,7 @@ function DraftApp() {
         } finally {
             if (!isStale()) setScreenshotProcessing(false);
         }
-    }, [screenshotProcessing, cards, cardMap, currentHandNames, allUsedCardNames, currentRound, draftFormat, handleAddCards, isReturningRound, markingPhase, markedRemaining, addTempCard]);
+    }, [screenshotProcessing, cards, cardMap, currentHandNames, allUsedCardNames, currentRound, draftFormat, handleAddCards, isReturningRound, markingPhase, markedRemaining, addTempCard, clearScreenshotBanner, finishMarking]);
 
     // Manual dimension editing (used when AI recommendations are toggled off)
     const handleManualDimensionChange = useCallback((key, field, value) => {
@@ -2844,25 +2881,23 @@ function DraftApp() {
     }, []);
 
     const handleDoneMarking = useCallback(() => {
-        // Compute which cards were taken by others (not marked as remaining)
-        const takenByOthers = currentHandNames.filter(name => !markedRemaining.has(name));
-        setOthersDrafted(prev => [...prev, ...takenByOthers]);
-        setMarkedRemaining(new Set());
-        setMarkingPhase(false);
-        setSelectedOccupation(null);
-        setSelectedMinor(null);
-    }, [markedRemaining, currentHandNames]);
+        finishMarking(currentHandNames, markedRemaining);
+    }, [finishMarking, markedRemaining, currentHandNames]);
 
     const handleBackToMarking = useCallback(() => {
-        // Re-enter marking: move this round's othersDrafted entries back to unmarked state
-        // by removing current hand cards from othersDrafted and resetting markedRemaining
+        // Re-enter marking with the previous marks restored, so fixing one card
+        // doesn't mean re-marking the whole hand. Cards still in hand are the ones
+        // not recorded as taken by others; those records are pulled back out of
+        // othersDrafted and re-added by the next Done Marking.
+        const takenSet = new Set(othersDrafted);
         const currentHandSet = new Set(currentHandNames);
+        setMarkedRemaining(new Set(currentHandNames.filter(name => !takenSet.has(name))));
         setOthersDrafted(prev => prev.filter(name => !currentHandSet.has(name)));
-        setMarkedRemaining(new Set());
         setMarkingPhase(true);
         setSelectedOccupation(null);
         setSelectedMinor(null);
-    }, [currentHandNames]);
+        setAutoMarkSummary(null);
+    }, [currentHandNames, othersDrafted]);
 
     const handleConfirmDraft = useCallback(() => {
         if (!selectedOccupation || !selectedMinor) return;
@@ -2875,6 +2910,7 @@ function DraftApp() {
         setSelectedOccupation(null);
         setSelectedMinor(null);
         setMarkingPhase(false);
+        setAutoMarkSummary(null);
         clearScreenshotBanner();
         setCurrentRound(prev => prev + 1);
     }, [selectedOccupation, selectedMinor, currentHandNames, currentRound, clearScreenshotBanner]);
@@ -2931,6 +2967,7 @@ function DraftApp() {
         setSelectedMinor(null);
         setMarkingPhase(false);
         setMarkedRemaining(new Set());
+        setAutoMarkSummary(null);
         clearScreenshotBanner();
         setCurrentRound(prevRound);
     }, [currentRound, hands, isReturningRound, currentHandNames, clearScreenshotBanner]);
@@ -3100,10 +3137,15 @@ function DraftApp() {
                             {!draftComplete && isReturningRound && !markingPhase && (
                                 <div className="marking-banner" style={{ background: '#d1ecf1', borderColor: '#bee5eb' }}>
                                     <div className="marking-banner-text" style={{ color: '#0c5460' }}>
+                                        {autoMarkSummary && (
+                                            <div style={{ marginBottom: '4px' }}>
+                                                <strong>Marked from screenshot:</strong> {autoMarkSummary.remaining} still in hand, {autoMarkSummary.taken} taken by others.
+                                            </div>
+                                        )}
                                         <strong>Draft Phase:</strong> Select 1 occupation and 1 minor improvement to draft.
                                     </div>
                                     <button className="btn btn-secondary" onClick={handleBackToMarking}>
-                                        ← Back to Marking
+                                        {autoMarkSummary ? 'Edit marked cards' : '← Back to Marking'}
                                     </button>
                                 </div>
                             )}
